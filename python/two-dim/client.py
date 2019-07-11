@@ -1,0 +1,181 @@
+import numpy as np
+import keras
+import random
+import time
+import json
+import pickle
+import codecs
+from keras.models import model_from_json
+from socketIO_client import SocketIO, LoggingNamespace
+from server import obj_to_pickle_string, pickle_string_to_obj
+import socketio
+from data import x,y
+import threading
+import sys
+
+class LocalModel(object):
+    def __init__(self, model_config):
+        # model_config:
+            # 'model': self.global_model.model.to_json(),
+            # 'model_id'
+            # 'min_train_size'
+            # 'data_split': (0.6, 0.3, 0.1), # train, test, valid
+            # 'epoch_per_round'
+            # 'batch_size'
+        self.model_config = model_config
+
+        self.model = model_from_json(model_config['model_json'])
+        # the weights will be initialized on first pull from server
+
+        self.model.compile(loss='mean_squared_error',
+              optimizer='sgd',
+              metrics=['mse'])
+
+        dataIndex = int(sys.argv[1])
+        self.x_train = x[dataIndex]
+        self.y_train = y[dataIndex]
+        self.x_test = x[dataIndex]
+        self.y_test = y[dataIndex]
+        self.x_valid = x[dataIndex]
+        self.y_valid = y[dataIndex]
+
+    def get_weights(self):
+        return self.model.get_weights()
+
+    def set_weights(self, new_weights):
+        self.model.set_weights(new_weights)
+
+    # return final weights, train loss, train accuracy
+    def train_one_round(self):
+        self.model.compile(loss='mean_squared_error',
+              optimizer='sgd',
+              metrics=['mse'])
+
+        self.model.fit(self.x_train, self.y_train,
+                  epochs=self.model_config['epoch_per_round'],
+                  batch_size=self.model_config['batch_size'],
+                  verbose=1,
+                  validation_data=(self.x_valid, self.y_valid))
+
+        score = self.model.evaluate(self.x_train, self.y_train, verbose=0)
+        print('Train loss:', score[0])
+        print('Train accuracy:', score[1])
+        return self.model.get_weights(), score[0], score[1]
+
+    def validate(self):
+        score = self.model.evaluate(self.x_valid, self.y_valid, verbose=0)
+        print('Validate loss:', score[0])
+        print('Validate accuracy:', score[1])
+        return score
+
+    def evaluate(self):
+        score = self.model.evaluate(self.x_test, self.y_test, verbose=0)
+        print('Test loss:', score[0])
+        print('Test accuracy:', score[1])
+        return score
+
+
+class FederatedClient(object):
+    MAX_DATASET_SIZE_KEPT = 50
+
+    def __init__(self, server_host, server_port):
+        print("init")
+        self.local_model = None
+        self.sio = socketio.Client()
+        with SocketIO('127.0.0.1', 5000, LoggingNamespace, transports=[
+            'xhr-polling', 'websocket'], verify=False) as sss:
+            self.sio = sss
+            print("got sio")
+            self.register_handles()
+            print("sent wakeup")
+            self.sio.emit('client_wake_up')
+            self.sio.wait()
+
+    
+    ########## Socket Event Handler ##########
+    def on_init(self, *args):
+        model_config = args[0]
+        print('on init')
+        
+        print("got data")
+        self.local_model = LocalModel(model_config)
+        # ready to be dispatched for training
+        print("emit: client ready")
+        self.sio.emit('client_ready', {
+                'train_size': self.local_model.x_train.shape[0],
+                'class_distr': None  # for debugging, not needed in practice
+            })
+
+
+    def register_handles(self):
+        def on_connect():
+            print('connect')
+
+        def on_disconnect():
+            print('disconnect')
+
+        def on_reconnect():
+            print('reconnect')
+
+        def on_request_update(*args):
+            req = args[0]
+            # req:
+            #     'model_id'
+            #     'round_number'
+            #     'current_weights'
+            #     'weights_format'
+            #     'run_validation'
+            print("update requested")
+
+            if req['weights_format'] == 'pickle':
+                weights = pickle_string_to_obj(req['current_weights'])
+
+            self.local_model.set_weights(weights)
+            my_weights, train_loss, train_accuracy = self.local_model.train_one_round()
+            resp = {
+                'round_number': req['round_number'],
+                'weights': obj_to_pickle_string(my_weights),
+                'train_size': self.local_model.x_train.shape[0],
+                'valid_size': self.local_model.x_valid.shape[0],
+                'train_loss': train_loss,
+                'train_accuracy': train_accuracy,
+            }
+            if req['run_validation']:
+                valid_loss, valid_accuracy = self.local_model.validate()
+                resp['valid_loss'] = valid_loss
+                resp['valid_accuracy'] = valid_accuracy
+            print("emit client update")
+            self.sio.emit('client_update', resp)
+
+
+        def on_stop_and_eval(*args):
+            req = args[0]
+            if req['weights_format'] == 'pickle':
+                weights = pickle_string_to_obj(req['current_weights'])
+            self.local_model.set_weights(weights)
+            test_loss, test_accuracy = self.local_model.evaluate()
+            resp = {
+                'test_size': self.local_model.x_test.shape[0],
+                'test_loss': test_loss,
+                'test_accuracy': test_accuracy
+            }
+            print("emit client eval")
+            self.sio.emit('client_eval', resp)
+
+
+        self.sio.on('connect', on_connect)
+        self.sio.on('disconnect', on_disconnect)
+        self.sio.on('reconnect', on_reconnect)
+        self.sio.on('init', lambda *args: self.on_init(*args))
+        self.sio.on('request_update', on_request_update)
+        self.sio.on('stop_and_eval', on_stop_and_eval)
+
+
+    
+    def intermittently_sleep(self, p=.1, low=10, high=100):
+        if (random.random() < p):
+            time.sleep(random.randint(low, high))
+
+if __name__ == "__main__":
+    print("start run")
+    FederatedClient("127.0.0.1", 5000)
