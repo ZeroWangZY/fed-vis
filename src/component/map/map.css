@@ -1,0 +1,21 @@
+.map-container {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}
+
+.leaflet-control-layers {
+    transform: scale(0.8);
+    margin-left: 5px!important;
+}
+.leaflet-control-layers-expanded {
+   padding: 30px 10px;
+}
+
+.leaflet-top.leaflet-left{
+    transition: margin cubic-bezier(0.4, 0, 0.6, 1) 225ms
+}
+.drawer-helper .leaflet-top.leaflet-left {
+    margin-left: 350px;
+}

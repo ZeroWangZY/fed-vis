@@ -1,113 +1,171 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import BMap from 'BMap';
-import BMapLib from 'BMapLib'
-import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
-import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
-import DirectionsIcon from '@material-ui/icons/Directions';
-const useStyles = makeStyles({
-  root: {
-    padding: '2px 4px',
-    display: 'flex',
-    alignItems: 'center',
-    width: 400,
-  },
-  input: {
-    marginLeft: 8,
-    flex: 1,
-  },
-  iconButton: {
-    padding: 10,
-  },
-  divider: {
-    width: 1,
-    height: 28,
-    margin: 4,
-  },
-});
-function processDataToPoints(data) {
+import MenuIcon from '@material-ui/icons/Menu';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import { Drawer, Divider } from '@material-ui/core';
+import { withStyles } from '@material-ui/styles';
 
-  let points=[]
-  data.forEach((item1,i) => {
-    item1.forEach((item2, j) => {
-      if(item2 !== 0){
-        points.push({
-          lng: j - 180,
-          lat: i - 90,
-          count: item2
-        })
-      }
-    })
-  })
-  return points
+import MapContainer from './component/map/MapContainer';
+
+function processDataToPoints(data) {
+    let points = [];
+    data.forEach((item1, i) => {
+        item1.forEach((item2, j) => {
+            if (item2 !== 0) {
+                points.push({
+                    lng: j - 180,
+                    lat: i - 90,
+                    count: item2
+                });
+            }
+        });
+    });
+    return points;
 }
+
+const drawerWidth = 350;
+
+const styles = {
+    hide: {
+        display: 'none'
+    },
+    drawer: {
+        width: drawerWidth,
+    },
+    drawerPaper: {
+        width: drawerWidth,
+        background: '#d1d1d1',
+    },
+    drawerHeader: {
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 8px',
+        justifyContent: 'flex-start'
+        // ...theme.mixins.toolbar,
+    },
+    content: {
+        transition: 'margin cubic-bezier(0.4, 0, 0.6, 1) 225ms',
+        marginLeft: 0
+    },
+    contentShift: {
+        marginLeft: -drawerWidth,
+        transition: 'margin cubic-bezier(0.4, 0, 0.6, 1) 225ms'
+    }
+};
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.map = React.createRef();
-    this.state = {
-      heatmap: {},
-      dataName: ''
+    constructor(props) {
+        super(props);
+        this.state = {
+            dataName: '',
+            heatData: [],
+            isDrawerOpen: false
+        };
+
+        this.handleClick = this.handleClick.bind(this);
+        this.handleDrawerOpen = this.handleDrawerOpen.bind(this);
+        this.handleDrawerClose = this.handleDrawerClose.bind(this);
     }
-  }
-  setPoint = data => {
-    this.state.heatmap.setDataSet({data: processDataToPoints(data), max: 10000})
-  }
 
-  componentDidMount() {
-    var map = new BMap.Map('map');
-    // 创建地图实例  
-    var point = new BMap.Point(-96, 39.921984);
-    map.centerAndZoom(point, 5);             // 初始化地图，设置中心点坐标和地图级别
-    map.enableScrollWheelZoom(); // 允许滚轮缩放
-    var heatmapOverlay = new BMapLib.HeatmapOverlay({"radius":30});
-    map.addOverlay(heatmapOverlay);
-    // fetch('/naive-data.json').then(res => res.json()).then(data => {
-    //   heatmapOverlay.setDataSet({data:processDataToPoints(data),max:20000})
-    // })
-    this.setState({
-      heatmap: heatmapOverlay 
-    })
-  }
+    handleClick() {
+        fetch(this.state.dataName + '.json')
+            .then(res => res.json())
+            .then(data =>
+                this.setState({
+                    heatData: processDataToPoints(data),
+                    dataName: ''
+                })
+            );
+    }
 
-  handleChange = e => {
-    this.setState({
-      dataName: e.target.value
-    })
-  }
-  handleClick = () => {
-    fetch(this.state.dataName + '.json').then(res => res.json()).then(data => {
-      this.setPoint(data)
-    })
-  }
+    handleDrawerOpen() {
+        this.setState({
+            isDrawerOpen: true
+        });
+    }
 
-  render() {
-    return (
-    <div className="App">
-      <div className ="Map" ref={this.map} id={'map'} style={{height: '100%', width:'100%', position: 'absolute'}}/>
-      <Paper style={{'position': 'absolute', marginLeft:'10px'}}>
-      <InputBase
-        placeholder="input data name"
-        inputProps={{ 'aria-label': 'input data name' }}
-        value={this.state.dataName}
-        onChange={this.handleChange}
-      />
-      <IconButton aria-label="Search" onClick={this.handleClick}>
-        <SearchIcon />
-      </IconButton>
-    </Paper>
-    </div>
-    )
-  }
+    handleDrawerClose() {
+        this.setState({
+            isDrawerOpen: false
+        });
+    }
+    render() {
+        let { heatData, dataName } = this.state;
+        let { isDrawerOpen } = this.state;
+        const { classes } = this.props;
+
+        const $input = (
+            <>
+                <InputBase
+                    placeholder="input data name"
+                    style={{ padding: '10px 20px' }}
+                    inputProps={{ 'aria-label': 'input data name' }}
+                    value={dataName}
+                    onChange={e => this.setState({ dataName: e.target.value })}
+                />
+                <IconButton aria-label="Search" onClick={this.handleClick}>
+                    <SearchIcon />
+                </IconButton>
+            </>
+        );
+        return (
+            <div className="App">
+                <div
+                    className={clsx(classes.content, {
+                        [classes.contentShift]: isDrawerOpen
+                    })}
+                >
+                    <Paper
+                        style={{
+                            position: 'absolute',
+                            marginLeft: '10px',
+                            zIndex: 1000,
+                            right: 0
+                        }}
+                    >
+                        {$input}
+                        <IconButton
+                            color="inherit"
+                            aria-label="open drawer"
+                            edge="end"
+                            onClick={this.handleDrawerOpen}
+                            className={clsx(isDrawerOpen && classes.hide)}
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                    </Paper>
+                    <MapContainer
+                        heatData={heatData}
+                        isDrawerOpen={isDrawerOpen}
+                    />
+                </div>
+                <Drawer
+                    className={classes.drawer}
+                    variant="persistent"
+                    anchor="right"
+                    open={isDrawerOpen}
+                    classes={{
+                        paper: classes.drawerPaper
+                    }}
+                >
+                    <div className={classes.drawerHeader}>
+                        {$input}
+                        <IconButton
+                            style={{ borderRight: '0.1em solid black' }}
+                            onClick={this.handleDrawerClose}
+                        >
+                            <ChevronRightIcon />
+                        </IconButton>
+                    </div>
+                    <Divider />
+                </Drawer>
+            </div>
+        );
+    }
 }
 
-
-
-export default App;
+export default withStyles(styles)(App);
