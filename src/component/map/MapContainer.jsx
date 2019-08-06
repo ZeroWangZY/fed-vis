@@ -4,7 +4,9 @@ import {
     LayersControl,
     FeatureGroup,
     TileLayer,
-    Circle
+    Circle,
+    Marker,
+    Popup
 } from 'react-leaflet';
 import HeatmapLayer from '../heatmap/heatmap';
 import { basicConfig, heatMapConfig } from '../../util/mapsetting';
@@ -12,6 +14,8 @@ import { EditControl } from 'react-leaflet-draw';
 import './map.css';
 import clsx from 'clsx';
 import SelectedListItem from '../displayItems/ItemLists';
+import HeatmapLegend from '../legend/legend';
+import { rankIcon } from '../icons/RankIcon';
 
 class MapContainer extends Component {
     constructor(props) {
@@ -19,7 +23,9 @@ class MapContainer extends Component {
         this.state = {
             topTen: [],
             $markers: [].fill(false, 0, 10),
-            showTopTen: false
+            showTopTen: false,
+            minValue: null,
+            maxValue: null
         };
         this.selectHeatMapPoints = this.selectHeatMapPoints.bind(this);
         this.createAMarker = this.createAMarker.bind(this);
@@ -62,14 +68,14 @@ class MapContainer extends Component {
             this.props.heatData != null
         ) {
             //获得top 10 elements
+            let temp = this.props.heatData.sort((a, b) => b.count - a.count);
             this.setState({
-                topTen: this.props.heatData
-                    .sort((a, b) => b.count - a.count)
-                    .slice(0, 10),
-                showTopTen: true
+                topTen: temp.slice(0, 10),
+                showTopTen: true,
+                maxValue: temp[0].count,
+                minValue: temp.pop().count
             });
         }
-        // console.log('didupdate')
     }
 
     createAMarker(index) {
@@ -79,7 +85,7 @@ class MapContainer extends Component {
                 <Circle
                     center={[topTen[index].lat, topTen[index].lng]}
                     // @todo: 调整radius
-                    radius={topTen[index].count/100}
+                    radius={topTen[index].count / 100}
                     // (500 * 10 * (topTen[index].count - topTen[9].count)) /
                     // (topTen[0].count - topTen[9].count)
                     // }
@@ -97,11 +103,29 @@ class MapContainer extends Component {
     render() {
         const data = this.props.heatData;
         const { isDrawerOpen } = this.props;
-        const { topTen, $markers, showTopTen } = this.state;
-
-        // console.log('---', $markers);
+        const { topTen, $markers, showTopTen, minValue, maxValue } = this.state;
+        let $rankMarkers = null;
+        if (topTen.length != 0) {
+            $rankMarkers = topTen.map((e, i) => (
+                <>
+                    <Circle
+                        center={[e.lat, e.lng]}
+                        // @todo: 调整radius
+                        radius={e.count / 100}
+                        key={i}
+                    />
+                    <Marker
+                        key={i}
+                        position={[e.lat, e.lng]}
+                        icon={rankIcon(i)}
+                        title = {i+1}
+                    >
+                    </Marker>
+                </>
+            ));
+        }
         return (
-            <div style={{ display: 'flex' }}>
+            <div>
                 <Map
                     center={basicConfig.center}
                     zoom={basicConfig.zoom}
@@ -179,12 +203,12 @@ class MapContainer extends Component {
                         </LayersControl.Overlay>
 
                         <LayersControl.Overlay name="Marker" checked>
-                            <Circle center={[39.921984, -96]} radius={200} />
-                            {$markers.map(e => {
+                            {/* {$markers.map(e => {
                                 if (e != null && e != false) {
                                     return e;
                                 }
-                            })}
+                            })} */}
+                            {$rankMarkers}
                         </LayersControl.Overlay>
                     </LayersControl>
                 </Map>
@@ -194,6 +218,11 @@ class MapContainer extends Component {
                         createAMarker={this.createAMarker}
                     />
                 )}
+                <HeatmapLegend
+                    colors={heatMapConfig.gradient}
+                    minValue={minValue}
+                    maxValue={maxValue}
+                />
             </div>
         );
     }

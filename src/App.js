@@ -49,10 +49,10 @@ const styles = {
     },
     content: {
         transition: 'margin cubic-bezier(0.4, 0, 0.6, 1) 225ms',
-        marginLeft: 0
+        // marginLeft: 0
     },
     contentShift: {
-        marginLeft: -drawerWidth,
+        // marginLeft: -drawerWidth,
         transition: 'margin cubic-bezier(0.4, 0, 0.6, 1) 225ms'
     }
 };
@@ -63,7 +63,7 @@ class App extends React.Component {
         this.state = {
             dataName: '',
             heatData: [],
-            isDrawerOpen: false
+            isDrawerOpen: true
         };
 
         this.handleClick = this.handleClick.bind(this);

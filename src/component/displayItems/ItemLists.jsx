@@ -2,12 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import Avatar from '@material-ui/core/Avatar';
-import InboxIcon from '@material-ui/icons/Inbox';
-import DraftsIcon from '@material-ui/icons/Drafts';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -19,11 +16,9 @@ const useStyles = makeStyles(theme => ({
         marginTop: '10px',
         height: '238px',
         borderRadius: '5px',
-        transform: `translate(420px,0)`
-
-        // position: 'absolute',
-        // bottom: '10px',
-        // left: '10px'
+        position: 'absolute',
+        left: '55px'
+        // transform: `translate(420px,0)`
     },
     title: {
         lineHeight: '15px',
@@ -47,7 +42,7 @@ const useStyles = makeStyles(theme => ({
         padding: '0'
     },
     selected: {
-        backgroundColor: '#DE9A96!important'
+        backgroundColor: '#fff6da!important'
     },
     avatar: {
         margin: 2,
@@ -55,52 +50,10 @@ const useStyles = makeStyles(theme => ({
         width: '15px',
         height: '15px',
         fontSize: '14px',
-        backgroundColor: '#ffcc66',
+        backgroundColor: '#ffcc66'
     }
 }));
 
-const testData = [
-    {
-        rank: 1,
-        name: 'test1'
-    },
-    {
-        rank: 1,
-        name: 'test2'
-    },
-    {
-        rank: 1,
-        name: 'test3'
-    },
-    {
-        rank: 1,
-        name: ' test4'
-    },
-    {
-        rank: 1,
-        name: ' test5'
-    },
-    {
-        rank: 1,
-        name: 'test6'
-    },
-    {
-        rank: 1,
-        name: 'test7'
-    },
-    {
-        rank: 1,
-        name: 'test8'
-    },
-    {
-        rank: 1,
-        name: 'test9'
-    },
-    {
-        rank: 1,
-        name: 'test10'
-    }
-];
 export default function SelectedListItem(props) {
     const classes = useStyles();
     const [selectedIndex, setSelectedIndex] = React.useState(
@@ -137,7 +90,7 @@ export default function SelectedListItem(props) {
                             primary={
                                 <>
                                     <Avatar className={classes.avatar}>
-                                        {i}
+                                        {i+1}
                                     </Avatar>
                                     {e.count + ':' + e.lat + ',' + e.lng}
                                 </>
