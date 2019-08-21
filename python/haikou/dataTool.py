@@ -1,6 +1,7 @@
 import csv
 import numpy as np
 import json
+import os
 
 MIN_LNG = 110.14
 MAX_LNG = 110.520
@@ -42,19 +43,34 @@ def satEncode():
 
 def readFrom(str):
     res = []
-    with open('data/'+ str +'.json') as json_file:
+    y = [0]
+    with open('data/source/'+ str +'.json') as json_file:
         res = json.load(json_file)
-    return res
+    for longitude in range(LNG_SIZE):
+        for latitude in range(LAT_SIZE):
+            y = np.append(y, [res[longitude][latitude]])
+    return y[1:]
 
-def writeTo(results, str):
-    i=1
+def initX():
+    x = [[0,0]]
+    for longitude in range(LNG_SIZE):
+        for latitude in range(LAT_SIZE):
+            x = np.append(x, [[longitude,latitude]],axis=0)
+    return x[1:]
+
+def writeTo(results, dir, file):
+    folder = os.path.exists(dir)
+    if not folder:
+        os.makedirs(dir) 
+    i=0
     output = np.zeros((LNG_SIZE, LAT_SIZE))
     for longitude in range(LNG_SIZE):
         for latitude in range(LAT_SIZE):
                 output[longitude][latitude] = int(results[i])
                 i+=1
-    with open('data/predict/' + str + '.json', 'w') as outfile: 
+    with open(dir + '/' + file + '.json', 'w') as outfile: 
         json.dump(output.tolist(), outfile)
+
 
 
 

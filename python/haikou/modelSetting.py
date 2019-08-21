@@ -16,29 +16,15 @@ def getModel():
     model.add(Flatten())
 
     count = 0
-    # while count < 3:
-    model.add(Dense(32, input_dim=2, activation='relu',
-                    kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
-                    activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
-                    bias_regularizer=regularizers.l1_l2(l1=0., l2=0.),
-                    kernel_initializer=initializers.glorot_normal(seed=None),
-                    # bias_initializer=initializers.RandomUniform(minval=-0.5, maxval=0.5, seed=None),
-                    ))
-    model.add(Dense(32, input_dim=2, activation='relu',
-                    kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
-                    activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
-                    bias_regularizer=regularizers.l1_l2(l1=0., l2=0.),
-                    kernel_initializer=initializers.glorot_normal(seed=None),
-                    # bias_initializer=initializers.RandomUniform(minval=-0.5, maxval=0.5, seed=None),
-                    ))
-    model.add(Dense(32, input_dim=2, activation='relu',
-                    kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
-                    activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
-                    bias_regularizer=regularizers.l1_l2(l1=0., l2=0.),
-                    kernel_initializer=initializers.glorot_normal(seed=None),
-                    # bias_initializer=initializers.RandomUniform(minval=-0.5, maxval=0.5, seed=None),
-                    ))
-    # count+=1
+    while count < 5:
+        model.add(Dense(32, input_dim=2, activation='relu',
+                        kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                        activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                        bias_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                        # kernel_initializer=initializers.glorot_normal(seed=None),
+                        # bias_initializer=initializers.RandomUniform(minval=-0.5, maxval=0.5, seed=None),
+                        ))
+        count+=1
     model.add(Dense(1))
 
     adam = optimizers.Adam(lr=0.01, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
