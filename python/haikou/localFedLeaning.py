@@ -10,27 +10,44 @@ import dataTool
 import modelSetting
 import os
 
-y1 = dataTool.readFrom('des1')
-y2 = dataTool.readFrom('start1')
+
+y = [dataTool.readFrom('des1'),dataTool.readFrom('des2'),dataTool.readFrom('des3'),dataTool.readFrom('des4'),dataTool.readFrom('des5')]
 x = dataTool.initX()
 
-mean = (np.mean(y1) + np.mean(y2)) / 2
-std = (np.std(y1) + np.std(y2)) / 2
-y1 = (y1 - mean)/std
-y2 = (y2 - mean)/std
+mean = 0
+std = 0
+
+for i in range(len(y)):
+    mean += np.mean(y[i])
+    std += np.std(y[i])
+mean /= 5    
+std /= 5
+
+for i in range(len(y)):
+    y[i] = (y[i] - mean) / std
 
 model = modelSetting.getModel()
+global_weights = model.get_weights()
+
+def update_weights(weightsArray):
+        new_weights = np.sum(weightsArray, axis=0) / len(weightsArray)
+        return new_weights
+
 
 round = 1
 while round < 10000:
+    w = [0,0,0,0,0]
 
-    model.fit(x, y1, epochs=1, batch_size=12800)
-    model.fit(x, y2, epochs=1, batch_size=12800)
+    for i in range(len(y)):
+        model.set_weights(global_weights)
+        model.fit(x, y[i], epochs=1, batch_size=12800)
+        w[i] = model.get_weights()
+
+    global_weights = update_weights(w)
 
     if round % 100 == 0:
         results = model.predict(x)
-        results*=std
-        results+=mean
-        dataTool.writeTo(results, 'data/predict/fed2c5l32u', str(round))
+        results = mean + std * results
+        dataTool.writeTo(results, 'data/predict/avgfed5client', str(round))
     round+=1
 

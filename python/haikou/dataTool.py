@@ -10,10 +10,10 @@ MAX_LAT = 20.070
 LNG_SIZE = int((MAX_LNG - MIN_LNG) * 1000) + 1
 LAT_SIZE = int((MAX_LAT - MIN_LAT) * 1000) + 1
 
-def rawDataToJson():
+def rawDataToJson(index):
     startingPosData = np.zeros((LNG_SIZE,LAT_SIZE))
     desPosData = np.zeros((LNG_SIZE,LAT_SIZE))
-    with open('data\dwv_order_make_haikou_1.csv', newline='') as csvfile:
+    with open('data/raw/dwv_order_make_haikou_' + str(index) + '.txt', newline='') as csvfile:
         haikouData = csv.reader(csvfile, delimiter='\t', quotechar='|')
         next(haikouData)
         for row in haikouData:
@@ -25,9 +25,9 @@ def rawDataToJson():
                 j2 = int((float(row[17]) - MIN_LAT) * 1000)
                 startingPosData[i1][j1] += 1
                 desPosData[i2][j2] += 1
-    with open('data/part1-starting-s.json', 'w') as outfile: 
+    with open('data/source/start' + str(index) + '.json', 'w') as outfile: 
         json.dump(startingPosData.tolist(), outfile)
-    with open('data/part1-des-s.json', 'w') as outfile: 
+    with open('data/source/des' + str(index) + '.json', 'w') as outfile: 
         json.dump(desPosData.tolist(), outfile)
 
 def satEncode():

@@ -40,10 +40,10 @@ class App extends React.Component {
     this.map = React.createRef();
     this.state = {
       heatmap: {},
-      dataName: 'predict/fed2c5l32u',
+      dataName: 'predict/fed5client',
       max: 5000,
-      name1: 'source/part1-des-s',
-      name2: 'source/part1-starting-s'
+      name1: 'source/des1',
+      name2: 'source/des2'
     }
   }
   setPoint = data => {
@@ -53,14 +53,11 @@ class App extends React.Component {
   componentDidMount() {
     var map = new BMap.Map('map');
     // 创建地图实例  
-    var point = new BMap.Point(110, 20);
-    map.centerAndZoom(point, 10);             // 初始化地图，设置中心点坐标和地图级别
+    var point = new BMap.Point(110.32, 20);
+    map.centerAndZoom(point, 13);             // 初始化地图，设置中心点坐标和地图级别
     map.enableScrollWheelZoom(); // 允许滚轮缩放
     var heatmapOverlay = new BMapLib.HeatmapOverlay({ "radius": 30 });
     map.addOverlay(heatmapOverlay);
-    // fetch('/naive-data.json').then(res => res.json()).then(data => {
-    //   heatmapOverlay.setDataSet({data:processDataToPoints(data),max:20000})
-    // })
     this.setState({
       heatmap: heatmapOverlay
     })
@@ -81,14 +78,27 @@ class App extends React.Component {
     fetch(this.state.name1 + '.json').then(res => res.json()).then(data1 => {
       fetch(this.state.name2 + '.json').then(res => res.json()).then(data2 => {
         let miss = 0
-        for(let i = 0; i < data1.length; i++){
-          for(let j = 0; j < data1[0].length; j++){
+        let m = data1.length
+        let n = data1[0].length
+        let size = m * n
+        let accCounter = 0
+        let fenmu = 0
+        for(let i = 0; i < m; i++){
+          for(let j = 0; j < n; j++){
             let abs = Math.abs(data1[i][j] - data2[i][j])
+            fenmu += data1[i][j]
             data1[i][j] = abs
             miss += abs
+
+            if(data1[i][j] != 0 && abs / data1[i][j] < 0.1) {
+              accCounter++
+            } else if(abs < 20){
+              accCounter++
+            }
           }
         }
-        console.log('miss is ' + miss)
+        console.log(this.state.name1 + ' ' + this.state.name2 + ' acc is ' + (1-miss / fenmu))
+        console.log(this.state.name1 + ' ' + this.state.name2 + ' miss is ' + miss)
         this.setPoint(data1)
       })
     })
