@@ -28,8 +28,8 @@ i = 0
 for latitude in range(180):
     for longitude in range(360):
         if latitude >= 117 and latitude <= 140 and longitude >= 43 and longitude <= 106:
-            x[i][0] = latitude - 117
-            x[i][1] = longitude - 43
+            x[i][0] = latitude - 117 - 10
+            x[i][1] = longitude - 43 - 25
             y[i] = allCount[latitude][longitude]
             i+=1
 
@@ -57,47 +57,95 @@ for latitude in range(180):
 #             json.dump(output3.tolist(), outfile)
 #     return
 
-x /= 10.
+x /= 20.
 y /= 10000.
 
-model.add(Dense(96, input_dim=2))
-model.add(Dense(96, activation='relu'))
-model.add(Dense(96, activation='relu'))
-model.add(Dense(96, activation='relu'))
-model.add(Dense(96, activation='relu'))
+model.add(Dense(32, input_dim=2, activation='relu',
+                kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                bias_regularizer=regularizers.l1_l2(l1=0., l2=0.)
+                ))
+model.add(Dense(32, activation='relu',
+                kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                bias_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                activity_regularizer=regularizers.l1_l2(l1=0., l2=0.)))
+model.add(Dense(32, activation='relu',
+                kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                bias_regularizer=regularizers.l1_l2(l1=0., l2=0.)))
+model.add(Dense(32, activation='relu',
+                kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                bias_regularizer=regularizers.l1_l2(l1=0., l2=0.)))
+model.add(Dense(32, activation='relu',
+                kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                bias_regularizer=regularizers.l1_l2(l1=0., l2=0.)))
+model.add(Dense(32, activation='relu',
+                kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                bias_regularizer=regularizers.l1_l2(l1=0., l2=0.)))
+model.add(Dense(32, input_dim=2, activation='relu',
+                kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                bias_regularizer=regularizers.l1_l2(l1=0., l2=0.)
+                ))
+model.add(Dense(32, activation='relu',
+                kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                bias_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                activity_regularizer=regularizers.l1_l2(l1=0., l2=0.)))
+model.add(Dense(32, activation='relu',
+                kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                bias_regularizer=regularizers.l1_l2(l1=0., l2=0.)))
+model.add(Dense(32, activation='relu',
+                kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                bias_regularizer=regularizers.l1_l2(l1=0., l2=0.)))
+model.add(Dense(32, activation='relu',
+                kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                bias_regularizer=regularizers.l1_l2(l1=0., l2=0.)))
+model.add(Dense(32, activation='relu',
+                kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                bias_regularizer=regularizers.l1_l2(l1=0., l2=0.)))
+# model.add(Dense(96, activation='relu'))
+# model.add(Dense(96, activation='relu'))
 
 model.add(Dense(1))
 
-
+sgd = optimizers.SGD(lr=0.035, decay=1e-6)
+rms = optimizers.RMSprop(lr=0.002, rho=0.9, epsilon=None, decay=0.0)
 model.compile(loss='mean_squared_error',
-              optimizer= 'sgd',
+              optimizer= sgd,
               metrics=['mse'])
 
 epoch = 0
-while epoch < 1000000:
+# while epoch < 1000000:
 
     # fit
     # model = load_model('model/naive-usa/' + str(epoch) + '.h5')
 
-    model.fit(x, y, epochs=500000, batch_size=100)
+model.fit(x, y, epochs=1000000, batch_size=64000)
     # model.save('model/naive-usa/' + str(epoch+500) + '.h5')
     
     # predict
-    results = model.predict(x)
-    results*=10000
-    print(results)
+    # results = model.predict(x)
+    # results*=10000
+    # print(results)
 
     # write to json
-    i=0
-    output = np.zeros((180,360))
-    for latitude in range(180):
-        for longitude in range(360):
-            if latitude >= 90+27 and latitude <= 90+50 and longitude >= 180-137 and longitude <= 180-74:
-                output[latitude][longitude] = results[i]
-                i+=1
-    epoch+=5000
-    with open('data/naive-usa-0708-' + str(epoch) + '.json', 'w') as outfile: 
-        json.dump(output.tolist(), outfile)
+    # i=0
+    # output = np.zeros((180,360))
+    # for latitude in range(180):
+    #     for longitude in range(360):
+    #         if latitude >= 90+27 and latitude <= 90+50 and longitude >= 180-137 and longitude <= 180-74:
+    #             output[latitude][longitude] = results[i]
+    #             i+=1
+    # epoch+=5000
+    # with open('data/naive-usa-0708-' + str(epoch) + '.json', 'w') as outfile: 
+    #     json.dump(output.tolist(), outfile)
 
     
 

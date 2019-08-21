@@ -11,6 +11,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import DirectionsIcon from '@material-ui/icons/Directions';
+import {haikouProcessDataToPoints, twoDimProcessDataToPoints} from './format-tool'
 const useStyles = makeStyles({
   root: {
     padding: '2px 4px',
@@ -31,22 +32,7 @@ const useStyles = makeStyles({
     margin: 4,
   },
 });
-function processDataToPoints(data) {
 
-  let points=[]
-  data.forEach((item1,i) => {
-    item1.forEach((item2, j) => {
-      if(item2 !== 0){
-        points.push({
-          lng: j - 180,
-          lat: i - 90,
-          count: item2
-        })
-      }
-    })
-  })
-  return points
-}
 
 class App extends React.Component {
   constructor(props) {
@@ -58,14 +44,14 @@ class App extends React.Component {
     }
   }
   setPoint = data => {
-    this.state.heatmap.setDataSet({data: processDataToPoints(data), max: 10000})
+    this.state.heatmap.setDataSet({data: haikouProcessDataToPoints(data), max: 5000})
   }
 
   componentDidMount() {
     var map = new BMap.Map('map');
     // 创建地图实例  
-    var point = new BMap.Point(-96, 39.921984);
-    map.centerAndZoom(point, 5);             // 初始化地图，设置中心点坐标和地图级别
+    var point = new BMap.Point(110, 20);
+    map.centerAndZoom(point, 10);             // 初始化地图，设置中心点坐标和地图级别
     map.enableScrollWheelZoom(); // 允许滚轮缩放
     var heatmapOverlay = new BMapLib.HeatmapOverlay({"radius":30});
     map.addOverlay(heatmapOverlay);
