@@ -10,6 +10,8 @@ import { Drawer, Divider } from '@material-ui/core';
 import { withStyles } from '@material-ui/styles';
 
 import MapContainer from './component/map/MapContainer';
+import BarChart from './component/barchart/Barchart';
+import Sankey from './component/sankey/Sankey';
 
 function processDataToPoints(data) {
     let points = [];
@@ -27,7 +29,7 @@ function processDataToPoints(data) {
     return points;
 }
 
-const drawerWidth = 350;
+const drawerWidth = 380;
 
 const styles = {
     hide: {
@@ -38,7 +40,7 @@ const styles = {
     },
     drawerPaper: {
         width: drawerWidth,
-        background: '#d1d1d1',
+        background: '#d1d1d1'
     },
     drawerHeader: {
         display: 'flex',
@@ -48,7 +50,7 @@ const styles = {
         // ...theme.mixins.toolbar,
     },
     content: {
-        transition: 'margin cubic-bezier(0.4, 0, 0.6, 1) 225ms',
+        transition: 'margin cubic-bezier(0.4, 0, 0.6, 1) 225ms'
         // marginLeft: 0
     },
     contentShift: {
@@ -162,6 +164,9 @@ class App extends React.Component {
                         </IconButton>
                     </div>
                     <Divider />
+                    <BarChart />
+                    <Divider />
+                    <Sankey/>
                 </Drawer>
             </div>
         );
