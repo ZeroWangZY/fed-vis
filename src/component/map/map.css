@@ -19,21 +19,12 @@
     border-radius: 50%;
     position: relative;
     opacity: 0.8;
+    transition:all ease-in-out 200ms
 }
 
-.leaflet-custome-icon::after{
-   content: '';
-   position: absolute;
-   left: 42%;
-   top: 100%;
-   width: 0;
-   height: 0;
-   border-left: 20px solid transparent;
-   border-right: 20px solid transparent;
-   border-top: 20px solid #e8e8e8;
-   clear: both;
+.leaflet-custome-icon:hover {
+    z-index: 404!important;
 }
-
 /* .drawer-helper .leaflet-left {
     margin-left: 350px;
 } */

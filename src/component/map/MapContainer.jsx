@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {
     Map,
     LayersControl,
@@ -107,21 +107,20 @@ class MapContainer extends Component {
         let $rankMarkers = null;
         if (topTen.length != 0) {
             $rankMarkers = topTen.map((e, i) => (
-                <>
+                <Fragment>
                     <Circle
                         center={[e.lat, e.lng]}
                         // @todo: 调整radius
                         radius={e.count / 100}
-                        key={i}
+                        key={'circle' + i}
                     />
                     <Marker
-                        key={i}
+                        key={'marker' + i}
                         position={[e.lat, e.lng]}
                         icon={rankIcon(i)}
-                        title = {i+1}
-                    >
-                    </Marker>
-                </>
+                        title={i + 1}
+                    />
+                </Fragment>
             ));
         }
         return (
@@ -203,12 +202,9 @@ class MapContainer extends Component {
                         </LayersControl.Overlay>
 
                         <LayersControl.Overlay name="Marker" checked>
-                            {/* {$markers.map(e => {
-                                if (e != null && e != false) {
-                                    return e;
-                                }
-                            })} */}
-                            {$rankMarkers}
+                            <FeatureGroup>
+                                {$rankMarkers}
+                            </FeatureGroup>
                         </LayersControl.Overlay>
                     </LayersControl>
                 </Map>
