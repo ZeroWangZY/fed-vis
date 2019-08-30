@@ -2,6 +2,7 @@ import csv
 import numpy as np
 import json
 import os
+import datetime
 
 MIN_LNG = 110.14
 MAX_LNG = 110.520
@@ -28,6 +29,27 @@ def rawDataToJson(index):
     with open('data/source/start' + str(index) + '.json', 'w') as outfile: 
         json.dump(startingPosData.tolist(), outfile)
     with open('data/source/des' + str(index) + '.json', 'w') as outfile: 
+        json.dump(desPosData.tolist(), outfile)
+
+def rawDataReader(index):
+    startingPosData = np.zeros((7,LNG_SIZE,LAT_SIZE))
+    desPosData = np.zeros((7,LNG_SIZE,LAT_SIZE))
+    with open('data/raw/dwv_order_make_haikou_' + str(index) + '.txt', newline='') as csvfile:
+        haikouData = csv.reader(csvfile, delimiter='\t', quotechar='|')
+        next(haikouData)
+        for row in haikouData:
+            if float(row[16]) >= MIN_LNG and float(row[18]) >= MIN_LNG  and float(row[16]) < MAX_LNG and float(row[18]) < MAX_LNG \
+                and float(row[17]) >= MIN_LAT and float(row[17]) < MAX_LAT and float(row[19]) >= MIN_LAT and float(row[19]) < MAX_LAT:
+                i1 = int((float(row[18]) - MIN_LNG) * 1000)
+                j1 = int((float(row[19]) - MIN_LAT) * 1000)
+                i2 = int((float(row[16]) - MIN_LNG) * 1000) 
+                j2 = int((float(row[17]) - MIN_LAT) * 1000)
+                weekday = datetime.date(int(row[20]),int(row[21]),int(row[22])).weekday()
+                startingPosData[weekday][i1][j1] += 1
+                desPosData[weekday][i2][j2] += 1                
+    with open('data/source/task2/start' + str(index) + '.json', 'w') as outfile: 
+        json.dump(startingPosData.tolist(), outfile)
+    with open('data/source/task2/des' + str(index) + '.json', 'w') as outfile: 
         json.dump(desPosData.tolist(), outfile)
 
 def satEncode():
@@ -71,7 +93,7 @@ def writeTo(results, dir, file):
     with open(dir + '/' + file + '.json', 'w') as outfile: 
         json.dump(output.tolist(), outfile)
 
-
-
+if __name__ == '__main__':
+    rawDataReader(1)
 
          
