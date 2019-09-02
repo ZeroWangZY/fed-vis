@@ -31,7 +31,7 @@ def rawDataToJson(index):
     with open('data/source/des' + str(index) + '.json', 'w') as outfile: 
         json.dump(desPosData.tolist(), outfile)
 
-def rawDataReader(index):
+def rawDataToJsonTask2(index):
     startingPosData = np.zeros((7,LNG_SIZE,LAT_SIZE))
     desPosData = np.zeros((7,LNG_SIZE,LAT_SIZE))
     with open('data/raw/dwv_order_make_haikou_' + str(index) + '.txt', newline='') as csvfile:
@@ -94,6 +94,6 @@ def writeTo(results, dir, file):
         json.dump(output.tolist(), outfile)
 
 if __name__ == '__main__':
-    rawDataReader(1)
+    rawDataToJsonTask2(5)
 
          
