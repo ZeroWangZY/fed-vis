@@ -1,27 +1,29 @@
-import numpy as np
-import json
-import random
 import csv
-from tool.data_processor import initX, readFrom
+import json
+import os
+import random
+
+import numpy as np
 from keras.models import load_model
-from tool.model import readModel, writeModel, get_model, readNorm, saveNorm, train_7_model, get_7_model
 
-# model = getModel(conv = False)
-models = get_7_model()
-x = initX()
-y = readFrom('des1-sat')
+from tool.dao import find_data, find_models_info
+from tool.model import (get_model, init_7_model, read_7_model, save_7_model,
+                        train_7_model)
 
-mean = np.mean(y,axis=1)
-std = np.std(y,axis=1)
-# saveNorm(mean, std, 'des1')
-y -= mean.reshape(7,1)
-y /= std.reshape(7,1)+1
+x = np.array(find_data('x')['data'])
+y = np.array(find_data('des1')['data'])
+models_info = find_models_info('des1')
+
+means = np.array(models_info['means'])
+stds = np.array(models_info['stds'])
+locations = np.array(models_info['locations'])
 
 
+
+y -= means.reshape(7, 1)
+y /= stds.reshape(7, 1) + 1
 
 for i in range(1000):
-    # model = readModel('des1')
-    # model.fit(x, y[0], epochs=100, batch_size=12800)
-    # writeModel(model, 'des1')
-
-    train_7_model(models, x, y)
+    models = read_7_model(locations)
+    train_7_model(models, x, y, epoch=10)
+    save_7_model(models, locations)

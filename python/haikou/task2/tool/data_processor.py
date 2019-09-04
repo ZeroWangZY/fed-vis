@@ -50,7 +50,7 @@ def rawDataToJsonTask2(index):
 
 def readFrom(str):
     result = np.empty((0, LNG_SIZE * LAT_SIZE), int)
-    with open('data/source/' + str + '.json') as json_file:
+    with open(os.path.dirname(__file__) + '/../data/source/' + str + '.json') as json_file:
         res = json.load(json_file)
     for day in range(7):
         y = np.empty(0, int)

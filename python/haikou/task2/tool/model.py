@@ -1,4 +1,6 @@
 import json
+import os
+import time
 
 import numpy as np
 from keras import backend, initializers, optimizers
@@ -9,11 +11,12 @@ from keras.models import Sequential, load_model
 from keras.utils import plot_model
 
 from .data_processor import LAT_SIZE, LNG_SIZE
+from .dao import insert_models_info
 
 
 def getMax():
     if LAT_SIZE > LNG_SIZE:
-        return LAT_SIZE 
+        return LAT_SIZE
     return LNG_SIZE
 
 
@@ -39,33 +42,17 @@ def get_model():
     return model
 
 
-def get_7_model():
+def init_7_model():
     models = []
     for i in range(7):
         models.append(get_model())
     return models
 
 
-def readModel(file):
+def read_a_model(location):
     model = get_model()
-    model = load_model('data/model/' + file + '.h5')
+    model = load_model(location)
     return model
-
-
-def writeModel(model, file):
-    model.save('data/model/' + file + '.h5')
-
-
-def saveNorm(mean, std, file):
-    with open('data/model/' + file + '-norm.json', 'w') as outfile:
-        json.dump({'mean': mean, 'std': std}, outfile)
-
-
-def readNorm(file):
-    res = []
-    with open('data/model/' + file + '-norm.json', 'r') as f:
-        res = json.load(f)
-    return [res['mean'], res['std']]
 
 
 def predict(model, mean, std, lng, lat):
@@ -81,10 +68,25 @@ def train_7_model(models, x, y, epoch=1, batch=12800):
         models[i].fit(x, y[i], epochs=epoch, batch_size=batch)
 
 
-if __name__ == '__main__':
-    model = readModel('des1')
-    [mean, std] = readNorm('des1')
-    while True:
-        lng = input('input lng \n')
-        lat = input('input lat \n')
-        print(predict(model, mean, std, lng, lat))
+def save_7_model_to_db(name, means, stds, models, description):
+    locations = []
+    for i in range(7):
+        location = os.path.abspath(
+            os.path.dirname(__file__) + '/../data/model/h5/' +
+            str(round(time.time() * 1000)) + '.h5')
+        models[i].save(location)
+        locations.append(location)
+    insert_models_info(name, description, means.tolist(), stds.tolist(),
+                       locations)
+
+
+def save_7_model(models, locations):
+    for i in range(7):
+        models[i].save(locations[i])
+
+
+def read_7_model(locations):
+    models = []
+    for i in range(7):
+        models.append(read_a_model(locations[i]))
+    return models

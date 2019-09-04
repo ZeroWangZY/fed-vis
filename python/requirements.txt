@@ -3,3 +3,4 @@ keras
 flask-socketio
 msgpack-numpy
 socketIO_client
+pymongo
