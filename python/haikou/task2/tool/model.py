@@ -12,10 +12,9 @@ from .data_processor import LAT_SIZE, LNG_SIZE
 
 
 def getMax():
-    maxNum = LNG_SIZE
     if LAT_SIZE > LNG_SIZE:
-        maxNum = LAT_SIZE
-    return maxNum
+        return LAT_SIZE 
+    return LNG_SIZE
 
 
 def get_model():
