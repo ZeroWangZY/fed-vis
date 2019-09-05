@@ -30,9 +30,9 @@ def find_data(tag):
     return data_collection.find_one({'tag': tag})
 
 
-if __name__ == '__main__':
-    from data_processor import readFrom, initX
-    a = find_data('des1')['data']
-    import numpy as np
-    arr = np.array(a)
-    print(arr)
+# if __name__ == '__main__':
+#     from data_processor import readFrom, initX
+#     a = find_data('des1')['data']
+#     import numpy as np
+#     arr = np.array(a)
+#     print(arr)

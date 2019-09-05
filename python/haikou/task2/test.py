@@ -1,20 +1,14 @@
-import os
-import json
-print()
-print(os.path.abspath(os.path.dirname(__file__)))
+import tensorflow as tf
 
-with open(os.path.abspath(__file__) + '/../data/source/des1-sat.json') as json_file:
-    res = json.load(json_file)
-    print(res)
+gpu_device_name = tf.test.gpu_device_name()
+print(gpu_device_name)
 
-
-import pymongo
-myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-haikou_database = myclient["haikou"]
-models_collection = haikou_database['models']
-
-adict = {'name': 'des1', 'model': []}
-
-x = models_collection.insert_one(adict)
-print(x)
+# Creates a graph.
+a = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[2, 3], name='a')
+b = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[3, 2], name='b')
+c = tf.matmul(a, b)
+# Creates a session with log_device_placement set to True.
+sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+# Runs the op.
+print(sess.run(c))
 

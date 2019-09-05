@@ -1,10 +1,4 @@
-import csv
-import json
-import os
-import random
-
 import numpy as np
-from keras.models import load_model
 
 from tool.dao import find_data, find_models_info
 from tool.model import (get_model, init_7_model, read_7_model, save_7_model,
@@ -17,8 +11,6 @@ models_info = find_models_info('des1')
 means = np.array(models_info['means'])
 stds = np.array(models_info['stds'])
 locations = np.array(models_info['locations'])
-
-
 
 y -= means.reshape(7, 1)
 y /= stds.reshape(7, 1) + 1

@@ -14,7 +14,7 @@ from .data_processor import LAT_SIZE, LNG_SIZE
 from .dao import insert_models_info
 
 
-def getMax():
+def get_max():
     if LAT_SIZE > LNG_SIZE:
         return LAT_SIZE
     return LNG_SIZE
@@ -22,7 +22,7 @@ def getMax():
 
 def get_model():
     model = Sequential()
-    model.add(embeddings.Embedding(getMax(), 256, input_length=2))
+    model.add(embeddings.Embedding(get_max(), 256, input_length=2))
     model.add(Flatten())
     for i in range(5):
         model.add(Dense(128, input_dim=2, activation='relu'))
@@ -66,6 +66,26 @@ def train_7_model(models, x, y, epoch=1, batch=12800):
     for i in range(len(models)):
         print('day ', i + 1, ' / ', len(models))
         models[i].fit(x, y[i], epochs=epoch, batch_size=batch)
+
+
+def train_7_model_fed(models, x, ys, epoch=1, round=1, batch=12800):
+    for r in range(round):
+        print('round ', r)
+        golbal_weights_set = []
+        for model in models:
+            golbal_weights_set.append(model.get_weights())
+
+        for i in range(len(models)):
+            print('day ', i + 1, ' / ', len(models))
+            weights_set = []
+            for j in range(len(ys)):
+                print('client ', j+1, ' / ', len(ys))
+                models[i].set_weights(golbal_weights_set[i])
+                models[i].fit(x, ys[j][i], epochs=epoch, batch_size=batch)
+                weights_set.append(models[i].get_weights())
+            print('weights aggregation')
+            models[i].set_weights(np.mean(weights_set, axis=0))
+
 
 
 def save_7_model_to_db(name, means, stds, models, description):
