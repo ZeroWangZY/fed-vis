@@ -33,5 +33,5 @@ for y in ys:
 
 for i in range(1000):
     models = read_7_model(locations)
-    train_7_model_fed(models, x, ys, epoch=1, round=15)
+    train_7_model_fed(models, x, ys, epoch=1, round=150, batch=1111111)
     save_7_model(models, locations)

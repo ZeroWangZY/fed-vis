@@ -1,14 +1,21 @@
-import tensorflow as tf
+import numpy as np
+from tool.dao import find_data, find_models_info
+from tool.model import (get_model, init_7_model, read_7_model, save_7_model,
+                        train_7_model_fed, save_7_model_to_db)
 
-gpu_device_name = tf.test.gpu_device_name()
-print(gpu_device_name)
+y = []
+for i in range(5):
+    y.append(np.array(find_data('start' + str(i+1))['data']))
+means = np.mean(y, axis=2)
+print(means)
+means = np.mean(means, axis=0)
+stds = np.mean(np.std(y, axis=2), axis=0)
 
-# Creates a graph.
-a = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[2, 3], name='a')
-b = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[3, 2], name='b')
-c = tf.matmul(a, b)
-# Creates a session with log_device_placement set to True.
-sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
-# Runs the op.
-print(sess.run(c))
 
+def f(n):
+    n +='s'
+    print(n)
+a = 'a'
+print(a)
+f(a)
+print(a)
