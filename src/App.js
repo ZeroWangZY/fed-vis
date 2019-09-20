@@ -95,6 +95,7 @@ class App extends React.Component {
             isDrawerOpen: false
         });
     }
+    
     render() {
         let { heatData, dataName } = this.state;
         let { isDrawerOpen } = this.state;

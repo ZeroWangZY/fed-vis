@@ -3,14 +3,12 @@ const access_token =
 
 export const basicConfig = {
     // center:[39.8097343,-98.5556199],
-    center: [39.921984, -96],
-    zoom: 4,
+    center: [20, 110.32],
+    zoom: 13,
     // style - mapbox
-    url:
-        'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' +
+    url: 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' +
         access_token,
-    attribution:
-        'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     id: 'mapbox.light'
 };
 
