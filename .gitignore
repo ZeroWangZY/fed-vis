@@ -26,3 +26,4 @@ data/
 model/
 
 *.pyc
+.vscode/settings.json
