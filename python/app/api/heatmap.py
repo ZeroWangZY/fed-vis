@@ -14,7 +14,7 @@ def get_heatmap_all():
     type_ = params.get('type')
     start_time = params.get('start_time')
     end_time = params.get('end_time')
-    if type != None and start_time != None and end_time != None:
+    if type_ != None and start_time != None and end_time != None:
         start_time = datetime.datetime.strptime(start_time, '%Y/%m/%dZ%H:%M')
         end_time = datetime.datetime.strptime(end_time, '%Y/%m/%dZ%H:%M')
         return json.dumps(get_heatmap(start_time, end_time, type_))
