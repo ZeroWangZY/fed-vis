@@ -34,29 +34,50 @@ def rawDataToJson(index):
         json.dump(desPosData.tolist(), outfile)
 
 
-def rawDataToJsonTask2(index):
-    startingPosData = np.zeros((7, LNG_SIZE, LAT_SIZE))
-    desPosData = np.zeros((7, LNG_SIZE, LAT_SIZE))
+def rawDataToDb(index):
+    startingPosData = np.zeros((LNG_SIZE, LAT_SIZE))
+    desPosData = np.zeros((LNG_SIZE, LAT_SIZE))
     with open('data/raw/dwv_order_make_haikou_' + str(index) + '.txt',
               newline='') as csvfile:
         haikouData = csv.reader(csvfile, delimiter='\t', quotechar='|')
         next(haikouData)
+
+        import pymongo
+        myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+        haikou_database = myclient["haikou"]
+        orders_info_collection = haikou_database['orders']
+        test_info_collection = haikou_database['test']
+
         for row in haikouData:
             if float(row[16]) >= MIN_LNG and float(row[18]) >= MIN_LNG  and float(row[16]) < MAX_LNG and float(row[18]) < MAX_LNG \
                 and float(row[17]) >= MIN_LAT and float(row[17]) < MAX_LAT and float(row[19]) >= MIN_LAT and float(row[19]) < MAX_LAT:
-                i1 = int((float(row[18]) - MIN_LNG) * 1000)
-                j1 = int((float(row[19]) - MIN_LAT) * 1000)
-                i2 = int((float(row[16]) - MIN_LNG) * 1000)
-                j2 = int((float(row[17]) - MIN_LAT) * 1000)
-                weekday = datetime.date(int(row[20]), int(row[21]),
-                                        int(row[22])).weekday()
-                startingPosData[weekday][i1][j1] += 1
-                desPosData[weekday][i2][j2] += 1
-    with open('data/source/task2/start' + str(index) + '.json',
-              'w') as outfile:
-        json.dump(startingPosData.tolist(), outfile)
-    with open('data/source/task2/des' + str(index) + '.json', 'w') as outfile:
-        json.dump(desPosData.tolist(), outfile)
+                start_time = datetime.datetime.strptime('2017/1/1 12:00','%Y/%m/%d %H:%M')
+                des_time = datetime.datetime.strptime('2017/1/1 12:00','%Y/%m/%d %H:%M')
+                try:
+                    start_time = datetime.datetime.strptime(row[12],'%Y/%m/%d %H:%M')
+                except ValueError:
+                    print('start time format error ', row[12])
+                try:
+                    des_time = datetime.datetime.strptime(row[11],'%Y/%m/%d %H:%M')
+                except ValueError:
+                    print('des time format error ', row[11])
+
+                document = {
+                    'client': index,
+                    'start_lng': row[18],
+                    'start_lat': row[19],
+                    'des_lng': row[16],
+                    'des_lat': row[17],
+                    'start_time': start_time,
+                    'des_time': des_time,
+                }
+                orders_info_collection.insert_one(document)
+                # i1 = int((float(row[18]) - MIN_LNG) * 1000)
+                # j1 = int((float(row[19]) - MIN_LAT) * 1000)
+                # i2 = int((float(row[16]) - MIN_LNG) * 1000)
+                # j2 = int((float(row[17]) - MIN_LAT) * 1000)
+                # startingPosData[i1][j1] += 1
+                # desPosData[i2][j2] += 1
 
 
 def readFrom(str):
@@ -93,4 +114,5 @@ def writeTo(results, dir, file):
 
 
 if __name__ == '__main__':
-    rawDataToJsonTask2(5)
+    for i in range(1, 6):
+        rawDataToDb(i)

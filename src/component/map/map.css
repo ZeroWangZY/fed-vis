@@ -1,0 +1,63 @@
+.map-container {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}
+
+.leaflet-control-layers {
+    transform: scale(0.75);
+    margin-left: 5px!important;
+}
+
+.leaflet-left{
+    transition: margin cubic-bezier(0.4, 0, 0.6, 1) 225ms
+}
+
+.leaflet-custome-icon {
+    background: #fff;
+    border-radius: 50%;
+    position: relative;
+    opacity: 0.8;
+    transition:all ease-in-out 200ms
+}
+
+.leaflet-custome-icon:hover {
+    z-index: 404!important;
+}
+/* .drawer-helper .leaflet-left {
+    margin-left: 350px;
+} */
+
+/* display control horizontally */
+/* .customer-control .leaflet-top.leaflet-left {
+   display: flex;
+}
+.customer-control .leaflet-top.leaflet-left .leaflet-control {
+    height: 100%;
+}
+
+.customer-control .leaflet-top.leaflet-left .leaflet-control-zoom {
+    display: flex;
+}
+.customer-control .leaflet-top.leaflet-left .leaflet-control-zoom a{
+    margin: 0 1px;
+}
+
+.customer-control .leaflet-top.leaflet-left .leaflet-draw {
+    display: flex;
+}
+.customer-control .leaflet-top.leaflet-left .leaflet-draw div{
+    margin: 0 2px;
+}
+.customer-control .leaflet-top.leaflet-left .leaflet-draw div.leaflet-draw-toolbar {
+    display: flex;
+}
+.customer-control .leaflet-top.leaflet-left .leaflet-draw div.leaflet-draw-toolbar a{
+    margin:0 1px;
+}
+
+.customer-control .leaflet-top.leaflet-left .leaflet-control-layers{
+    margin:5px 1px 0;
+    transform: scale(0.7);
+} */
