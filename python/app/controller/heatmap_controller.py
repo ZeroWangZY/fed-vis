@@ -2,7 +2,7 @@ import numpy as np
 
 from app.dao.heatmap_cache import (fetch_heatmap_from_cache,
                                    save_heatmap_to_cache)
-from app.dao.order import get_count_start_with_datetime, get_start_all_heatmap
+from app.dao.order import get_count_start_with_datetime_pg_version, get_start_all_heatmap, get_count_start_with_datetime
 
 MIN_LNG = 110.14
 MAX_LNG = 110.520

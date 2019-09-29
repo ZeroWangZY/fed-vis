@@ -5,3 +5,4 @@ msgpack-numpy
 socketIO_client
 pymongo
 Gevent
+psycopg2
