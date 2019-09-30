@@ -11,7 +11,7 @@ import {
 import HeatmapLayer from '../heatmap/heatmap';
 import { basicConfig, heatMapConfig } from '../../util/mapsetting';
 import { EditControl } from 'react-leaflet-draw';
-import './map.css';
+import './map.less';
 import clsx from 'clsx';
 import SelectedListItem from '../displayItems/ItemLists';
 import HeatmapLegend from '../legend/legend';
@@ -125,6 +125,7 @@ class MapContainer extends Component {
         }
         return (
             <div>
+                <div className="panel-title">Map View</div>
                 <Map
                     center={basicConfig.center}
                     zoom={basicConfig.zoom}

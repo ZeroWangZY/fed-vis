@@ -1,4 +1,5 @@
 import React from 'react';
+import './App.less';
 import clsx from 'clsx';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
@@ -11,6 +12,9 @@ import { withStyles } from '@material-ui/styles';
 
 import MapContainer from './component/map/MapContainer';
 import BarChart from './component/barchart/Barchart';
+import ControlPanel from './component/controlPanel/ControlPanel';
+import DataOverviewPanel from './component/dataoverviewPanel/DataOverviewPanel';
+
 import Sankey from './component/sankey/Sankey';
 
 function processDataToPoints(data) {
@@ -117,7 +121,17 @@ class App extends React.Component {
         );
         return (
             <div className="App">
-                <div
+                <div id="left-panel">
+                    <ControlPanel />
+                    <DataOverviewPanel />
+                </div>
+                <div id="map-panel">
+                    <MapContainer
+                        heatData={heatData}
+                        isDrawerOpen={isDrawerOpen}
+                    />
+                </div>
+                {/* <div
                     className={clsx(classes.content, {
                         [classes.contentShift]: isDrawerOpen
                     })}
@@ -168,10 +182,11 @@ class App extends React.Component {
                     <BarChart />
                     <Divider />
                     <Sankey/>
-                </Drawer>
+                </Drawer> */}
             </div>
         );
     }
 }
 
-export default withStyles(styles)(App);
+export default App;
+// export default withStyles(styles)(App);
