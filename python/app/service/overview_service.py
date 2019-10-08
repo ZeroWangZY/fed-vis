@@ -43,11 +43,11 @@ def get_overview(cached=True):
 
 
 if __name__ == "__main__":
-    date = datetime(2017, 4, 1)
-    res = {4: [], 5: [], 6: [], 7: [], 8: []}
-    while not (date.month == 9 and date.day == 1):
-        count = get_count_start_with_datetime(date, date + timedelta(days=1))
-        print(date.month, '.', date.day, ' ', count)
-        res[date.month].append(count)
-        date += timedelta(days=1)
-    print(res)
+    # date = datetime(2017, 4, 1)
+    # res = {4: [], 5: [], 6: [], 7: [], 8: []}
+    # while not (date.month == 9 and date.day == 1):
+    #     count = get_count_start_with_datetime(date, date + timedelta(days=1))
+    #     print(date.month, '.', date.day, ' ', count)
+    #     res[date.month].append(count)
+    #     date += timedelta(days=1)
+    print(get_overview(False))

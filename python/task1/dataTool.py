@@ -45,11 +45,9 @@ def rawDataToDb(index):
         import pymongo
         myclient = pymongo.MongoClient("mongodb://localhost:27017/")
         haikou_database = myclient["haikou"]
-        orders_info_collection = haikou_database['orders_mini']
+        orders_info_collection = haikou_database['orders']
 
         for row in haikouData:
-            for x in range(50):
-                next(haikouData)
             if float(row[16]) >= MIN_LNG and float(row[18]) >= MIN_LNG  and float(row[16]) < MAX_LNG and float(row[18]) < MAX_LNG \
                 and float(row[17]) >= MIN_LAT and float(row[17]) < MAX_LAT and float(row[19]) >= MIN_LAT and float(row[19]) < MAX_LAT:
                 start_time = datetime.datetime.strptime(
@@ -153,5 +151,5 @@ def writeTo(results, dir, file):
 
 
 if __name__ == '__main__':
-    for i in range(1, 6):
-        rawDataToPostgres(i)
+    for i in range(6, 9):
+        rawDataToDb(i)

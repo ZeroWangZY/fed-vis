@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from .db_setting import mongo_client, pg_cur
 
 haikou_database = mongo_client["haikou"]
@@ -83,6 +83,6 @@ def get_start_all_heatmap():
 
 
 if __name__ == "__main__":
-    
-    print(get_count_start_with_datetime(datetime.datetime(2017,6,3), datetime.datetime(2017,6,4)))
+    print(datetime(2017,6,4).weekday())
+    print(datetime(2017,6,4) - datetime(2017,6,3))
     

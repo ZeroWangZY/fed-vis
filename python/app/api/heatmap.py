@@ -5,8 +5,8 @@ import numpy as np
 from flask import request
 
 from app import app
-from app.controller.heatmap_controller import get_heatmap, get_default_heatmap
-from app.controller.overview_controller import get_overview
+from app.service.heatmap_service import get_heatmap, get_default_heatmap
+from app.service.overview_service import get_overview
 
 
 @app.route('/api/heatmap/all')
