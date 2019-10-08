@@ -1,15 +1,7 @@
-import pymongo
-import psycopg2
 import datetime
-pg_conn = psycopg2.connect(host='localhost',
-                           database='haikou',
-                           user='postgres',
-                           password='ni99woba')
-pg_cur = pg_conn.cursor()
+from .db_setting import mongo_client, pg_cur
 
-myclient = pymongo.MongoClient("mongodb://10.76.0.163:27017/")
-
-haikou_database = myclient["haikou"]
+haikou_database = mongo_client["haikou"]
 orders_info_collection = haikou_database['orders']
 data_collection = haikou_database['data']
 

@@ -1,7 +1,7 @@
 import pymongo
+from .db_setting import mongo_client, pg_cur
 
-myclient = pymongo.MongoClient("mongodb://10.76.0.163:27017/")
-haikou_database = myclient["haikou"]
+haikou_database = mongo_client["haikou"]
 collection = haikou_database['heatmap_cache']
 
 
