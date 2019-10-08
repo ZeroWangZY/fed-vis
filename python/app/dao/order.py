@@ -8,27 +8,34 @@ data_collection = haikou_database['data']
 
 def get_count_start_with_datetime(start_time,
                                   end_time,
-                                  lng_from,
-                                  lng_to,
-                                  lat_from,
-                                  lat_to,
+                                  lng_from=None,
+                                  lng_to=None,
+                                  lat_from=None,
+                                  lat_to=None,
                                   type_='start'):
     res = 0
     if type_ == 'start':
-        res = orders_info_collection.count_documents({
-            "start_time": {
-                "$gt": start_time,
-                "$lt": end_time
-            },
-            "start_lng": {
-                "$gt": lng_from,
-                "$lt": lng_to
-            },
-            "start_lat": {
-                "$gt": lat_from,
-                "$lt": lat_to
-            }
-        })
+        if lng_from == None:
+            res = orders_info_collection.count_documents(
+                {"start_time": {
+                    "$gt": start_time,
+                    "$lt": end_time
+                }})
+        else:
+            res = orders_info_collection.count_documents({
+                "start_time": {
+                    "$gt": start_time,
+                    "$lt": end_time
+                },
+                "start_lng": {
+                    "$gt": lng_from,
+                    "$lt": lng_to
+                },
+                "start_lat": {
+                    "$gt": lat_from,
+                    "$lt": lat_to
+                }
+            })
     else:
         res = orders_info_collection.count_documents({
             "des_time": {
@@ -76,6 +83,6 @@ def get_start_all_heatmap():
 
 
 if __name__ == "__main__":
-    get_count_start_with_datetime_pg_version('2017-06-03 17:39:05',
-                                             '2017-07-03 17:39:05', 110.3752,
-                                             110.5752, 20.0497, 21.0497)
+    
+    print(get_count_start_with_datetime(datetime.datetime(2017,6,3), datetime.datetime(2017,6,4)))
+    

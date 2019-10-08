@@ -6,10 +6,11 @@ from flask import request
 
 from app import app
 from app.controller.heatmap_controller import get_heatmap, get_default_heatmap
+from app.controller.overview_controller import get_overview
 
 
 @app.route('/api/heatmap/all')
-def get_heatmap_all():
+def get_heatmap_all_api():
     params = request.args
     type_ = params.get('type')
     start_time = params.get('start_time')
@@ -19,3 +20,8 @@ def get_heatmap_all():
         end_time = datetime.datetime.strptime(end_time, '%Y/%m/%dZ%H:%M')
         return json.dumps(get_heatmap(start_time, end_time, type_))
     return json.dumps(get_default_heatmap())
+
+
+@app.route('/api/overview')
+def get_overview_api():
+    return json.dumps({'data': get_overview()})
