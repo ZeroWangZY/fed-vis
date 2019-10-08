@@ -6,7 +6,7 @@ orders_info_collection = haikou_database['orders']
 data_collection = haikou_database['data']
 
 
-def get_count_start_with_datetime(start_time,
+def query_count(start_time,
                                   end_time,
                                   lng_from=None,
                                   lng_to=None,
@@ -54,7 +54,7 @@ def get_count_start_with_datetime(start_time,
     return res
 
 
-def get_count_start_with_datetime_pg_version(start_time,
+def query_count_pg_version(start_time,
                                              end_time,
                                              lng_from,
                                              lng_to,
@@ -77,7 +77,7 @@ def get_count_start_with_datetime_pg_version(start_time,
         return pg_cur.fetchone()[0]
 
 
-def get_start_all_heatmap():
+def query_default_heatmap():
     res = data_collection.find_one({"tag": "start-all"})['data']
     return res
 

@@ -1,2 +1,1 @@
-from app.api import index
-from app.api import heatmap
+from app.api import index, heatmap, overview, histogram
