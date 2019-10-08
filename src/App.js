@@ -14,6 +14,7 @@ import MapContainer from './component/map/MapContainer';
 import BarChart from './component/barchart/Barchart';
 import ControlPanel from './component/controlPanel/ControlPanel';
 import DataOverviewPanel from './component/dataoverviewPanel/DataOverviewPanel';
+import DetailPanel from './component/detailPanel/DetailPanel'
 
 import Sankey from './component/sankey/Sankey';
 
@@ -130,6 +131,7 @@ class App extends React.Component {
                         heatData={heatData}
                         isDrawerOpen={isDrawerOpen}
                     />
+                    <DetailPanel />
                 </div>
                 {/* <div
                     className={clsx(classes.content, {

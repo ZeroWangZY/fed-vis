@@ -124,7 +124,7 @@ class MapContainer extends Component {
             ));
         }
         return (
-            <div>
+            <div id="map-content">
                 <div className="panel-title">Map View</div>
                 <Map
                     center={basicConfig.center}
