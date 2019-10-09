@@ -1,8 +1,10 @@
 import { all } from 'redux-saga/effects';
 import { watchHeatmapByTimeRange } from './heatmap';
+import initCalendar from './calendar';
 
 export default function * rootSaga () {
   yield all([
-    watchHeatmapByTimeRange()
+    initCalendar(),
+    watchHeatmapByTimeRange(),
   ])
 }

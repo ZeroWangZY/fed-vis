@@ -1,6 +1,6 @@
 import { GET_HEATMAP_BY_TIME_RANGE, SHOW_HEATMAP } from 'actions/heatmap';
-import { get } from '../util/tools';
-import Apis from '../util/api';
+import { get } from '../api/tools';
+import Apis from '../api/apis';
 
 const heatmapData = (state = {}, action) => {
   switch (action.type) {

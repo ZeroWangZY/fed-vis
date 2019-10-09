@@ -1,33 +1,23 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import './DataOverviewPanel.less';
 
 import Calendar from '../calendar/Calendar';
-import { get } from '../../util/tools';
-import Apis from '../../util/api';
 
-export default class DataOverviewPanel extends React.PureComponent {
-  constructor () {
-    super();
+function mapStateToProps(state) {
+  return {
+    dataset: state.calendarData,
+  };
+}
 
-    this.state = {
-      dataset: {},
-    }
-  }
-
-  componentDidMount() {
-    get({
-      url: Apis.get_overview
-    }).then(resp => {
-      if (resp.data) {
-        this.setState({
-          dataset: resp.data.data,
-        });
-      }
-    });
+class DataOverviewPanel extends React.Component {
+  constructor(props) {
+    super(props);
   }
 
   render() {
-    const { dataset } = this.state;
+    const { dataset } = this.props;
+
     return (
       <div id="dataoverview-panel">
         <div className="panel-title">Data Overview</div>
@@ -36,12 +26,13 @@ export default class DataOverviewPanel extends React.PureComponent {
             <Calendar
               dataset={dataset}
             />
-            {/* <g id="dataoverview-legend">
-              <text y='500' x="100">The Flow Volumn Encoding</text>
-            </g> */}
           </svg>
         </div>
       </div>
     );
   }
 }
+
+export default connect(
+  mapStateToProps
+)(DataOverviewPanel);
