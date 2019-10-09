@@ -105,7 +105,7 @@ class MapContainer extends Component {
         const { isDrawerOpen } = this.props;
         const { topTen, $markers, showTopTen, minValue, maxValue } = this.state;
         let $rankMarkers = null;
-        if (topTen.length != 0) {
+        if (topTen.length !== 0) {
             $rankMarkers = topTen.map((e, i) => (
                 <Fragment>
                     <Circle

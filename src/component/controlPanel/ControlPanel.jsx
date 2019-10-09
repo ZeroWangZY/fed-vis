@@ -4,6 +4,11 @@ import './ControlPanel.less';
 export default class ControlPanel extends React.PureComponent {
   constructor () {
     super();
+    this.handleLoadClick = this.handleLoadClick.bind(this);
+  }
+  handleLoadClick () {
+    console.log('load data');
+    this.props.onSelect('2', '22', '222');
   }
   render() {
     return (
@@ -28,7 +33,7 @@ export default class ControlPanel extends React.PureComponent {
             <input type="range"></input>
           </div>
         </div>
-        <button>Load data</button>
+        <button onClick={this.handleLoadClick}>Load data</button>
       </div>
     );
   }

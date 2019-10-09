@@ -12,7 +12,7 @@ import { withStyles } from '@material-ui/styles';
 
 import MapContainer from './component/map/MapContainer';
 import BarChart from './component/barchart/Barchart';
-import ControlPanel from './component/controlPanel/ControlPanel';
+import ControlPanelContainer from 'container/ControlPanelContainer';
 import DataOverviewPanel from './component/dataoverviewPanel/DataOverviewPanel';
 import DetailPanel from './component/detailPanel/DetailPanel'
 
@@ -123,7 +123,7 @@ class App extends React.Component {
         return (
             <div className="App">
                 <div id="left-panel">
-                    <ControlPanel />
+                    <ControlPanelContainer />
                     <DataOverviewPanel />
                 </div>
                 <div id="map-panel">

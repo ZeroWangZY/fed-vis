@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
-import init from './init';
+import heatmapData from './heatmapData';
 
 const rootReducer = combineReducers({
-  init
+  heatmapData
 });
 
 export default rootReducer;
