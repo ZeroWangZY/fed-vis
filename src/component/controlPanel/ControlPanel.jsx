@@ -14,11 +14,13 @@ export default class ControlPanel extends React.PureComponent {
             <p>Select a time range:</p>
             <div className="line">
               <p>Start time:</p>
-              <input></input>
+              <input type="date" defaultValue="2017-06-02"></input>
+              <input type="time" defaultValue="00:00"></input>
             </div>
             <div className="line">
               <p>End time:</p>
-              <input style={{marginLeft: 15}}></input>
+              <input type="date" style={{marginLeft: 15}} defaultValue="2017-06-02"></input>
+              <input type="time" defaultValue="00:00"></input>
             </div>
           </div>
           <div id="acc-select">

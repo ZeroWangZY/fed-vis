@@ -8,12 +8,12 @@ import {
     Marker,
     Popup
 } from 'react-leaflet';
-import HeatmapLayer from '../heatmap/heatmap';
+// import HeatmapLayer from '../heatmap/heatmap';
 import { basicConfig, heatMapConfig } from '../../util/mapsetting';
 import { EditControl } from 'react-leaflet-draw';
 import './map.less';
 import clsx from 'clsx';
-import SelectedListItem from '../displayItems/ItemLists';
+// import SelectedListItem from '../displayItems/ItemLists';
 import HeatmapLegend from '../legend/legend';
 import { rankIcon } from '../icons/RankIcon';
 
@@ -143,7 +143,7 @@ class MapContainer extends Component {
                         </LayersControl.BaseLayer>
                         <LayersControl.Overlay name="Heatmap" checked>
                             <FeatureGroup color="black">
-                                {data && (
+                                {/* {data && (
                                     <HeatmapLayer
                                         fitBoundsOnLoad
                                         fitBoundsOnUpdate
@@ -156,7 +156,7 @@ class MapContainer extends Component {
                                         blur={heatMapConfig.blur}
                                         // max = {100000}
                                     />
-                                )}
+                                )} */}
                             </FeatureGroup>
                         </LayersControl.Overlay>
                         <LayersControl.Overlay name="Brush" checked>
@@ -209,17 +209,17 @@ class MapContainer extends Component {
                         </LayersControl.Overlay>
                     </LayersControl>
                 </Map>
-                {showTopTen && (
+                {/* {showTopTen && (
                     <SelectedListItem
                         data={topTen}
                         createAMarker={this.createAMarker}
                     />
-                )}
-                <HeatmapLegend
+                )} */}
+                {/* <HeatmapLegend
                     colors={heatMapConfig.gradient}
                     minValue={minValue}
                     maxValue={maxValue}
-                />
+                /> */}
             </div>
         );
     }

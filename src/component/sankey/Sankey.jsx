@@ -127,7 +127,7 @@ class Sankey extends Component {
             });
 
         sankeyData.links.map(e => {
-            if (e.y0 == e.y1) {
+            if (e.y0 === e.y1) {
                 e.y1 += 0.01;
             }
         });

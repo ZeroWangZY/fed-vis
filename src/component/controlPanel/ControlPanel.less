@@ -18,7 +18,7 @@
     font-size: 16px;
     margin: 20px 0px;
     cursor: pointer;
-    width: 275px;
+    width: 260px;
     border-radius: 5px;
   }
   #control-panel-content{
@@ -32,10 +32,24 @@
       .line {
         display: inline-flex;
         align-items: center;
-        input {
-          width: 200px;
+        input[type='date'] {
+          width: 105px;
           height: 17px;
           margin-left: 10px;
+        }
+        input[type='time'] {
+          width: 60px;
+          height: 17px;
+          margin-left: 10px;
+        }
+        input[type='date']::-webkit-inner-spin-button {
+          display: none;
+        }
+        input[type='date']::-webkit-clear-button {    /*控制清除按钮*/
+          display: none;
+        }
+        input[type='time']::-webkit-clear-button {
+          display: none;
         }
       }
     }
@@ -48,7 +62,7 @@
         -webkit-appearance: none;
         // top: 50%;
         // left: 50%;
-        width: 280px;
+        width: 260px;
         height: 25px;
         // padding: 0 0.5em;
         border-radius: 0.625em;

@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import L from 'leaflet';
 import { MapLayer, withLeaflet } from 'react-leaflet';
 import simpleheat from 'simpleheat';

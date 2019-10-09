@@ -73,21 +73,21 @@ class App extends React.Component {
             isDrawerOpen: true
         };
 
-        this.handleClick = this.handleClick.bind(this);
+        // this.handleClick = this.handleClick.bind(this);
         this.handleDrawerOpen = this.handleDrawerOpen.bind(this);
         this.handleDrawerClose = this.handleDrawerClose.bind(this);
     }
 
-    handleClick() {
-        fetch(this.state.dataName + '.json')
-            .then(res => res.json())
-            .then(data =>
-                this.setState({
-                    heatData: processDataToPoints(data),
-                    dataName: ''
-                })
-            );
-    }
+    // handleClick() {
+    //     fetch(this.state.dataName + '.json')
+    //         .then(res => res.json())
+    //         .then(data =>
+    //             this.setState({
+    //                 heatData: processDataToPoints(data),
+    //                 dataName: ''
+    //             })
+    //         );
+    // }
 
     handleDrawerOpen() {
         this.setState({
