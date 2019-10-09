@@ -18,18 +18,19 @@ def get_histogram_api():
     lng_to = float(params.get('lng_to'))
     lat_from = float(params.get('lat_from'))
     lat_to = float(params.get('lat_to'))
-    print(lng_from,lng_to,lat_from,lat_to)
+    print(lng_from, lng_to, lat_from, lat_to)
     if type_ != None and start_time != None and end_time != None and lng_from != None and lng_to != None and lat_from != None and lat_to != None:
         start_time = datetime.datetime.strptime(start_time, '%Y/%m/%dZ%H:%M')
         end_time = datetime.datetime.strptime(end_time, '%Y/%m/%dZ%H:%M')
-        print(start_time, end_time,lng_from,lng_to,lat_from,lat_to)
-        return json.dumps({'data': get_histogram(
-            start_time,
-            end_time,
-            lng_from,
-            lng_to,
-            lat_from,
-            lat_to,
-            type_=type_
-        )})
-    return json.dumps({'data':get_default_histogram()})
+        print(start_time, end_time, lng_from, lng_to, lat_from, lat_to)
+        return json.dumps({
+            'data':
+            get_histogram(start_time,
+                          end_time,
+                          lng_from,
+                          lng_to,
+                          lat_from,
+                          lat_to,
+                          type_=type_)
+        })
+    return json.dumps({'data': get_default_histogram()})
