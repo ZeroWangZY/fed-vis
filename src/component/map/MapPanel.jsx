@@ -17,7 +17,7 @@ import clsx from 'clsx';
 import HeatmapLegend from '../legend/legend';
 import { rankIcon } from '../icons/RankIcon';
 
-class MapContainer extends Component {
+class MapPanel extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -101,6 +101,7 @@ class MapContainer extends Component {
     }
 
     render() {
+        // console.log(this.props.heatmapData)
         const data = this.props.heatData;
         const { isDrawerOpen } = this.props;
         const { topTen, $markers, showTopTen, minValue, maxValue } = this.state;
@@ -225,4 +226,4 @@ class MapContainer extends Component {
     }
 }
 
-export default MapContainer;
+export default MapPanel;

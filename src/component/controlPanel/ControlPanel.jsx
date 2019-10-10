@@ -7,8 +7,8 @@ export default class ControlPanel extends React.PureComponent {
     this.handleLoadClick = this.handleLoadClick.bind(this);
   }
   handleLoadClick () {
-    console.log('load data');
-    this.props.onSelect('2', '22', '222');
+    // load data
+    this.props.onSelect('2', '22', '222');// to modify
   }
   render() {
     return (

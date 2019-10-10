@@ -10,9 +10,10 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { Drawer, Divider } from '@material-ui/core';
 import { withStyles } from '@material-ui/styles';
 
-import MapContainer from './component/map/MapContainer';
+// import MapPanel from './component/map/MapPanel';
 import BarChart from './component/barchart/Barchart';
 import ControlPanelContainer from 'container/ControlPanelContainer';
+import MapPanelContainer from 'container/MapPanelContainer';
 import DataOverviewPanel from './component/dataoverviewPanel/DataOverviewPanel';
 import DetailPanel from './component/detailPanel/DetailPanel'
 
@@ -127,7 +128,7 @@ class App extends React.Component {
                     <DataOverviewPanel />
                 </div>
                 <div id="map-panel">
-                    <MapContainer
+                    <MapPanelContainer
                         heatData={heatData}
                         isDrawerOpen={isDrawerOpen}
                     />
