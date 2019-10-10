@@ -6,6 +6,8 @@ import {
     TileLayer,
     Circle,
     Marker,
+    Rectangle,
+    Polyline,
     Popup
 } from 'react-leaflet';
 // import HeatmapLayer from '../heatmap/heatmap';
@@ -16,6 +18,7 @@ import clsx from 'clsx';
 // import SelectedListItem from '../displayItems/ItemLists';
 import HeatmapLegend from '../legend/legend';
 import { rankIcon } from '../icons/RankIcon';
+import * as d3 from 'd3'
 
 class MapPanel extends Component {
     constructor(props) {
@@ -25,10 +28,18 @@ class MapPanel extends Component {
             $markers: [].fill(false, 0, 10),
             showTopTen: false,
             minValue: null,
-            maxValue: null
+            maxValue: null,
+
+            latRange: [19.902, 20.07],
+            lngRange: [110.14, 110.52],
+            rectDataMaxnum: 0 //前端算还是后端算？
+            // colorLinear: d3.scaleLinear()
+            //     .domain([0, 100])// 需要确定最大最小值
+            //     .range([0, 1])
         };
         this.selectHeatMapPoints = this.selectHeatMapPoints.bind(this);
         this.createAMarker = this.createAMarker.bind(this);
+        this.computeColor = this.computeColor.bind(this);
     }
 
     /**
@@ -99,31 +110,59 @@ class MapPanel extends Component {
             $markers
         });
     }
-
+    computeColor (num) {
+        let colorLinear =  d3.scaleLinear()
+            .domain([0, 1000])// 需要确定最大最小值 to modify
+            .range([0, 1]);
+        let compute = d3.interpolate(d3.rgb(238,238,238), d3.rgb(215,25,28));
+        return compute(colorLinear(num));
+    }
     render() {
-        // console.log(this.props.heatmapData)
+        let me = this;
+        console.log('render map')
         const data = this.props.heatData;
-        const { isDrawerOpen } = this.props;
-        const { topTen, $markers, showTopTen, minValue, maxValue } = this.state;
-        let $rankMarkers = null;
-        if (topTen.length !== 0) {
-            $rankMarkers = topTen.map((e, i) => (
-                <Fragment>
-                    <Circle
-                        center={[e.lat, e.lng]}
-                        // @todo: 调整radius
-                        radius={e.count / 100}
-                        key={'circle' + i}
-                    />
-                    <Marker
-                        key={'marker' + i}
-                        position={[e.lat, e.lng]}
-                        icon={rankIcon(i)}
-                        title={i + 1}
-                    />
-                </Fragment>
-            ));
+        const { isDrawerOpen, heatmapData, colorLinear } = this.props;
+        const { topTen, $markers, showTopTen, minValue, maxValue, latRange, lngRange } = this.state;
+        // let $rankMarkers = null;
+        // if (topTen.length !== 0) {
+        //     $rankMarkers = topTen.map((e, i) => (
+        //         <Fragment>
+        //             <Circle
+        //                 center={[e.lat, e.lng]}
+        //                 // @todo: 调整radius
+        //                 radius={e.count / 100}
+        //                 key={'circle' + i}
+        //             />
+        //             <Marker
+        //                 key={'marker' + i}
+        //                 position={[e.lat, e.lng]}
+        //                 icon={rankIcon(i)}
+        //                 title={i + 1}
+        //             />
+        //         </Fragment>
+        //     ));
+        // }
+        let heatmapRects = null;
+        if (heatmapData.length !== 0) {
+            heatmapRects = heatmapData.map((column, column_index) => {
+                return column.map((singleRect, rect_index) => {
+                    // 算rect的经纬度
+                    let bounds = [[latRange[0] + 0.001 * rect_index, lngRange[0] + 0.001 * column_index], [latRange[0] + 0.001 * (rect_index+1), lngRange[0] + 0.001 * (column_index+1)]];
+                    if ( (singleRect - 0) <= 0.1) {
+                        return null;
+                    } else {
+                        return <FeatureGroup key={'heatmap-column' + column_index + '-' + rect_index}><Rectangle
+                            bounds={bounds}
+                            color={me.computeColor(singleRect)}// to modify
+                            weight={0}
+                            fillOpacity={0.5}
+                            key={'heatmap-rect' + column_index + '-' + rect_index}
+                        /></FeatureGroup>
+                    }
+                });
+            });
         }
+        
         return (
             <div id="map-content">
                 <div className="panel-title">Map View</div>
@@ -143,7 +182,12 @@ class MapPanel extends Component {
                             />
                         </LayersControl.BaseLayer>
                         <LayersControl.Overlay name="Heatmap" checked>
-                            <FeatureGroup color="black">
+                            <FeatureGroup>
+                                {heatmapRects}
+                                {/* <Circle center={[20.07,110.52]} radius={200}/> */}
+                                {/* <Rectangle bounds={[[20, 110.32], [20.0210604, 110.35]]} color="#ff7800" weight={0}></Rectangle>
+                                <Rectangle bounds={[[20, 110.32], [20.0210604, 110.33]]} color="#ff7800" weight={0}></Rectangle> */}
+                                {/* <HeatmapLayer /> */}
                                 {/* {data && (
                                     <HeatmapLayer
                                         fitBoundsOnLoad
@@ -203,11 +247,11 @@ class MapPanel extends Component {
                             </FeatureGroup>
                         </LayersControl.Overlay>
 
-                        <LayersControl.Overlay name="Marker" checked>
+                        {/* <LayersControl.Overlay name="Marker" checked>
                             <FeatureGroup>
                                 {$rankMarkers}
                             </FeatureGroup>
-                        </LayersControl.Overlay>
+                        </LayersControl.Overlay> */}
                     </LayersControl>
                 </Map>
                 {/* {showTopTen && (

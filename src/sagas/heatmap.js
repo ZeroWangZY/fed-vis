@@ -8,7 +8,7 @@ function * updateHeatmap (action) {
     startTime: action.startTime,
     endTime: action.endTime
   };
-  const heatmapData  = yield call(api.getHeatmap, {dataType: 'start', startTime: '2017/5/19Z10:00', endTime: '2017/5/19Z12:00'});// to modify
+  const heatmapData  = yield call(api.getHeatmap, params);
   yield put({ type: SHOW_HEATMAP, heatmapData });
 }
 
