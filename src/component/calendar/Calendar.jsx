@@ -12,7 +12,7 @@ export default class Calendar extends Component {
     super(props);
 
     // mock数据, 后面部分要干掉
-    this.daySet = ['Sun', 'Mon', 'Tue', 'Wed', 'Tue', 'Fri', 'Sat'];
+    this.daySet = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     this.dayTextTranslateY = 30;
     this.year = 2019;
 

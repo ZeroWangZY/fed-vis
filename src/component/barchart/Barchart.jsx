@@ -1,95 +1,214 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
+import './BarChart.less';
 
-const testConfig = {
-    width: 360,
-    height: (window.innerHeight-60)*0.6,
-    left: 30,
-    right: 20,
-    top: 10,
-    bottom: 35
-};
-
-const dataSet = [10,20,30,23,13,40,27,35,20,21,23,50,10,20,30,23,13,40,27,35,20,21,23,50];
-class BarChart extends Component {
-    constructor(props) {
-        super(props);
-        this.$svg = React.createRef();
-        this.drawChart = this.drawChart.bind(this);
-    }
-
-    componentDidMount() {
-        this.drawChart();
-    }
-
-    drawChart = () => {
-        const width = testConfig.width - testConfig.left - testConfig.right;
-        const height = testConfig.height - testConfig.top - testConfig.bottom;
-        let g = d3
-            .select(this.$svg.current)
-            .attr('width', testConfig.width)
-            .attr('height', testConfig.height)
-            .append('g')
-            .attr(
-                'transform',
-                `translate(${testConfig.left},${testConfig.top})`
-            );
-
-        let y = d3
-            .scaleBand()
-            .range([height, 0])
-            .domain(dataSet.map((d, i) => i % 24));
-        let x = d3
-            .scaleLinear()
-            .range([0, width])
-            .domain([0, d3.max(dataSet)]);
-        // .domain([0, dataSet.length]);
-
-        const _w =
-            (testConfig.height - testConfig.top - testConfig.bottom) /
-            dataSet.length;
-
-        let bars = g.selectAll('bar')
-            .data(dataSet)
-            .enter()
-            .append('g')
-        bars.append('rect')
-            .attr('height', _w - 2)
-            .attr('width', d => x(d))
-            .attr('x', 0)
-            .attr('y', (d, i) => y(i))
-            .style('fill', '#EEE')
-        bars.append('text')
-            .text(d=>d)
-            .attr('y', (d, i) => y(i)+_w*0.7)
-            .attr('x',d=>x(d))
-            .style('font-size','10px');
-
-        g.append('g')
-            .attr('class', 'axis axis--x')
-            .attr(
-                'transform',
-                `translate(0,${testConfig.height -
-                    testConfig.bottom -
-                    testConfig.top})`
-            )
-            .call(d3.axisBottom(x));
-
-        g.append('g')
-            .call(d3.axisLeft(y))
-            .append('text')
-            .attr('fill', '#000')
-            .attr('transform', 'rotate(-90)')
-            .attr('y', 6)
-            .attr('x', '-2')
-            .attr('dy', '0.71em')
-            .attr('text-anchor', 'end')
-            .text('hour');
-    };
-
-    render() {
-        return <svg ref={this.$svg} />;
-    }
+function customXAxis(xAxis) {
+  return g => {
+    g.call(xAxis);
+    g.selectAll(".tick text").attr("dy", 10);
+  }
 }
 
-export default BarChart;
+function customYAxis(yAxis) {
+  return g => {
+    g.call(yAxis);
+    g.selectAll(".tick text").attr("x", -10);
+  }
+}
+
+export default class BarChart extends Component {
+  constructor(props) {
+    super(props);
+
+    this.svgWidth = 300;
+    this.svgHeight = 230;
+    this.padding = {
+      top: 45,
+      left: 30,
+    };
+    this.iconSize = 10;
+    this.colorClass = [
+      '#d7191c',
+      '#fdae61',
+      '#ffffbf',
+      '#abd9e9',
+      '#2c7bb6',
+    ];
+
+    this.renderByD3 = this.renderByD3.bind(this);
+    this.renderAxis = this.renderAxis.bind(this);
+    this.renderBars = this.renderBars.bind(this);
+    this.handleDeleteSvg = this.handleDeleteSvg.bind(this);
+    this.groupDataByAggregateHour = this.groupDataByAggregateHour.bind(this);
+  }
+
+  componentDidMount() {
+    this.renderByD3();
+  }
+
+  componentDidUpdate() {
+    this.renderByD3();
+  }
+
+  renderByD3() {
+    const {
+      svgWidth,
+      svgHeight,
+      colorClass,
+      groupDataByAggregateHour,
+      padding,
+    } = this;
+
+    const {
+      data,
+      dataKeys,
+      aggregateHour,
+    } = this.props;
+
+    const width = svgWidth - 2 * padding.left;
+    const height = svgHeight - 2 * padding.top;
+
+    const formattedData = groupDataByAggregateHour(data, dataKeys, aggregateHour);
+    let stackKeys = [];
+    if (formattedData.length > 0) {
+      stackKeys = Object.keys(formattedData[0]).filter(key => 
+        key !== 'type' 
+        && key !== 'total'
+      );
+    }
+    const gChart = d3.select(this.node).select('.barchart__group');
+    // 先清空一遍svg下的所有元素
+    gChart.selectAll('*').remove();
+
+    const xScale = d3.scaleBand()
+      .domain(dataKeys)
+      .rangeRound([0, width])
+      .paddingInner(0.3)
+      .paddingOuter(0.2);
+
+    const yScale = d3.scaleLinear()
+      .domain([0, d3.max(formattedData, d => d.total)])
+      .rangeRound([height, 0]);
+
+    const colorScale = d3.scaleOrdinal()
+      .domain(stackKeys)
+      .range(colorClass);
+    window.colorScale = colorScale;
+
+    gChart.append("g")
+      .selectAll("g")
+      .data(d3.stack().keys(stackKeys)(formattedData))
+      .enter()
+      .append("g")
+      .attr("fill", d => colorScale(d.key))
+      .selectAll("rect")
+      .data(d => d)
+      .enter()
+      .append("rect")
+      .attr("x", d => xScale(d.data["type"]))
+      .attr("y", d => yScale(d[1]))
+      .attr("height", d => yScale(d[0]) - yScale(d[1]))
+      .attr("width", xScale.bandwidth());
+
+    gChart.append("g")
+      .attr("class", "x-axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(customXAxis(
+        d3.axisBottom()
+          .scale(xScale)
+          .tickSize(0)
+      ));
+
+    gChart.append("g")
+      .attr("class", "y-axis")
+      .call(customYAxis(
+        d3.axisLeft()
+          .scale(yScale)
+          .tickSize(0)
+      ))
+      .append("text")
+      .attr("x", 10)
+      .attr("y", -15)
+      .attr("dy", "0.32em")
+      .attr("fill", "#000")
+      .attr("font-weight", "bold")
+      .attr("text-anchor", "start")
+      .text("Flow Volume");
+  }
+
+  groupDataByAggregateHour(data, dataKeys, aggregateHour) {
+    let formattedData = [];
+    let numSegment = 24 / aggregateHour;
+
+    const sumReducer = (accumulator, currentValue) => accumulator + currentValue;
+
+    for (let i = 0, len = dataKeys.length; i < len; i += 1) {
+      let dataEle = {};
+      const dataByDay = data[i];
+      for (let j = 0; j < numSegment; j += 1) {
+        dataEle[`${j}`] = dataByDay.slice(j * aggregateHour, (j + 1) * aggregateHour).reduce(sumReducer);
+      }
+      dataEle["type"] = dataKeys[i];
+      dataEle["total"] = data[i].reduce(sumReducer);
+
+      formattedData.push(dataEle);
+    }
+    return formattedData;
+  }
+
+  renderAxis() {
+
+  }
+
+  renderBars() {
+
+  }
+
+  handleDeleteSvg() {
+
+  }
+
+  render() {
+    const {
+      svgWidth,
+      svgHeight,
+      iconSize,
+      padding,
+      handleDeleteSvg,
+    } = this;
+
+    const {
+      uuid,
+    } = this.props;
+
+    return (
+      <svg
+        className="barchart"
+        ref={node => {
+          this.node = node;
+        }}
+        width={svgWidth}
+        height={svgHeight}
+      >
+        <g className="barchart__group"
+          transform={`translate(${padding.left}, ${padding.top})`}
+        />
+        <image
+          className="barchart__deletebtn"
+          x={svgWidth - iconSize - 10}
+          y={10}
+          width={iconSize}
+          height={iconSize}
+          xlinkHref={require("../../assets/img/delete-btn.svg")}
+          onClick={handleDeleteSvg}
+        />
+        <text
+          className="barchart__hint"
+          transform={`translate(${svgWidth / 2}, ${svgHeight - 10})`}
+          textAnchor="middle"
+          dominantBaseline="baseline"
+        >{`Region ${uuid}`}</text>
+      </svg>
+    );
+  }
+};
