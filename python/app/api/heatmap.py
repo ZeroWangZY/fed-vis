@@ -1,15 +1,15 @@
 import datetime
-import json
 
-import numpy as np
 from flask import request
 
 from app import app
-from app.controller.heatmap_controller import get_heatmap, get_default_heatmap
+from app.service.heatmap_service import get_default_heatmap, get_heatmap
+
+from .response import gen_response
 
 
 @app.route('/api/heatmap/all')
-def get_heatmap_all():
+def get_heatmap_all_api():
     params = request.args
     type_ = params.get('type')
     start_time = params.get('start_time')
@@ -17,5 +17,5 @@ def get_heatmap_all():
     if type_ != None and start_time != None and end_time != None:
         start_time = datetime.datetime.strptime(start_time, '%Y/%m/%dZ%H:%M')
         end_time = datetime.datetime.strptime(end_time, '%Y/%m/%dZ%H:%M')
-        return json.dumps(get_heatmap(start_time, end_time, type_))
-    return json.dumps(get_default_heatmap())
+        return gen_response(get_heatmap(start_time, end_time, type_))
+    return gen_response(get_default_heatmap())

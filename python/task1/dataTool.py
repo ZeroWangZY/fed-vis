@@ -45,11 +45,9 @@ def rawDataToDb(index):
         import pymongo
         myclient = pymongo.MongoClient("mongodb://localhost:27017/")
         haikou_database = myclient["haikou"]
-        orders_info_collection = haikou_database['orders_mini']
+        orders_info_collection = haikou_database['orders']
 
         for row in haikouData:
-            for x in range(50):
-                next(haikouData)
             if float(row[16]) >= MIN_LNG and float(row[18]) >= MIN_LNG  and float(row[16]) < MAX_LNG and float(row[18]) < MAX_LNG \
                 and float(row[17]) >= MIN_LAT and float(row[17]) < MAX_LAT and float(row[19]) >= MIN_LAT and float(row[19]) < MAX_LAT:
                 start_time = datetime.datetime.strptime(
@@ -77,6 +75,46 @@ def rawDataToDb(index):
                     'des_time': des_time,
                 }
                 orders_info_collection.insert_one(document)
+
+
+def rawDataToPostgres(index):
+    import psycopg2
+    import datetime
+    conn = psycopg2.connect(host='localhost',
+                            database='haikou',
+                            user='postgres',
+                            password='ni99woba')
+    cur = conn.cursor()
+
+    with open('data/raw/dwv_order_make_haikou_' + str(index) + '.txt',
+              newline='') as csvfile:
+        haikouData = csv.reader(csvfile, delimiter='\t', quotechar='|')
+        next(haikouData)
+        i = 0
+        for row in haikouData:
+            i += 1
+            if float(row[16]) >= MIN_LNG and float(row[18]) >= MIN_LNG  and float(row[16]) < MAX_LNG and float(row[18]) < MAX_LNG \
+                and float(row[17]) >= MIN_LAT and float(row[17]) < MAX_LAT and float(row[19]) >= MIN_LAT and float(row[19]) < MAX_LAT:
+                start_time = datetime.datetime.strptime(
+                    '2017/1/1 12:00', '%Y/%m/%d %H:%M')
+                des_time = datetime.datetime.strptime('2017/1/1 12:00',
+                                                      '%Y/%m/%d %H:%M')
+                try:
+                    start_time = datetime.datetime.strptime(
+                        row[12], '%Y/%m/%d %H:%M')
+                except ValueError:
+                    print('start time format error ', row[12])
+                try:
+                    des_time = datetime.datetime.strptime(
+                        row[11], '%Y/%m/%d %H:%M')
+                except ValueError:
+                    print('des time format error ', row[11])
+                cur.execute(
+                    "INSERT INTO orders(client, start_lng, start_lat, des_lng, des_lat, start_time, des_time) VALUES(%s, %s, %s, %s, %s, %s, %s);",
+                    (index, float(row[18]), float(row[19]), float(
+                        row[16]), float(row[17]), start_time, des_time))
+                if i % 1000 == 0:
+                    conn.commit()
 
 
 def readFrom(str):
@@ -113,5 +151,5 @@ def writeTo(results, dir, file):
 
 
 if __name__ == '__main__':
-    # for i in range(1, 6):
-    rawDataToDb(5)
+    for i in range(6, 9):
+        rawDataToDb(i)
