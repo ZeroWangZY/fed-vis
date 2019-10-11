@@ -105,22 +105,22 @@ class App extends React.Component {
     render() {
         let { heatData, dataName } = this.state;
         let { isDrawerOpen } = this.state;
-        const { classes } = this.props;
+        // const { classes } = this.props;
 
-        const $input = (
-            <>
-                <InputBase
-                    placeholder="input data name"
-                    style={{ padding: '10px 20px' }}
-                    inputProps={{ 'aria-label': 'input data name' }}
-                    value={dataName}
-                    onChange={e => this.setState({ dataName: e.target.value })}
-                />
-                <IconButton aria-label="Search" onClick={this.handleClick}>
-                    <SearchIcon />
-                </IconButton>
-            </>
-        );
+        // const $input = (
+        //     <>
+        //         <InputBase
+        //             placeholder="input data name"
+        //             style={{ padding: '10px 20px' }}
+        //             inputProps={{ 'aria-label': 'input data name' }}
+        //             value={dataName}
+        //             onChange={e => this.setState({ dataName: e.target.value })}
+        //         />
+        //         <IconButton aria-label="Search" onClick={this.handleClick}>
+        //             <SearchIcon />
+        //         </IconButton>
+        //     </>
+        // );
         return (
             <div className="App">
                 <div id="left-panel">

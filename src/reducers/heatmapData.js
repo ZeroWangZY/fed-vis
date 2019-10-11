@@ -1,12 +1,10 @@
-import { GET_HEATMAP_BY_TIME_RANGE, SHOW_HEATMAP } from 'actions/heatmap';
-import { get } from '../api/tools';
-import Apis from '../api/apis';
+import { SHOW_HEATMAP } from 'actions/heatmap';
 
 const heatmapData = (state = [], action) => {
   switch (action.type) {
     case SHOW_HEATMAP:
       let [min, max] = getMinMax(action.heatmapData.data);
-      return {data: action.heatmapData.data, minCount: min, maxCount: max};// 找到heatdata的最大值和最小值 为了在地图上做颜色映射
+      return {heatmapData: action.heatmapData.data, heatmapMinCount: min, heatmapMaxCount: max};// 找到heatdata的最大值和最小值 为了在地图上做颜色映射
     default:
       return state;
   }

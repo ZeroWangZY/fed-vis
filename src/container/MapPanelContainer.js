@@ -4,7 +4,7 @@ import MapPanel from 'components/map/MapPanel';
 
 const mapStateToProps = (state) => {
   return {
-    heatmapData: state.heatmapData
+    mapData: state.heatmapData
   };
 };
 

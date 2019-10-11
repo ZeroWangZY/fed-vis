@@ -29,13 +29,19 @@ class MapPanel extends Component {
             showTopTen: false,
             minValue: null,
             maxValue: null,
-
+            // 数据经纬度范围
             latRange: [19.902, 20.07],
-            lngRange: [110.14, 110.52]
+            lngRange: [110.14, 110.52],
+            currentDisplayType: 1,// 1为热力图 0为odmap 默认显示热力图
+            selectedRectsOnMap: [],  // [{index: 0, bounds: []}...]
+            selectedRectsNum: 0
         };
         this.selectHeatMapPoints = this.selectHeatMapPoints.bind(this);
         this.createAMarker = this.createAMarker.bind(this);
-        this.computeColor = this.computeColor.bind(this);
+
+        this.computeColor = this.computeColor.bind(this);// 计算热力图的插值
+        this.handleOverlayerType = this.handleOverlayerType.bind(this);// 热力图和odmap的切换
+        this.createARect = this.createARect.bind(this);
     }
 
     /**
@@ -51,9 +57,24 @@ class MapPanel extends Component {
                 ele.lng < bounds._northEast.lng &&
                 ele.lng > bounds._southWest.lng
         );
-        console.log(result);
+        // console.log(result);
     }
-
+    createARect (bounds) {
+        let rectId = this.state.selectedRectsNum;
+        let newSelectedRectsOnMap = this.state.selectedRectsOnMap;
+        let latlngbound = {
+            lng_from: bounds._southWest.lng,
+            lng_to: bounds._northEast.lng,
+            lat_from: bounds._southWest.lng,
+            lat_to: bounds._northEast.lng,
+        }
+        newSelectedRectsOnMap.push({index: rectId, bounds: latlngbound})
+        rectId++;
+        this.setState ({
+            selectedRectsNum: rectId,
+            selectedRectsOnMap: newSelectedRectsOnMap
+        })
+    }
     _onCreated = e => {
         let type = e.layerType;
         let layer = e.layer;
@@ -62,7 +83,9 @@ class MapPanel extends Component {
             console.log('_onCreated: marker created', e);
         } else {
             console.log('_onCreated: something else created:', type, e);
-            this.selectHeatMapPoints(layer._bounds);
+            // this.selectHeatMapPoints(layer._bounds);
+            this.createARect(layer._bounds);
+            
         }
         // Do whatever else you need to. (save to db; etc)
 
@@ -107,15 +130,27 @@ class MapPanel extends Component {
         });
     }
     computeColor (num) {
-        let compute = d3.interpolate(d3.rgb(238,238,238), d3.rgb(215,25,28));
+        let compute = d3.interpolate(d3.rgb(236,213,214), d3.rgb(215,25,28));
         return compute(num);
     }
+    handleOverlayerType () {
+        let displayType = (this.state.currentDisplayType + 1) % 2;
+        console.log(displayType)
+        this.setState({
+            currentDisplayType: displayType
+        });
+    }
+    // componentWillReceiveProps (nextProps) {
+    //     let { mapData } = this.props;
+    //     // if (nextProps.mapData !== this.props.mapData) {
+    //     // }
+    // }
     render() {
         let me = this;
-        console.log('render map')
         // const data = this.props.heatData;
-        const { isDrawerOpen, heatmapData } = this.props;
-        const { topTen, $markers, showTopTen, minValue, maxValue, latRange, lngRange } = this.state;
+        const { isDrawerOpen, mapData } = this.props;
+        const { latRange, lngRange, currentDisplayType, selectedRectsOnMap, selectedRectsNum } = this.state;
+        console.log('render map', selectedRectsOnMap, selectedRectsNum)
         // let $rankMarkers = null;
         // if (topTen.length !== 0) {
         //     $rankMarkers = topTen.map((e, i) => (
@@ -136,11 +171,11 @@ class MapPanel extends Component {
         //     ));
         // }
         let heatmapRects = null;
-        if (heatmapData.length !== 0) {
+        if (mapData.length !== 0) {
             let colorLinear = d3.scaleLinear()
-                .domain([heatmapData.minCount, heatmapData.maxCount])
+                .domain([mapData.heatmapMinCount, mapData.heatmapMaxCount])
                 .range([0, 1]);
-            let data = heatmapData.data;
+            let data = mapData.heatmapData;
             heatmapRects = data.map((column, column_index) => {
                 return column.map((singleRect, rect_index) => {
                     // 算rect的经纬度
@@ -162,7 +197,7 @@ class MapPanel extends Component {
         
         return (
             <div id="map-content">
-                <div className="panel-title">Map View</div>
+                <div className="panel-title">Map View<button onClick={this.handleOverlayerType}>H⇋O</button></div>
                 <Map
                     center={basicConfig.center}
                     zoom={basicConfig.zoom}
@@ -180,7 +215,7 @@ class MapPanel extends Component {
                         </LayersControl.BaseLayer>
                         <LayersControl.Overlay name="Heatmap" checked>
                             <FeatureGroup>
-                                {heatmapRects}
+                                {currentDisplayType && heatmapRects}
                                 {/* <Circle center={[20.07,110.52]} radius={200}/> */}
                                 {/* <Rectangle bounds={[[20, 110.32], [20.0210604, 110.35]]} color="#ff7800" weight={0}></Rectangle>
                                 <Rectangle bounds={[[20, 110.32], [20.0210604, 110.33]]} color="#ff7800" weight={0}></Rectangle> */}

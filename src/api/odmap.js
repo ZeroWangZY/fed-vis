@@ -1,0 +1,18 @@
+import { get} from './tools';
+import Apis from './apis';
+
+export const getOdmap = params => {
+  let urlPath = getOdmapUrlPath(params);
+  console.log(urlPath)
+  return get({
+    url: urlPath
+  }).then(resp => resp.data);
+}
+
+function getOdmapUrlPath (params) {
+  let arr = [];
+  arr.push(Apis.get_odmap_by_time_range + '?' + 'type=' + params.dataType);
+  arr.push('start_time=' + params.startTime);
+  arr.push('end_time=' + params.endTime);
+  return arr.join('&') + '&vertical_size=5&horizon_size=10';// to modify
+}
