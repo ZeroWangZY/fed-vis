@@ -31,11 +31,7 @@ class MapPanel extends Component {
             maxValue: null,
 
             latRange: [19.902, 20.07],
-            lngRange: [110.14, 110.52],
-            rectDataMaxnum: 0 //前端算还是后端算？
-            // colorLinear: d3.scaleLinear()
-            //     .domain([0, 100])// 需要确定最大最小值
-            //     .range([0, 1])
+            lngRange: [110.14, 110.52]
         };
         this.selectHeatMapPoints = this.selectHeatMapPoints.bind(this);
         this.createAMarker = this.createAMarker.bind(this);
@@ -111,17 +107,14 @@ class MapPanel extends Component {
         });
     }
     computeColor (num) {
-        let colorLinear =  d3.scaleLinear()
-            .domain([0, 1000])// 需要确定最大最小值 to modify
-            .range([0, 1]);
         let compute = d3.interpolate(d3.rgb(238,238,238), d3.rgb(215,25,28));
-        return compute(colorLinear(num));
+        return compute(num);
     }
     render() {
         let me = this;
         console.log('render map')
-        const data = this.props.heatData;
-        const { isDrawerOpen, heatmapData, colorLinear } = this.props;
+        // const data = this.props.heatData;
+        const { isDrawerOpen, heatmapData } = this.props;
         const { topTen, $markers, showTopTen, minValue, maxValue, latRange, lngRange } = this.state;
         // let $rankMarkers = null;
         // if (topTen.length !== 0) {
@@ -144,7 +137,11 @@ class MapPanel extends Component {
         // }
         let heatmapRects = null;
         if (heatmapData.length !== 0) {
-            heatmapRects = heatmapData.map((column, column_index) => {
+            let colorLinear = d3.scaleLinear()
+                .domain([heatmapData.minCount, heatmapData.maxCount])
+                .range([0, 1]);
+            let data = heatmapData.data;
+            heatmapRects = data.map((column, column_index) => {
                 return column.map((singleRect, rect_index) => {
                     // 算rect的经纬度
                     let bounds = [[latRange[0] + 0.001 * rect_index, lngRange[0] + 0.001 * column_index], [latRange[0] + 0.001 * (rect_index+1), lngRange[0] + 0.001 * (column_index+1)]];
@@ -153,7 +150,7 @@ class MapPanel extends Component {
                     } else {
                         return <FeatureGroup key={'heatmap-column' + column_index + '-' + rect_index}><Rectangle
                             bounds={bounds}
-                            color={me.computeColor(singleRect)}// to modify
+                            color={me.computeColor(colorLinear(singleRect))}
                             weight={0}
                             fillOpacity={0.5}
                             key={'heatmap-rect' + column_index + '-' + rect_index}

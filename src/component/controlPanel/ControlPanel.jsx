@@ -5,6 +5,7 @@ export default class ControlPanel extends React.PureComponent {
   constructor () {
     super();
     this.state = { 
+      // 默认
       dataType: 'start',
       startDate: '2017-05-19',
       endDate: '2017-05-19',
@@ -22,7 +23,6 @@ export default class ControlPanel extends React.PureComponent {
     // 按api格式拼接日期
     let startTime = this.state.startDate.replace(/-/g, '/') + 'Z' + this.state.startHour;
     let endTime = this.state.endDate.replace(/-/g, '/') + 'Z' + this.state.endHour;
-    console.log(this.state.dataType, startTime, endTime)
     // load data
     this.props.onSelect(this.state.dataType, startTime, endTime);
   }
@@ -72,7 +72,7 @@ export default class ControlPanel extends React.PureComponent {
           <div id="datatype-select">
             <form action="" method="get">
               Select data type:
-              <label><input name="dataType" type="radio" value="start" onChange={this.updateDatatype}/>start</label> 
+              <label><input name="dataType" type="radio" value="start" defaultChecked onChange={this.updateDatatype}/>start</label> 
               <label><input name="dataType" type="radio" value="end" onChange={this.updateDatatype}/>end</label> 
             </form>
           </div>
