@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from .db_setting import mongo_client, pg_cur
 
 haikou_database = mongo_client["haikou"]
@@ -6,6 +7,7 @@ orders_info_collection = haikou_database['orders']
 data_collection = haikou_database['data']
 
 ORDER_DATA_ON_MEMORY = []
+
 
 def query_count(start_time,
                 end_time,
@@ -125,23 +127,25 @@ def query_default_heatmap():
     res = data_collection.find_one({"tag": "start-all"})['data']
     return res
 
+
 def is_order_data_on_memory():
     if len(ORDER_DATA_ON_MEMORY) == 0:
         return False
     return True
 
+
 def load_order_data_to_memory():
-    pg_cur.execute(
-        'select * from orders ORDER BY start_time')
+    pg_cur.execute('select * from orders ORDER BY start_time')
     global ORDER_DATA_ON_MEMORY
     ORDER_DATA_ON_MEMORY = pg_cur.fetchall()
+
 
 def get_order_data_on_memory():
     return ORDER_DATA_ON_MEMORY
 
+
 if __name__ == "__main__":
-    pg_cur.execute(
-        'select * from orders ORDER BY start_time')
+    pg_cur.execute('select * from orders ORDER BY start_time')
     import numpy as np
     rows = pg_cur.fetchall()
     print(len(rows))
@@ -160,5 +164,5 @@ if __name__ == "__main__":
     for row in rows:
         heatmap_matrix[int(
             (row[2] - MIN_LNG) * 1000
-        ), int((row[3] - MIN_LAT) * 1000)] +=1
+        ), int((row[3] - MIN_LAT) * 1000)] += 1
     print(heatmap_matrix)

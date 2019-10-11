@@ -1,5 +1,6 @@
-from app.dao.order import query_count
 from datetime import datetime, timedelta
+
+from app.dao.order import query_count
 
 
 def get_histogram(start_time,
@@ -53,5 +54,6 @@ def get_default_histogram():
 
 if __name__ == "__main__":
     print(
-        get_histogram(datetime(2017, 5, 19,hour=12), datetime(2017, 7, 19, hour=12), 110.200,
-                      110.210, 20, 20.01))
+        get_histogram(datetime(2017, 5, 19, hour=12),
+                      datetime(2017, 7, 19, hour=12), 110.200, 110.210, 20,
+                      20.01))

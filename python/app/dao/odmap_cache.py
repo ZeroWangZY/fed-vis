@@ -1,4 +1,5 @@
 import pymongo
+
 from .db_setting import mongo_client, pg_cur
 
 haikou_database = mongo_client["haikou"]
