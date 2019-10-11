@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
-
-from app.dao.order import query_count
+import numpy as np
+from app.dao.order import query_count, get_order_data_on_memory, is_order_data_on_memory
 
 
 def get_histogram(start_time,
@@ -10,6 +10,30 @@ def get_histogram(start_time,
                   lat_from,
                   lat_to,
                   type_='start'):
+    if is_order_data_on_memory():
+        return get_histogram_on_memory(start_time, end_time, lng_from, lng_to,
+                                       lat_from, lat_to, type_)
+    return get_histogram_from_db(start_time, end_time, lng_from, lng_to,
+                                 lat_from, lat_to, type_)
+
+
+def get_histogram_on_memory(start_time, end_time, lng_from, lng_to, lat_from,
+                            lat_to, type_):
+    data = get_order_data_on_memory()
+    res = np.zeros((7, 24), dtype=int)
+    for row in data:
+        if row[6] < end_time and row[6] > start_time and row[2] > lng_from and row[2] < lng_to and row[3] > lat_from and row[3] < lat_to:
+            res[row[6].weekday()][row[6].hour - 1] += 1
+    return res.tolist()
+
+
+def get_histogram_from_db(start_time,
+                          end_time,
+                          lng_from,
+                          lng_to,
+                          lat_from,
+                          lat_to,
+                          type_='start'):
     res = [0, 0, 0, 0, 0, 0, 0]
     date = start_time.replace(hour=0, minute=0, second=0,
                               microsecond=0) + timedelta(days=1)
