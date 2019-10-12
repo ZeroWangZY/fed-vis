@@ -3,7 +3,6 @@ import Apis from './apis';
 
 export const getHeatmap = params => {
   let urlPath = getUrlPath(params);
-  console.log(urlPath)
   return get({
     url: urlPath,
     config: params

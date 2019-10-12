@@ -1,6 +1,7 @@
 export const ADD_BARCHART = 'ADD_BARCHART';
 export const DELETE_BARCHART = 'DELETE_BARCHART';
 
+// to modify
 export function addBarchart (start_time,
   type, //上车 or 下车数据
   end_time,

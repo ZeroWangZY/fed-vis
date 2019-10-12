@@ -3,7 +3,6 @@ import Apis from './apis';
 
 export const getOdmap = params => {
   let urlPath = getOdmapUrlPath(params);
-  console.log(urlPath)
   return get({
     url: urlPath
   }).then(resp => resp.data);

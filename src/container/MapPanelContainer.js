@@ -1,18 +1,19 @@
 import { connect } from 'react-redux';
 import MapPanel from 'components/map/MapPanel';
-// import {getHeatmapByTimeRange} from 'actions/heatmap'
+import {addBarchart} from 'actions/barchart'
 
 const mapStateToProps = (state) => {
   return {
-    mapData: state.heatmapData
+    heatmapData: state.heatmapData,
+    odmapData: state.odmapData
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSelect: (dataType, startTime, endTime) => {
+    onSelect: (index, bounds) => {
       // to add 框选
-      // dispatch(getHeatmapByTimeRange(dataType, startTime, endTime));
+      dispatch(addBarchart(index, bounds));
     }
   };
 };

@@ -32,9 +32,16 @@ class MapPanel extends Component {
             // 数据经纬度范围
             latRange: [19.902, 20.07],
             lngRange: [110.14, 110.52],
+            odmapOuterrectSize: [0.0336, 0.038], //一格的经纬度范围 lat lng
+            odmapInnerrectSize: [0.00672, 0.0038], //一小格的经纬度范围
             currentDisplayType: 1,// 1为热力图 0为odmap 默认显示热力图
-            selectedRectsOnMap: [],  // [{index: 0, bounds: []}...]
-            selectedRectsNum: 0
+            tooltipLinePos: [],
+            isShowTooltipLine: false,
+            // 跟barchrt的联动
+            selectedRectsOnMap: [],  // [{index: id, bounds: []}...]
+            selectedRectsNum: 0,
+
+            userrectIndexBounds: []// [[leftdownpoint], [rightUppoint]]
         };
         this.selectHeatMapPoints = this.selectHeatMapPoints.bind(this);
         this.createAMarker = this.createAMarker.bind(this);
@@ -42,6 +49,8 @@ class MapPanel extends Component {
         this.computeColor = this.computeColor.bind(this);// 计算热力图的插值
         this.handleOverlayerType = this.handleOverlayerType.bind(this);// 热力图和odmap的切换
         this.createARect = this.createARect.bind(this);
+        this.handleODmapClick = this.handleODmapClick.bind(this);
+        this.handleODmapMouseOut= this.handleODmapMouseOut.bind(this);
     }
 
     /**
@@ -59,22 +68,6 @@ class MapPanel extends Component {
         );
         // console.log(result);
     }
-    createARect (bounds) {
-        let rectId = this.state.selectedRectsNum;
-        let newSelectedRectsOnMap = this.state.selectedRectsOnMap;
-        let latlngbound = {
-            lng_from: bounds._southWest.lng,
-            lng_to: bounds._northEast.lng,
-            lat_from: bounds._southWest.lng,
-            lat_to: bounds._northEast.lng,
-        }
-        newSelectedRectsOnMap.push({index: rectId, bounds: latlngbound})
-        rectId++;
-        this.setState ({
-            selectedRectsNum: rectId,
-            selectedRectsOnMap: newSelectedRectsOnMap
-        })
-    }
     _onCreated = e => {
         let type = e.layerType;
         let layer = e.layer;
@@ -82,7 +75,7 @@ class MapPanel extends Component {
             // Do marker specific actions
             console.log('_onCreated: marker created', e);
         } else {
-            console.log('_onCreated: something else created:', type, e);
+            // console.log('_onCreated: something else created:', type, e);
             // this.selectHeatMapPoints(layer._bounds);
             this.createARect(layer._bounds);
             
@@ -91,21 +84,43 @@ class MapPanel extends Component {
 
         // this._onChange();
     };
-
-    componentDidUpdate(prevProps, prevState) {
-        if (
-            prevProps.heatData != this.props.heatData &&
-            this.props.heatData != null
-        ) {
-            //获得top 10 elements
-            let temp = this.props.heatData.sort((a, b) => b.count - a.count);
-            this.setState({
-                topTen: temp.slice(0, 10),
-                showTopTen: true,
-                maxValue: temp[0].count,
-                minValue: temp.pop().count
-            });
+    _onDeleted = e => {
+        let rectIndex = -1;
+        for (let i in e.layers._layers) {
+            rectIndex = e.layers._layers[i]._path.classList[0].split('-')[1];
         }
+        // 删除rect  修改selectedRectsOnMap selectedRectsNum  to modify
+        const {selectedRectsNum, selectedRectsOnMap} = this.state;
+        // let newSelectedRectsNum = selectedRectsNum - 1;
+        let newSelectedRectsOnMap = selectedRectsOnMap;
+        for (let i = 0; i < selectedRectsOnMap.length; i++) {
+            if (selectedRectsOnMap[i].index === parseInt(rectIndex)) {
+                // 删除
+                newSelectedRectsOnMap.splice(i, 1);
+            }
+        }
+        this.setState ({
+            // selectedRectsNum: newSelectedRectsNum,
+            selectedRectsOnMap: newSelectedRectsOnMap
+        });
+    }
+    _onEdited = e => {
+        console.log('edit ', e);
+    }
+    componentDidUpdate(prevProps, prevState) {
+        // if (
+        //     prevProps.heatData != this.props.heatData &&
+        //     this.props.heatData != null
+        // ) {
+        //     //获得top 10 elements
+        //     let temp = this.props.heatData.sort((a, b) => b.count - a.count);
+        //     this.setState({
+        //         topTen: temp.slice(0, 10),
+        //         showTopTen: true,
+        //         maxValue: temp[0].count,
+        //         minValue: temp.pop().count
+        //     });
+        // }
     }
 
     createAMarker(index) {
@@ -129,53 +144,108 @@ class MapPanel extends Component {
             $markers
         });
     }
-    computeColor (num) {
-        let compute = d3.interpolate(d3.rgb(236,213,214), d3.rgb(215,25,28));
+    createARect (bounds) {
+        let rectId = this.state.selectedRectsNum;
+        let newSelectedRectsOnMap = this.state.selectedRectsOnMap;
+        let latlngbound = {
+            lng_from: bounds._southWest.lng,
+            lng_to: bounds._northEast.lng,
+            lat_from: bounds._southWest.lat,
+            lat_to: bounds._northEast.lat,
+        }
+        newSelectedRectsOnMap.push({index: rectId, bounds: latlngbound})
+        rectId++;
+        this.setState ({
+            selectedRectsNum: rectId,
+            selectedRectsOnMap: newSelectedRectsOnMap
+        });
+        // add barchart
+        this.props.onSelect(rectId, bounds);
+    }
+    computeColor (num) {//236,213,214
+        let compute = d3.interpolate(d3.rgb(236,213,214), d3.rgb(131,4,4));//d3.rgb(215,25,28));
         return compute(num);
     }
     handleOverlayerType () {
-        let displayType = (this.state.currentDisplayType + 1) % 2;
-        console.log(displayType)
-        this.setState({
-            currentDisplayType: displayType
-        });
+        const {currentDisplayType, selectedRectsNum, selectedRectsOnMap, latRange, lngRange, odmapOuterrectSize} = this.state;
+        const {odmapData} = this.props;
+        let displayType = (currentDisplayType + 1) % 2;
+        // 切换到odmap时 如果有框选 在odmap上高亮最新一次框选对应的格子
+        if (selectedRectsNum !== 0) {
+            let {lat_from, lat_to, lng_from, lng_to} = selectedRectsOnMap[selectedRectsOnMap.length-1].bounds;
+            let outerBounds = [];
+            let newUserrectIndexBounds = []; // 框在odmap上的index bound
+            // 对比rectBounds在odmap的哪个区域
+            for (let i = 0; i < odmapData.data.length; i++) {
+                for (let j = 0; j < odmapData.data[i].length; j++) {
+                    outerBounds = [[latRange[0] + odmapOuterrectSize[0] * j, lngRange[0] + odmapOuterrectSize[1] * i], [latRange[0] + odmapOuterrectSize[0] * (j+1), lngRange[0] + odmapOuterrectSize[1] * (i+1)]];
+                    if ((lat_from > outerBounds[0][0] && lat_from < outerBounds[1][0]) && (lng_from > outerBounds[0][1] && lng_from < outerBounds[1][1])) {
+                        newUserrectIndexBounds.push([i, j])
+                    }
+                    if ((lat_to > outerBounds[0][0] && lat_to < outerBounds[1][0]) && (lng_to > outerBounds[0][1] && lng_to < outerBounds[1][1])) {
+                        newUserrectIndexBounds.push([i, j])
+                    }
+                }
+            }
+            this.setState({
+                userrectIndexBounds: newUserrectIndexBounds,
+                currentDisplayType: displayType,
+                isShowTooltipLine: false
+            });
+        } else {
+            this.setState({
+                currentDisplayType: displayType,
+                isShowTooltipLine: false
+            });
+        }
     }
-    // componentWillReceiveProps (nextProps) {
-    //     let { mapData } = this.props;
-    //     // if (nextProps.mapData !== this.props.mapData) {
-    //     // }
-    // }
+    handleODmapClick (e) {
+        const { latRange, lngRange, odmapOuterrectSize, odmapInnerrectSize} = this.state;
+        let hoveredRectId = e.originalEvent.target.className.baseVal.split(' ')[0];
+        let [outerRectX, outerRectY, innerRectX, innerRectY] = hoveredRectId.split('-').slice(1);
+        // let startPointIndex = [outerRectX, outerRectY], endPointIndex = [innerRectX, innerRectY];
+        // 找到两个point的经纬度坐标
+        let startPointPos = [
+            latRange[0] + outerRectY * odmapOuterrectSize[0] + innerRectY * odmapInnerrectSize[0] + 0.5*odmapInnerrectSize[0],
+            lngRange[0] + outerRectX * odmapOuterrectSize[1] + innerRectX * odmapInnerrectSize[1] + 0.5*odmapInnerrectSize[1],
+        ];
+        let endPointPos = [
+            latRange[0] + innerRectY * odmapOuterrectSize[0] + outerRectY * odmapInnerrectSize[0],
+            lngRange[0] + innerRectX * odmapOuterrectSize[1] + outerRectX * odmapInnerrectSize[1],
+        ];
+        let newPos = [startPointPos, endPointPos];
+        this.setState({
+            isShowTooltipLine: true,
+            tooltipLinePos: newPos
+        })
+    }
+    handleODmapMouseOut() {
+        this.setState({
+            isShowTooltipLine: false
+        })
+    }
     render() {
         let me = this;
-        // const data = this.props.heatData;
-        const { isDrawerOpen, mapData } = this.props;
-        const { latRange, lngRange, currentDisplayType, selectedRectsOnMap, selectedRectsNum } = this.state;
-        console.log('render map', selectedRectsOnMap, selectedRectsNum)
-        // let $rankMarkers = null;
-        // if (topTen.length !== 0) {
-        //     $rankMarkers = topTen.map((e, i) => (
-        //         <Fragment>
-        //             <Circle
-        //                 center={[e.lat, e.lng]}
-        //                 // @todo: 调整radius
-        //                 radius={e.count / 100}
-        //                 key={'circle' + i}
-        //             />
-        //             <Marker
-        //                 key={'marker' + i}
-        //                 position={[e.lat, e.lng]}
-        //                 icon={rankIcon(i)}
-        //                 title={i + 1}
-        //             />
-        //         </Fragment>
-        //     ));
-        // }
+        const { isDrawerOpen, heatmapData, odmapData } = this.props;
+        const {
+            latRange,
+            lngRange,
+            currentDisplayType,
+            selectedRectsOnMap,
+            selectedRectsNum,
+            odmapOuterrectSize,
+            odmapInnerrectSize,
+            tooltipLinePos,
+            isShowTooltipLine,
+            userrectIndexBounds
+        } = this.state;
         let heatmapRects = null;
-        if (mapData.length !== 0) {
+        // heatmap
+        if (heatmapData.length !== 0) {
             let colorLinear = d3.scaleLinear()
-                .domain([mapData.heatmapMinCount, mapData.heatmapMaxCount])
+                .domain([heatmapData.heatmapMinCount, heatmapData.heatmapMaxCount /8])
                 .range([0, 1]);
-            let data = mapData.heatmapData;
+            let data = heatmapData.heatmapData;
             heatmapRects = data.map((column, column_index) => {
                 return column.map((singleRect, rect_index) => {
                     // 算rect的经纬度
@@ -187,17 +257,76 @@ class MapPanel extends Component {
                             bounds={bounds}
                             color={me.computeColor(colorLinear(singleRect))}
                             weight={0}
-                            fillOpacity={0.5}
+                            fillOpacity={0.6}
                             key={'heatmap-rect' + column_index + '-' + rect_index}
                         /></FeatureGroup>
                     }
                 });
             });
         }
-        
+        // odmap
+        let odmapRects = null;
+        if (odmapData.length !== 0) {
+            let colorLinear = d3.scaleLinear()
+                .domain([odmapData.min, odmapData.max])
+                .range([0, 1]);
+            odmapRects = odmapData.data.map((column, column_index) => {
+                return column.map((outerRect, outerRectId) => {
+                    // 默认是5*10
+                    let outerRectBounds = [[latRange[0] + odmapOuterrectSize[0] * outerRectId, lngRange[0] + odmapOuterrectSize[1] * column_index], [latRange[0] + odmapOuterrectSize[0] * (outerRectId+1), lngRange[0] + odmapOuterrectSize[1] * (column_index+1)]];
+                    let innerRects = outerRect.map((innerColumn, innerColumnId) => {
+                        return innerColumn.map((innerRect, innerRectId) => {
+                            let innerRectBounds = [[outerRectBounds[0][0] + odmapInnerrectSize[0] * innerRectId, outerRectBounds[0][1] + odmapInnerrectSize[1] * innerColumnId], [outerRectBounds[0][0] + odmapInnerrectSize[0] * (innerRectId+1), outerRectBounds[0][1] + odmapInnerrectSize[1] * (innerColumnId+1)]];
+                            if ( (innerRect - 0) <= 0.1) {
+                                return null;
+                            } else {
+                                let highlightFlag = false;
+                                // 需要高亮
+                                if (userrectIndexBounds.length !== 0 && innerColumnId <= userrectIndexBounds[1][0]
+                                    && innerColumnId >= userrectIndexBounds[0][0]
+                                    && innerRectId <= userrectIndexBounds[1][1]
+                                    && innerRectId >= userrectIndexBounds[0][1]) {
+                                    highlightFlag = true;
+                                }
+                                return <FeatureGroup key={'odmap-innerrcolumn' + innerColumnId + '-' + innerRectId}>
+                                            <Rectangle
+                                                    bounds={innerRectBounds}
+                                                    fillColor={me.computeColor(colorLinear(innerRect))}
+                                                    color={"#333"}
+                                                    weight={highlightFlag ? 1 : 0}
+                                                    fillOpacity={0.6}
+                                                    key={'odmap-innerrect' + innerColumnId + '-' + innerRectId}
+                                                    className={'odmaprect-'+ column_index + '-'+ outerRectId + '-'+ innerColumnId + '-' + innerRectId}
+                                                    id={'odmaprect-'+ column_index + '-'+ outerRectId + '-'+ innerColumnId + '-' + innerRectId}
+                                                    onclick={me.handleODmapClick}
+                                                    // onmouseout={me.handleODmapMouseOut}
+                                            />
+                                        </FeatureGroup>
+                            }
+                        })
+                    })
+                    
+                    return <FeatureGroup key={'odmap-outercolumn' + column_index + '-' + outerRectId}>
+                                <Rectangle
+                                    bounds={outerRectBounds}
+                                    color={'#333'}
+                                    weight={1}
+                                    // fillOpacity={0.5}
+                                    fill={false}
+                                    key={'odmap-outerrect' + column_index + '-' + outerRectId}
+                                />
+                                {innerRects}
+                            </FeatureGroup>
+                })
+            });
+        }
         return (
             <div id="map-content">
-                <div className="panel-title">Map View<button onClick={this.handleOverlayerType}>H⇋O</button></div>
+                <div className="panel-title">
+                    Map View
+                    <button onClick={this.handleOverlayerType}>H⇋O</button>
+                    <button style={{right: '70px', backgroundColor: (currentDisplayType?'#eee':'#fff')}} disabled={currentDisplayType?"disabled":""}>O⇋D</button>
+                </div>
                 <Map
                     center={basicConfig.center}
                     zoom={basicConfig.zoom}
@@ -215,25 +344,8 @@ class MapPanel extends Component {
                         </LayersControl.BaseLayer>
                         <LayersControl.Overlay name="Heatmap" checked>
                             <FeatureGroup>
-                                {currentDisplayType && heatmapRects}
-                                {/* <Circle center={[20.07,110.52]} radius={200}/> */}
-                                {/* <Rectangle bounds={[[20, 110.32], [20.0210604, 110.35]]} color="#ff7800" weight={0}></Rectangle>
-                                <Rectangle bounds={[[20, 110.32], [20.0210604, 110.33]]} color="#ff7800" weight={0}></Rectangle> */}
-                                {/* <HeatmapLayer /> */}
-                                {/* {data && (
-                                    <HeatmapLayer
-                                        fitBoundsOnLoad
-                                        fitBoundsOnUpdate
-                                        points={data}
-                                        longitudeExtractor={m => m.lng}
-                                        latitudeExtractor={m => m.lat}
-                                        intensityExtractor={m => m.count}
-                                        gradient={heatMapConfig.gradient}
-                                        radius={heatMapConfig.radius}
-                                        blur={heatMapConfig.blur}
-                                        // max = {100000}
-                                    />
-                                )} */}
+                                {currentDisplayType ? heatmapRects : odmapRects}
+                                {isShowTooltipLine && <Polyline color={'#D7191C'} weight={2} positions={tooltipLinePos}/>}
                             </FeatureGroup>
                         </LayersControl.Overlay>
                         <LayersControl.Overlay name="Brush" checked>
@@ -241,8 +353,8 @@ class MapPanel extends Component {
                                 <EditControl
                                     position="topleft"
                                     onCreated={this._onCreated}
-                                    // onEdited={this._onEdite}
-                                    // onDeleted={this._onDeleted}
+                                    onEdited={this._onEdited}
+                                    onDeleted={this._onDeleted}
                                     draw={{
                                         rectangle: {
                                             shapeOptions: {
@@ -253,7 +365,8 @@ class MapPanel extends Component {
                                                 fillOpacity: 0.2,
                                                 opacity: 0.5,
                                                 stroke: true,
-                                                weight: 2
+                                                weight: 2,
+                                                className: 'drawRect-' + selectedRectsNum
                                             }
                                         },
                                         marker: false,
@@ -276,14 +389,9 @@ class MapPanel extends Component {
                                     // });
                                     // }}
                                 />
+                                {/* <EditControl name="line"/> */}
                             </FeatureGroup>
                         </LayersControl.Overlay>
-
-                        {/* <LayersControl.Overlay name="Marker" checked>
-                            <FeatureGroup>
-                                {$rankMarkers}
-                            </FeatureGroup>
-                        </LayersControl.Overlay> */}
                     </LayersControl>
                 </Map>
                 {/* {showTopTen && (

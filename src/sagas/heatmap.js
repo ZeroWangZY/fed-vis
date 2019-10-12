@@ -1,5 +1,4 @@
 import { GET_HEATMAP_BY_TIME_RANGE, SHOW_HEATMAP } from 'actions/heatmap';
-import { SHOW_ODMAP } from 'actions/odmap';
 import { put, takeLatest, call, all } from 'redux-saga/effects';
 import api from 'api';
 
@@ -13,10 +12,8 @@ function * updateHeatmap (action) {
     heatmapData: call(api.getHeatmap, params),
     // odmapData: call(api.getOdmap, params)
   });
-  // const odmapData  = yield call(api.getOdmap, params);
 
   yield put({ type: SHOW_HEATMAP, heatmapData });
-  // yield put({ type: SHOW_ODMAP, odmapData });
 }
 
 export function * watchHeatmapByTimeRange () {

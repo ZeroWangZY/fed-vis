@@ -9,15 +9,11 @@ function * updateOdmap (action) {
     startTime: action.startTime,
     endTime: action.endTime
   };
-  console.log('odmap', params)
   const { odmapData}  = yield all({
-    // heatmapData: call(api.getHeatmap, params),
     odmapData: call(api.getOdmap, params)
   });
-  // const odmapData  = yield call(api.getOdmap, params);
 
   yield put({ type: SHOW_ODMAP, odmapData });
-  // yield put({ type: SHOW_ODMAP, odmapData });
 }
 
 export function * watchOdmapByTimeRange () {

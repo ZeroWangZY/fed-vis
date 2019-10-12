@@ -14,8 +14,9 @@ import { withStyles } from '@material-ui/styles';
 import BarChart from './component/barchart/Barchart';
 import ControlPanelContainer from 'container/ControlPanelContainer';
 import MapPanelContainer from 'container/MapPanelContainer';
+import DetailPanelContainer from 'container/DetailPanelContainer';
 import DataOverviewPanel from './component/dataoverviewPanel/DataOverviewPanel';
-import DetailPanel from './component/detailPanel/DetailPanel'
+// import DetailPanel from './component/detailPanel/DetailPanel'
 
 import Sankey from './component/sankey/Sankey';
 
@@ -132,7 +133,7 @@ class App extends React.Component {
                         heatData={heatData}
                         isDrawerOpen={isDrawerOpen}
                     />
-                    <DetailPanel />
+                    <DetailPanelContainer />
                 </div>
                 {/* <div
                     className={clsx(classes.content, {

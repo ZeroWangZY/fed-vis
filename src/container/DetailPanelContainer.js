@@ -1,17 +1,14 @@
 import { connect } from 'react-redux';
-import DetailPanel from 'components/detailPanel';
+import DetailPanel from 'components/detailPanel/DetailPanel';
 
 const mapStateToProps = (state) => {
   return {
-    testData: state.testData
+    // to add
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    // onSelect: time => {
-    //   dispatch(playCertainStep(time));
-    // }
   };
 };
 
