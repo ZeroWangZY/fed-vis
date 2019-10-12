@@ -1,12 +1,26 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import './DetailPanel.less';
 import BarChart from '../barchart/Barchart';
+import { deleteBarchart } from '../../actions/barchart';
 
 import { Select } from 'antd';
 import "antd/lib/select/style/index.css";
 const { Option } = Select;
 
-export default class DetailPanel extends React.PureComponent {
+function mapStateToProps(state) {
+  return {
+    dataset: state.barchartData,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    deleteBarchartById: id => dispatch(deleteBarchart(id)),
+  };
+}
+
+class DetailPanel extends React.PureComponent {
   constructor () {
     super();
   
@@ -33,7 +47,7 @@ export default class DetailPanel extends React.PureComponent {
     ];
 
     this.state = {
-      aggregateHour: 1,
+      aggregateHour: 24,
     };
 
     this.handleSliderChange = this.handleSliderChange.bind(this);
@@ -52,13 +66,16 @@ export default class DetailPanel extends React.PureComponent {
     console.log("in handleSelectBarChart");
   }
 
-  handleDeleteBarChart() {
-    console.log("in handleDeleteBarChart");
+  handleDeleteBarChart(uuid) {
+    const {
+      deleteBarchartById,
+    } = this.props;
+    console.log("in handleDeleteBarChart", uuid);
+    deleteBarchartById(uuid);
   }
 
   render() {
     const {
-      dataset,
       dataKeys,
       aggregateHourOptions,
       handleSliderChange,
@@ -69,6 +86,11 @@ export default class DetailPanel extends React.PureComponent {
     const {
       aggregateHour,
     } = this.state;
+
+    const {
+      dataset,
+    } = this.props;
+    console.log(111, dataset);
 
     return (
       <div id="detail-panel">
@@ -89,11 +111,11 @@ export default class DetailPanel extends React.PureComponent {
           </div>
           <div className='detail-content__info'>
             {
-              dataset.map((data, dataIndex) =>
+              dataset.map(data =>
                 <BarChart
-                  key={dataIndex}
-                  uuid={dataIndex}
-                  data={data}
+                  key={data.id}
+                  uuid={data.id}
+                  data={data.data}
                   dataKeys={dataKeys}
                   aggregateHour={parseInt(aggregateHour, 10)}
                   onSelect={handleSelectBarChart}
@@ -107,3 +129,8 @@ export default class DetailPanel extends React.PureComponent {
     );
   }
 }
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(DetailPanel);

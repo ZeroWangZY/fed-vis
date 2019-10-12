@@ -36,8 +36,6 @@ export default class BarChart extends Component {
     ];
 
     this.renderByD3 = this.renderByD3.bind(this);
-    this.renderAxis = this.renderAxis.bind(this);
-    this.renderBars = this.renderBars.bind(this);
     this.handleDeleteSvg = this.handleDeleteSvg.bind(this);
     this.groupDataByAggregateHour = this.groupDataByAggregateHour.bind(this);
   }
@@ -156,16 +154,13 @@ export default class BarChart extends Component {
     return formattedData;
   }
 
-  renderAxis() {
-
-  }
-
-  renderBars() {
-
-  }
-
   handleDeleteSvg() {
+    const {
+      uuid,
+      onDelete
+    } = this.props;
 
+    onDelete(uuid);
   }
 
   render() {

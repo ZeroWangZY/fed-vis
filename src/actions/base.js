@@ -1,0 +1,1 @@
+export const SET_BASE_PARAM = 'SET_BASE_PARAM';
