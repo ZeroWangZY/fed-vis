@@ -168,12 +168,22 @@ class MapPanel extends Component {
         return compute(num);
     }
     handleOverlayerType () {
-        const {currentDisplayType, selectedRectsNum, selectedRectsOnMap, latRange, lngRange, odmapOuterrectSize} = this.state;
+        const {currentDisplayType, selectedRectsNum, selectedRectsOnMap, latRange, lngRange, odmapOuterrectSize } = this.state;
+        const {selectRect} = this.props;
         const {odmapData} = this.props;
         let displayType = (currentDisplayType + 1) % 2;
-        // 切换到odmap时 如果有框选 在odmap上高亮最新一次框选对应的格子
+        // 切换到odmap时 如果有框选 在odmap上高亮selectrect对应的格子
         if (selectedRectsOnMap.length !== 0) {
-            let {lat_from, lat_to, lng_from, lng_to} = selectedRectsOnMap[selectedRectsOnMap.length-1].bounds;
+            let arrIndex = selectedRectsOnMap.length-1;
+            if (selectRect !== -1)  {
+                for (let i = 0; i <selectedRectsOnMap.length; i++) {
+                    if (parseInt(selectRect) === selectedRectsOnMap[i].index) {
+                        // id = selectRect;
+                        arrIndex = i;
+                    }
+                }
+            }
+            let {lat_from, lat_to, lng_from, lng_to} = selectedRectsOnMap[arrIndex].bounds;
             let outerBounds = [];
             let newUserrectIndexBounds = []; // 框在odmap上的index bound
             // 对比rectBounds在odmap的哪个区域
