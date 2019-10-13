@@ -6,7 +6,7 @@ const mapStateToProps = (state) => {
   return {
     heatmapData: state.heatmapData,
     odmapData: state.odmapData,
-    selectRect: state.idOfHighlightedBarchart
+    selectRect: state.highlightId
   };
 };
 
