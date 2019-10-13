@@ -51,6 +51,7 @@ class MapPanel extends Component {
         this.createARect = this.createARect.bind(this);
         this.handleODmapClick = this.handleODmapClick.bind(this);
         this.handleODmapMouseOut= this.handleODmapMouseOut.bind(this);
+        // this.handleMapClick = this.handleMapClick.bind(this);
     }
 
     /**
@@ -72,24 +73,18 @@ class MapPanel extends Component {
         let type = e.layerType;
         let layer = e.layer;
         if (type === 'marker') {
-            // Do marker specific actions
             console.log('_onCreated: marker created', e);
         } else {
-            // console.log('_onCreated: something else created:', type, e);
-            // this.selectHeatMapPoints(layer._bounds);
             this.createARect(layer._bounds);
             
         }
-        // Do whatever else you need to. (save to db; etc)
-
-        // this._onChange();
     };
     _onDeleted = e => {
         let rectIndex = -1;
         for (let i in e.layers._layers) {
             rectIndex = e.layers._layers[i]._path.classList[0].split('-')[1];
         }
-        // 删除rect  修改selectedRectsOnMap selectedRectsNum  to modify
+        // 删除rect
         const {selectedRectsNum, selectedRectsOnMap} = this.state;
         // let newSelectedRectsNum = selectedRectsNum - 1;
         let newSelectedRectsOnMap = selectedRectsOnMap;
@@ -103,10 +98,11 @@ class MapPanel extends Component {
             // selectedRectsNum: newSelectedRectsNum,
             selectedRectsOnMap: newSelectedRectsOnMap
         });
+        // this.props.onSelect
     }
-    _onEdited = e => {
-        console.log('edit ', e);
-    }
+    // _onEdited = e => {
+    //     console.log('edit ', e);
+    // }
     componentDidUpdate(prevProps, prevState) {
         // if (
         //     prevProps.heatData != this.props.heatData &&
@@ -171,7 +167,7 @@ class MapPanel extends Component {
         const {odmapData} = this.props;
         let displayType = (currentDisplayType + 1) % 2;
         // 切换到odmap时 如果有框选 在odmap上高亮最新一次框选对应的格子
-        if (selectedRectsNum !== 0) {
+        if (selectedRectsOnMap.length !== 0) {
             let {lat_from, lat_to, lng_from, lng_to} = selectedRectsOnMap[selectedRectsOnMap.length-1].bounds;
             let outerBounds = [];
             let newUserrectIndexBounds = []; // 框在odmap上的index bound
@@ -195,7 +191,8 @@ class MapPanel extends Component {
         } else {
             this.setState({
                 currentDisplayType: displayType,
-                isShowTooltipLine: false
+                isShowTooltipLine: false,
+                userrectIndexBounds: []// odmap上无高亮
             });
         }
     }
@@ -219,6 +216,12 @@ class MapPanel extends Component {
             tooltipLinePos: newPos
         })
     }
+    // handleMapClick () {
+    //     console.log('111')
+    //     this.setState({
+    //         isShowTooltipLine: false
+    //     })
+    // }
     handleODmapMouseOut() {
         this.setState({
             isShowTooltipLine: false
