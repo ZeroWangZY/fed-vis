@@ -82,7 +82,7 @@ export default class Calendar extends Component {
         }
         <CalendarMap
           baseTranslateX={baseTranslateX}
-          baseTranslateY={30 + baseTranslateY}
+          baseTranslateY={50 + baseTranslateY}
           cellSize={cellSize}
           dataset={dataset}
           colorSet={colorSet}

@@ -63,7 +63,6 @@ export default class BarChart extends Component {
       dataKeys,
       aggregateHour,
     } = this.props;
-
     const width = svgWidth - 2 * padding.left;
     const height = svgHeight - 2 * padding.top;
 
@@ -92,7 +91,6 @@ export default class BarChart extends Component {
     const colorScale = d3.scaleOrdinal()
       .domain(stackKeys)
       .range(colorClass);
-    window.colorScale = colorScale;
 
     gChart.append("g")
       .selectAll("g")
@@ -152,6 +150,7 @@ export default class BarChart extends Component {
 
       formattedData.push(dataEle);
     }
+
     return formattedData;
   }
 

@@ -10,6 +10,7 @@ export default function* initCalendar() {
   }));
 
   if (resp.data) {
+    delete resp.data.data["4"];
     yield put({
       type: INIT_CALENDAR,
       data: resp.data.data,
