@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import MapPanel from 'components/map/MapPanel';
-import {addBarchart} from 'actions/barchart'
+import {addBarchart, deleteBarchart} from 'actions/barchart'
 
 const mapStateToProps = (state) => {
   return {
@@ -14,6 +14,9 @@ const mapDispatchToProps = (dispatch) => {
     onSelect: (index, bounds) => {
       // to add 框选
       dispatch(addBarchart(index, bounds));
+    },
+    onDeleteRect: (index) =>{
+      dispatch(deleteBarchart(index));
     }
   };
 };

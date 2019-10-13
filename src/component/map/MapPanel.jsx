@@ -75,6 +75,11 @@ class MapPanel extends Component {
         if (type === 'marker') {
             console.log('_onCreated: marker created', e);
         } else {
+            // 创建新的rect 把之前的rect隐藏
+            let prevRects = document.getElementsByClassName('drawRect');
+            for (let i = 0; i < prevRects.length - 1; i++) {
+                prevRects[i].style.display = 'none';
+            }
             this.createARect(layer._bounds);
             
         }
@@ -98,7 +103,7 @@ class MapPanel extends Component {
             // selectedRectsNum: newSelectedRectsNum,
             selectedRectsOnMap: newSelectedRectsOnMap
         });
-        // this.props.onSelect
+        this.props.onDeleteRect(parseInt(rectIndex));
     }
     // _onEdited = e => {
     //     console.log('edit ', e);
@@ -369,7 +374,7 @@ class MapPanel extends Component {
                                                 opacity: 0.5,
                                                 stroke: true,
                                                 weight: 2,
-                                                className: 'drawRect-' + selectedRectsNum
+                                                className: 'drawRect-' + selectedRectsNum +' drawRect'
                                             }
                                         },
                                         marker: false,
