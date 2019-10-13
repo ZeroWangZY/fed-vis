@@ -12,7 +12,7 @@ export const barchartData = (state = [], action) => {
   }
 };
 
-export const idOfHighlightedBarchart = (state = -1, action) => {
+export const highlightId = (state = -1, action) => {
   switch(action.type) {
     case SELECT_BARCHART:
       return action.id;

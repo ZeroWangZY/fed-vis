@@ -11,6 +11,7 @@ const { Option } = Select;
 function mapStateToProps(state) {
   return {
     dataset: state.barchartData,
+    highlightId: state.highlightId,
   };
 }
 
@@ -48,7 +49,6 @@ class DetailPanel extends React.PureComponent {
   }
 
   handleSliderChange(value) {
-    console.log("in handleSliderChange", value);
     this.setState({
       aggregateHour: value
     });
@@ -83,6 +83,7 @@ class DetailPanel extends React.PureComponent {
 
     const {
       dataset,
+      highlightId,
     } = this.props;
 
     return (
@@ -111,6 +112,7 @@ class DetailPanel extends React.PureComponent {
                   data={data.data}
                   dataKeys={dataKeys}
                   aggregateHour={parseInt(aggregateHour, 10)}
+                  highlightId={highlightId}
                   onSelect={handleSelectBarChart}
                   onDelete={handleDeleteBarChart}
                 />

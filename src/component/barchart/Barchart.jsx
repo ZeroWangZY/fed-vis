@@ -164,14 +164,13 @@ export default class BarChart extends Component {
     onDelete(uuid);
   }
 
-  handleSelectSvg(event) {
-    if (event.target.className.baseVal !== 'barchart__deletebtn') {
-      const {
-        uuid,
-        onSelect,
-      } = this.props;
-      onSelect(uuid);
-    }
+  handleSelectSvg() {
+    const {
+      uuid,
+      onSelect,
+    } = this.props;
+
+    onSelect(uuid);
   }
 
   render() {
@@ -186,11 +185,12 @@ export default class BarChart extends Component {
 
     const {
       uuid,
+      highlightId,
     } = this.props;
 
     return (
       <svg
-        className="barchart"
+        className={`barchart ${uuid === highlightId ? 'barchart__highlight' : 'barchart__nohighlight'}`}
         ref={node => {
           this.node = node;
         }}

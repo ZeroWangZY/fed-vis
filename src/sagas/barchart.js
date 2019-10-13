@@ -1,5 +1,5 @@
 import { put, takeLatest, select, call } from 'redux-saga/effects';
-import { RENEW_BARCHART, DELETE_BARCHART, ADD_BARCHART } from '../actions/barchart';
+import { RENEW_BARCHART, DELETE_BARCHART, ADD_BARCHART, SELECT_BARCHART } from '../actions/barchart';
 import Apis from '../api/apis';
 import { get } from '../api/tools';
 
@@ -23,6 +23,11 @@ function* processDeleteBarchart(action) {
   yield put({
     type: RENEW_BARCHART,
     new: newBarchartData,
+  });
+
+  yield put({
+    type: SELECT_BARCHART,
+    id: -1,
   });
 }
 
@@ -58,6 +63,11 @@ function* processAddBarchart(action) {
   yield put({
     type: RENEW_BARCHART,
     new: newBarchartData,
+  });
+
+  yield put({
+    type: SELECT_BARCHART,
+    id,
   });
 }
 
