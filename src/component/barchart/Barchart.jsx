@@ -20,11 +20,11 @@ export default class BarChart extends Component {
   constructor(props) {
     super(props);
 
-    this.svgWidth = 300;
+    this.svgWidth = 320;
     this.svgHeight = 230;
     this.padding = {
       top: 45,
-      left: 30,
+      left: 50,
     };
     this.iconSize = 10;
     this.colorClass = [
@@ -37,6 +37,7 @@ export default class BarChart extends Component {
 
     this.renderByD3 = this.renderByD3.bind(this);
     this.handleDeleteSvg = this.handleDeleteSvg.bind(this);
+    this.handleSelectSvg = this.handleSelectSvg.bind(this);
     this.groupDataByAggregateHour = this.groupDataByAggregateHour.bind(this);
   }
 
@@ -157,10 +158,21 @@ export default class BarChart extends Component {
   handleDeleteSvg() {
     const {
       uuid,
-      onDelete
+      onDelete,
     } = this.props;
 
     onDelete(uuid);
+  }
+
+  handleSelectSvg(event) {
+    if (event.target.className.baseVal !== 'barchart__deletebtn') {
+      const {
+        uuid,
+        onSelect,
+      } = this.props;
+
+      onSelect(uuid);
+    }
   }
 
   render() {
@@ -170,6 +182,7 @@ export default class BarChart extends Component {
       iconSize,
       padding,
       handleDeleteSvg,
+      handleSelectSvg,
     } = this;
 
     const {
@@ -184,6 +197,7 @@ export default class BarChart extends Component {
         }}
         width={svgWidth}
         height={svgHeight}
+        onClick={handleSelectSvg}
       >
         <g className="barchart__group"
           transform={`translate(${padding.left}, ${padding.top})`}

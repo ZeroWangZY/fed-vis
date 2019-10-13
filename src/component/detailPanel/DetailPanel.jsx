@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import './DetailPanel.less';
 import BarChart from '../barchart/Barchart';
-import { deleteBarchart } from '../../actions/barchart';
+import { deleteBarchart, selectBarchart } from '../../actions/barchart';
 
 import { Select } from 'antd';
 import "antd/lib/select/style/index.css";
@@ -17,22 +17,14 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     deleteBarchartById: id => dispatch(deleteBarchart(id)),
+    selectBarchartById: id => dispatch(selectBarchart(id)),
   };
 }
 
 class DetailPanel extends React.PureComponent {
   constructor () {
     super();
-  
-    this.dataset = new Array(6).fill([
-      new Array(24).fill(1),
-      new Array(24).fill(2),
-      new Array(24).fill(1),
-      new Array(24).fill(2),
-      new Array(24).fill(1),
-      new Array(24).fill(2),
-      new Array(24).fill(1),
-    ]);
+
     this.dataKeys = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     this.aggregateHourOptions = [
@@ -62,15 +54,17 @@ class DetailPanel extends React.PureComponent {
     });
   }
 
-  handleSelectBarChart() {
-    console.log("in handleSelectBarChart");
+  handleSelectBarChart(uuid) {
+    const {
+      selectBarchartById,
+    } = this.props;
+    selectBarchartById(uuid);
   }
 
   handleDeleteBarChart(uuid) {
     const {
       deleteBarchartById,
     } = this.props;
-    console.log("in handleDeleteBarChart", uuid);
     deleteBarchartById(uuid);
   }
 
@@ -90,7 +84,6 @@ class DetailPanel extends React.PureComponent {
     const {
       dataset,
     } = this.props;
-    console.log(111, dataset);
 
     return (
       <div id="detail-panel">

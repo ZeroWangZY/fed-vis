@@ -13,7 +13,7 @@ export default class Calendar extends Component {
 
     // mock数据, 后面部分要干掉
     this.daySet = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    this.dayTextTranslateY = 30;
+    this.dayTextTranslateY = 20;
     this.year = 2019;
 
     this.colorSet = ['#d7191c', '#fdae61', '#ffffbf', '#a6d96a', '#1a9641'];
@@ -23,7 +23,7 @@ export default class Calendar extends Component {
     this.svgWidth = 318;
 
     this.legendSpacingX = 10;
-    this.legendSpacingY = 20;
+    this.legendSpacingY = 10;
 
     // this.dataset = dataset;
     this.generateBaseTranslateY = this.generateBaseTranslateY.bind(this);
@@ -82,7 +82,7 @@ export default class Calendar extends Component {
         }
         <CalendarMap
           baseTranslateX={baseTranslateX}
-          baseTranslateY={50 + baseTranslateY}
+          baseTranslateY={30 + baseTranslateY}
           cellSize={cellSize}
           dataset={dataset}
           colorSet={colorSet}
