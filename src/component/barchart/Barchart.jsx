@@ -28,9 +28,9 @@ export default class BarChart extends Component {
     };
     this.iconSize = 10;
     this.colorClass = [
-      '#d7191c',
+      '#F06466',
       '#fdae61',
-      '#ffffbf',
+      '#95C0DA',//'#ffffbf',
       '#abd9e9',
       '#2c7bb6',
     ];

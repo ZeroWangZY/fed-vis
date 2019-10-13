@@ -164,7 +164,7 @@ class MapPanel extends Component {
         });
     }
     computeColor (num) {//236,213,214
-        let compute = d3.interpolate(d3.rgb(236,213,214), d3.rgb(131,4,4));//d3.rgb(215,25,28));
+        let compute = d3.interpolate(d3.rgb(236,213,214), d3.rgb(240,100,102));//d3.rgb(215,25,28));
         return compute(num);
     }
     handleOverlayerType () {

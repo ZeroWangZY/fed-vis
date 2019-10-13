@@ -16,7 +16,7 @@ export default class Calendar extends Component {
     this.dayTextTranslateY = 20;
     this.year = 2019;
 
-    this.colorSet = ['#d7191c', '#fdae61', '#ffffbf', '#a6d96a', '#1a9641'].reverse();
+    this.colorSet = ['#fbf9db', '#B3D8DF', '#95C0DA', '#215ea5', '#273a90'];
 
     this.cellSize = 24;
 
