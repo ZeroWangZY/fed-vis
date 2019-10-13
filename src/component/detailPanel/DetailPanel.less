@@ -1,19 +1,37 @@
 #detail-panel {
   max-width: 100%;
-
-  .panel-title {
-    color: #333;
-    line-height: 50px;
-    height: 50px;
-    text-align: left;
-    font-size: 22px;
-    padding-left: 30px;
-    font-weight: 500;
-    border-bottom: solid 1px #333;
-    // border-right: solid 1px #333;
-    // border-top: solid 1px #333;
-  }
   border: solid 1px #333;
+  border-left: none;
+
+  .detail-panel-heading {
+    // color: #333;
+    // line-height: 50px;
+    box-sizing: border-box;
+    height: 50px;
+    border-bottom: solid 1px #333;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .detail-panel-heading__title {
+    width: 300px;
+    line-height: 50px;
+    font-size: 22px;
+    color: #333;
+    margin-left: 30px;
+    font-weight: 500;
+  }
+
+  .detail-panel-heading__filter {
+    display: flex;
+    align-items: center;
+    margin-right: 50px;
+  }
+
+  .detail-panel-heading__filter__hint {
+    margin-right: 20px;
+  }
 
   #detail-content {
     width: 100%;
@@ -21,31 +39,31 @@
     display: flex;
   }
 
-  .detail-content__filter {
-    width: 200px;
-    position: relative;
-    display: inline-flex;
-    align-items: flex-start;
-    justify-content: center;
-  }
+  // .detail-content__filter {
+  //   width: 200px;
+  //   position: relative;
+  //   display: inline-flex;
+  //   align-items: flex-start;
+  //   justify-content: center;
+  // }
 
-  .detail-content__filter__hint {
-    writing-mode: vertical-lr;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50% - 350px, -50%) rotate(180deg);
-    transform-origin: center;
-  }
+  // .detail-content__filter__hint {
+  //   writing-mode: vertical-lr;
+  //   position: absolute;
+  //   top: 50%;
+  //   left: 50%;
+  //   transform: translate(-50% - 350px, -50%) rotate(180deg);
+  //   transform-origin: center;
+  // }
 
-  div.ant-select {
-    margin-top: 20px;
-  }
+  // div.ant-select {
+  //   margin-top: 20px;
+  // }
 
   .detail-content__info {
     height: 100%;
     max-height: 257.15px;
-    width: calc(100% - 100px);
+    width: 100%;
     display: inline-flex;
     overflow-y: auto;
     align-items: flex-start;

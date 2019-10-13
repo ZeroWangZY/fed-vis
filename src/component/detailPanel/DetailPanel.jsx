@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import './DetailPanel.less';
 import BarChart from '../barchart/Barchart';
-import { deleteBarchart, selectBarchart } from '../../actions/barchart';
+import { deleteBarchart, selectBarchart, setAggregateHour } from '../../actions/barchart';
 
 import { Select } from 'antd';
 import "antd/lib/select/style/index.css";
@@ -11,6 +11,7 @@ const { Option } = Select;
 function mapStateToProps(state) {
   return {
     dataset: state.barchartData,
+    aggregateHour: state.aggregateHour,
     highlightId: state.highlightId,
   };
 }
@@ -19,6 +20,7 @@ function mapDispatchToProps(dispatch) {
   return {
     deleteBarchartById: id => dispatch(deleteBarchart(id)),
     selectBarchartById: id => dispatch(selectBarchart(id)),
+    setAggregateHour: hour => dispatch(setAggregateHour(hour)),
   };
 }
 
@@ -49,9 +51,10 @@ class DetailPanel extends React.PureComponent {
   }
 
   handleSliderChange(value) {
-    this.setState({
-      aggregateHour: value
-    });
+    const {
+      setAggregateHour
+    } = this.props;
+    setAggregateHour(parseInt(value, 10));
   }
 
   handleSelectBarChart(uuid) {
@@ -78,20 +81,17 @@ class DetailPanel extends React.PureComponent {
     } = this;
 
     const {
-      aggregateHour,
-    } = this.state;
-
-    const {
       dataset,
+      aggregateHour,
       highlightId,
     } = this.props;
 
     return (
       <div id="detail-panel">
-        <div className="panel-title">Detail Comparison Overview</div>
-        <div id="detail-content">
-          <div className="detail-content__filter">
-            <div className="detail-content__filter__hint">Hours per bar</div>
+        <div className="detail-panel-heading">
+          <div className="detail-panel-heading__title">Detail Comparison Overview</div>
+          <div className="detail-panel-heading__filter">
+            <div className="detail-panel-heading__filter__hint">Hours per bar</div>
             <Select defaultValue={aggregateHourOptions[0]} style={{ width: 80 }} onChange={handleSliderChange}>
               {
                 aggregateHourOptions.map((option, optionIndex) =>
@@ -103,6 +103,8 @@ class DetailPanel extends React.PureComponent {
               }
             </Select>
           </div>
+        </div>
+        <div id="detail-content">
           <div className='detail-content__info'>
             {
               dataset.map(data =>
@@ -111,7 +113,7 @@ class DetailPanel extends React.PureComponent {
                   uuid={data.id}
                   data={data.data}
                   dataKeys={dataKeys}
-                  aggregateHour={parseInt(aggregateHour, 10)}
+                  aggregateHour={aggregateHour}
                   highlightId={highlightId}
                   onSelect={handleSelectBarChart}
                   onDelete={handleDeleteBarChart}

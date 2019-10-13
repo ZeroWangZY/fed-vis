@@ -3,6 +3,7 @@ export const DELETE_BARCHART = 'DELETE_BARCHART';
 export const RENEW_BARCHART = 'RENEW_BARCHART';
 export const CLEAR_BARCHART = 'CLEAR_BARCHART';
 export const SELECT_BARCHART = 'SELECT_BARCHART';
+export const SET_AGGREGATE_HOUR = 'SET_AGGREGATE_HOUR';
 
 // to modify
 export function addBarchart(id, bounds) {
@@ -25,4 +26,11 @@ export function selectBarchart(id) {
     type: SELECT_BARCHART,
     id,
   };
+}
+
+export function setAggregateHour(hour) {
+  return {
+    type: SET_AGGREGATE_HOUR,
+    hour,
+  }
 }

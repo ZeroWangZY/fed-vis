@@ -1,6 +1,7 @@
 import { 
   RENEW_BARCHART,
   SELECT_BARCHART,
+  SET_AGGREGATE_HOUR,
 } from '../actions/barchart';
 
 export const barchartData = (state = [], action) => {
@@ -20,3 +21,12 @@ export const highlightId = (state = -1, action) => {
       return state;
   }
 };
+
+export const aggregateHour = (state = 24, action) => {
+  switch(action.type) {
+    case SET_AGGREGATE_HOUR:
+      return action.hour;
+    default:
+      return state;
+  }
+}
