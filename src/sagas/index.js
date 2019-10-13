@@ -11,5 +11,6 @@ export default function * rootSaga () {
     watchOdmapByTimeRange(),
     watchDeleteBarchart(),
     watchAddBarchart(),
+    // watchSelectBarchart()
   ])
 }

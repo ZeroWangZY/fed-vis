@@ -5,7 +5,8 @@ import {addBarchart, deleteBarchart} from 'actions/barchart'
 const mapStateToProps = (state) => {
   return {
     heatmapData: state.heatmapData,
-    odmapData: state.odmapData
+    odmapData: state.odmapData,
+    selectRect: state.idOfHighlightedBarchart
   };
 };
 

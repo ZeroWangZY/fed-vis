@@ -170,7 +170,6 @@ export default class BarChart extends Component {
         uuid,
         onSelect,
       } = this.props;
-
       onSelect(uuid);
     }
   }

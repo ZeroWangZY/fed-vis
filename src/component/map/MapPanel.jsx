@@ -147,6 +147,8 @@ class MapPanel extends Component {
     }
     createARect (bounds) {
         let rectId = this.state.selectedRectsNum;
+        // add barchart
+        this.props.onSelect(rectId, bounds);
         let newSelectedRectsOnMap = this.state.selectedRectsOnMap;
         let latlngbound = {
             lng_from: bounds._southWest.lng,
@@ -160,8 +162,6 @@ class MapPanel extends Component {
             selectedRectsNum: rectId,
             selectedRectsOnMap: newSelectedRectsOnMap
         });
-        // add barchart
-        this.props.onSelect(rectId, bounds);
     }
     computeColor (num) {//236,213,214
         let compute = d3.interpolate(d3.rgb(236,213,214), d3.rgb(131,4,4));//d3.rgb(215,25,28));
@@ -231,6 +231,16 @@ class MapPanel extends Component {
         this.setState({
             isShowTooltipLine: false
         })
+    }
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.selectRect !== -1) {
+            // 创建新的rect 把之前的rect隐藏
+            let prevRects = document.getElementsByClassName('drawRect');
+            for (let i = 0; i < prevRects.length; i++) {
+                prevRects[i].style.display = 'none';
+            }
+            document.getElementsByClassName('drawRect-' + nextProps.selectRect)[0].style.display = 'block';
+        }
     }
     render() {
         let me = this;
