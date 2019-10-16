@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
+import d3Tip from 'd3-tip';
 import './BarChart.less';
 
 function customXAxis(xAxis) {
@@ -39,6 +40,7 @@ export default class BarChart extends Component {
     this.handleDeleteSvg = this.handleDeleteSvg.bind(this);
     this.handleSelectSvg = this.handleSelectSvg.bind(this);
     this.groupDataByAggregateHour = this.groupDataByAggregateHour.bind(this);
+    this.getHourRange = this.getHourRange.bind(this);
   }
 
   componentDidMount() {
@@ -55,18 +57,23 @@ export default class BarChart extends Component {
       svgHeight,
       colorClass,
       groupDataByAggregateHour,
+      getHourRange,
       padding,
     } = this;
 
     const {
       data,
+      uuid,
       dataKeys,
       aggregateHour,
     } = this.props;
     const width = svgWidth - 2 * padding.left;
     const height = svgHeight - 2 * padding.top;
 
-    const formattedData = groupDataByAggregateHour(data, dataKeys, aggregateHour);
+    // 注意这两句的先后顺序
+    groupDataByAggregateHour(data, dataKeys, aggregateHour);
+    const formattedData = this.formattedData;
+
     let stackKeys = [];
     if (formattedData.length > 0) {
       stackKeys = Object.keys(formattedData[0]).filter(key => 
@@ -77,6 +84,22 @@ export default class BarChart extends Component {
     const gChart = d3.select(this.node).select('.barchart__group');
     // 先清空一遍svg下的所有元素
     gChart.selectAll('*').remove();
+    d3.select(`.d3-tip-${uuid}`).remove();
+    
+    let tip = d3Tip()
+      .attr('class', `d3-tip-${uuid}`)
+      .direction('e')
+      .offset([0, 10])
+      .html(function(data) {
+        return `
+          <div class="barchart-tooltip">
+          <div class="barchart-tooltip__row">Hour range: ${getHourRange(data.index)}</div>
+          <div class="barchart-tooltip__row">Data num: ${data.d[1] - data.d[0]}</div>
+          </div>
+        `;
+      });
+
+    gChart.call(tip);
 
     const xScale = d3.scaleBand()
       .domain(dataKeys)
@@ -98,6 +121,7 @@ export default class BarChart extends Component {
       .enter()
       .append("g")
       .attr("fill", d => colorScale(d.key))
+      .attr("class", (_, i) => `barchart-rects-${i}`)
       .selectAll("rect")
       .data(d => d)
       .enter()
@@ -105,7 +129,16 @@ export default class BarChart extends Component {
       .attr("x", d => xScale(d.data["type"]))
       .attr("y", d => yScale(d[1]))
       .attr("height", d => yScale(d[0]) - yScale(d[1]))
-      .attr("width", xScale.bandwidth());
+      .attr("width", xScale.bandwidth())
+      .on("mouseover", function(d) {
+        const tgtEle = d3.select(this).node();
+        const index = parseInt(d3.select(tgtEle.parentNode).attr("class").split("-")[2], 10);
+        tip.show({
+          d,
+          index
+        }, tgtEle);
+      })
+      .on("mouseout", tip.hide);
 
     gChart.append("g")
       .attr("class", "x-axis")
@@ -151,7 +184,15 @@ export default class BarChart extends Component {
       formattedData.push(dataEle);
     }
 
-    return formattedData;
+    this.formattedData = formattedData;
+  }
+
+  getHourRange(index) {
+    const {
+      aggregateHour
+    } = this.props;
+    const startTime = index * aggregateHour;
+    return `${startTime} ~ ${startTime + aggregateHour}`;
   }
 
   handleDeleteSvg() {
