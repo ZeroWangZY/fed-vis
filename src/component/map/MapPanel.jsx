@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import {
     Map,
     LayersControl,
@@ -16,8 +16,8 @@ import { EditControl } from 'react-leaflet-draw';
 import './map.less';
 import clsx from 'clsx';
 // import SelectedListItem from '../displayItems/ItemLists';
-import HeatmapLegend from '../legend/legend';
-import { rankIcon } from '../icons/RankIcon';
+// import HeatmapLegend from '../legend/legend';
+// import { rankIcon } from '../icons/RankIcon';
 import * as d3 from 'd3'
 
 class MapPanel extends Component {
@@ -243,7 +243,11 @@ class MapPanel extends Component {
         })
     }
     componentWillReceiveProps(nextProps) {
-        if (nextProps.selectRect !== -1) {
+        if (nextProps.deleteRect !== -1 && nextProps.deleteRect !== this.props.deleteRect) {
+            //删除指定rect
+            let rect = document.getElementsByClassName("drawRect-" + nextProps.deleteRect)[0];
+            // rect.parentNode.removeChild(rect);
+        } else if (nextProps.selectRect !== -1 && nextProps.selectRect !== this.props.selectRect) {
             // 创建新的rect 把之前的rect隐藏
             let prevRects = document.getElementsByClassName('drawRect');
             for (let i = 0; i < prevRects.length; i++) {

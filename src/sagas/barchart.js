@@ -1,5 +1,6 @@
 import { put, takeLatest, select, call } from 'redux-saga/effects';
-import { RENEW_BARCHART, DELETE_BARCHART, ADD_BARCHART, SELECT_BARCHART } from '../actions/barchart';
+import { RENEW_BARCHART, DELETE_BARCHART, ADD_BARCHART, SELECT_BARCHART } from 'actions/barchart';
+import { DELETE_RECT_ON_MAP } from 'actions/heatmap'
 import Apis from '../api/apis';
 import { get } from '../api/tools';
 
@@ -24,10 +25,13 @@ function* processDeleteBarchart(action) {
     type: RENEW_BARCHART,
     new: newBarchartData,
   });
-
   yield put({
     type: SELECT_BARCHART,
     id: -1,
+  });
+  yield put({
+    type: DELETE_RECT_ON_MAP,
+    id: id,
   });
 }
 
@@ -64,7 +68,6 @@ function* processAddBarchart(action) {
     type: RENEW_BARCHART,
     new: newBarchartData,
   });
-
   yield put({
     type: SELECT_BARCHART,
     id,

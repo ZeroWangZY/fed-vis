@@ -1,70 +1,21 @@
 import React from 'react';
 import './App.less';
-import clsx from 'clsx';
-import Paper from '@material-ui/core/Paper';
-import InputBase from '@material-ui/core/InputBase';
-import IconButton from '@material-ui/core/IconButton';
-import SearchIcon from '@material-ui/icons/Search';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import { Drawer, Divider } from '@material-ui/core';
-import { withStyles } from '@material-ui/styles';
+// import clsx from 'clsx';
+// import Paper from '@material-ui/core/Paper';
+// import InputBase from '@material-ui/core/InputBase';
+// import IconButton from '@material-ui/core/IconButton';
+// import SearchIcon from '@material-ui/icons/Search';
+// import MenuIcon from '@material-ui/icons/Menu';
+// import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+// import { Drawer, Divider } from '@material-ui/core';
+// import { withStyles } from '@material-ui/styles';
 
 // import MapPanel from './component/map/MapPanel';
-import BarChart from './component/barchart/Barchart';
 import ControlPanelContainer from 'container/ControlPanelContainer';
 import MapPanelContainer from 'container/MapPanelContainer';
 import DetailPanelContainer from 'container/DetailPanelContainer';
 import DataOverviewPanel from './component/dataoverviewPanel/DataOverviewPanel';
 // import DetailPanel from './component/detailPanel/DetailPanel'
-
-import Sankey from './component/sankey/Sankey';
-
-function processDataToPoints(data) {
-    let points = [];
-    data.forEach((item1, i) => {
-        item1.forEach((item2, j) => {
-            if (item2 !== 0) {
-                points.push({
-                    lng: j - 180,
-                    lat: i - 90,
-                    count: item2
-                });
-            }
-        });
-    });
-    return points;
-}
-
-const drawerWidth = 380;
-
-const styles = {
-    hide: {
-        display: 'none'
-    },
-    drawer: {
-        width: drawerWidth,
-    },
-    drawerPaper: {
-        width: drawerWidth,
-        background: '#d1d1d1'
-    },
-    drawerHeader: {
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0 8px',
-        justifyContent: 'flex-start'
-        // ...theme.mixins.toolbar,
-    },
-    content: {
-        transition: 'margin cubic-bezier(0.4, 0, 0.6, 1) 225ms'
-        // marginLeft: 0
-    },
-    contentShift: {
-        // marginLeft: -drawerWidth,
-        transition: 'margin cubic-bezier(0.4, 0, 0.6, 1) 225ms'
-    }
-};
 
 class App extends React.Component {
     constructor(props) {
@@ -104,7 +55,7 @@ class App extends React.Component {
     }
     
     render() {
-        let { heatData, dataName } = this.state;
+        let { heatData } = this.state;
         let { isDrawerOpen } = this.state;
         // const { classes } = this.props;
 

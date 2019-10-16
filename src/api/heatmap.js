@@ -1,4 +1,4 @@
-import { post , get} from './tools';
+import { get } from './tools';
 import Apis from './apis';
 
 export const getHeatmap = params => {
