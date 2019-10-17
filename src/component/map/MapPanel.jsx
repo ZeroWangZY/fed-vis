@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import {
     Map,
     LayersControl,
@@ -16,8 +16,8 @@ import { EditControl } from 'react-leaflet-draw';
 import './map.less';
 import clsx from 'clsx';
 // import SelectedListItem from '../displayItems/ItemLists';
-import HeatmapLegend from '../legend/legend';
-import { rankIcon } from '../icons/RankIcon';
+// import HeatmapLegend from '../legend/legend';
+// import { rankIcon } from '../icons/RankIcon';
 import * as d3 from 'd3'
 
 class MapPanel extends Component {
@@ -108,21 +108,6 @@ class MapPanel extends Component {
     // _onEdited = e => {
     //     console.log('edit ', e);
     // }
-    componentDidUpdate(prevProps, prevState) {
-        // if (
-        //     prevProps.heatData != this.props.heatData &&
-        //     this.props.heatData != null
-        // ) {
-        //     //获得top 10 elements
-        //     let temp = this.props.heatData.sort((a, b) => b.count - a.count);
-        //     this.setState({
-        //         topTen: temp.slice(0, 10),
-        //         showTopTen: true,
-        //         maxValue: temp[0].count,
-        //         minValue: temp.pop().count
-        //     });
-        // }
-    }
 
     createAMarker(index) {
         let { $markers, topTen } = this.state;
@@ -168,12 +153,22 @@ class MapPanel extends Component {
         return compute(num);
     }
     handleOverlayerType () {
-        const {currentDisplayType, selectedRectsNum, selectedRectsOnMap, latRange, lngRange, odmapOuterrectSize} = this.state;
+        const {currentDisplayType, selectedRectsNum, selectedRectsOnMap, latRange, lngRange, odmapOuterrectSize } = this.state;
+        const {selectRect} = this.props;
         const {odmapData} = this.props;
         let displayType = (currentDisplayType + 1) % 2;
-        // 切换到odmap时 如果有框选 在odmap上高亮最新一次框选对应的格子
+        // 切换到odmap时 如果有框选 在odmap上高亮selectrect对应的格子
         if (selectedRectsOnMap.length !== 0) {
-            let {lat_from, lat_to, lng_from, lng_to} = selectedRectsOnMap[selectedRectsOnMap.length-1].bounds;
+            let arrIndex = selectedRectsOnMap.length-1;
+            if (selectRect !== -1)  {
+                for (let i = 0; i <selectedRectsOnMap.length; i++) {
+                    if (parseInt(selectRect) === selectedRectsOnMap[i].index) {
+                        // id = selectRect;
+                        arrIndex = i;
+                    }
+                }
+            }
+            let {lat_from, lat_to, lng_from, lng_to} = selectedRectsOnMap[arrIndex].bounds;
             let outerBounds = [];
             let newUserrectIndexBounds = []; // 框在odmap上的index bound
             // 对比rectBounds在odmap的哪个区域
@@ -232,14 +227,20 @@ class MapPanel extends Component {
             isShowTooltipLine: false
         })
     }
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.selectRect !== -1) {
+    componentDidUpdate(prevProps) {
+        if (this.props.deleteRect !== -1 && this.props.deleteRect !== prevProps.deleteRect) {
+            //删除指定rect
+            if (document.getElementsByClassName("drawRect-" + this.props.deleteRect).length > 0) {// 如果直接删的矩形 则元素已不存在
+                let rect = document.getElementsByClassName("drawRect-" + this.props.deleteRect)[0];
+                rect.parentNode.removeChild(rect);
+            }
+        } else if (this.props.selectRect !== -1 && this.props.selectRect !== prevProps.selectRect) {
             // 创建新的rect 把之前的rect隐藏
             let prevRects = document.getElementsByClassName('drawRect');
             for (let i = 0; i < prevRects.length; i++) {
                 prevRects[i].style.display = 'none';
             }
-            document.getElementsByClassName('drawRect-' + nextProps.selectRect)[0].style.display = 'block';
+            document.getElementsByClassName('drawRect-' + this.props.selectRect)[0].style.display = 'block';
         }
     }
     render() {

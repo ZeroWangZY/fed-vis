@@ -1,4 +1,4 @@
-import { GET_HEATMAP_BY_TIME_RANGE, SHOW_HEATMAP } from 'actions/heatmap';
+import { GET_HEATMAP_BY_TIME_RANGE } from 'actions/heatmap';
 import { SHOW_ODMAP } from 'actions/odmap';
 import { put, takeLatest, call, all } from 'redux-saga/effects';
 import api from 'api';

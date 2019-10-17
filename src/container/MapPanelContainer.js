@@ -6,7 +6,8 @@ const mapStateToProps = (state) => {
   return {
     heatmapData: state.heatmapData,
     odmapData: state.odmapData,
-    selectRect: state.highlightId
+    selectRect: state.highlightId,
+    deleteRect: state.deleteRectId
   };
 };
 

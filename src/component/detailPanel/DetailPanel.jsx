@@ -89,7 +89,7 @@ class DetailPanel extends React.PureComponent {
     return (
       <div id="detail-panel">
         <div className="detail-panel-heading">
-          <div className="detail-panel-heading__title">Detail Comparison Overview</div>
+          <div className="detail-panel-heading__title">Detail Comparison Panel</div>
           <div className="detail-panel-heading__filter">
             <div className="detail-panel-heading__filter__hint">Hours per bar</div>
             <Select defaultValue={aggregateHourOptions[0]} style={{ width: 80 }} onChange={handleSliderChange}>

@@ -1,6 +1,6 @@
-import { SHOW_HEATMAP } from 'actions/heatmap';
+import { SHOW_HEATMAP, DELETE_RECT_ON_MAP } from 'actions/heatmap';
 
-const heatmapData = (state = [], action) => {
+export const heatmapData = (state = [], action) => {
   switch (action.type) {
     case SHOW_HEATMAP:
       let [min, max] = getMinMax(action.heatmapData.data);
@@ -10,7 +10,14 @@ const heatmapData = (state = [], action) => {
   }
 };
 
-export default heatmapData;
+export const deleteRectId = (state = -1, action) => {
+  switch (action.type) {
+    case DELETE_RECT_ON_MAP:
+      return action.id
+    default:
+      return state;
+  }
+}
 
 function getMinMax (data) {
   let min = 999, max = 0;
