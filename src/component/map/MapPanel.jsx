@@ -108,21 +108,6 @@ class MapPanel extends Component {
     // _onEdited = e => {
     //     console.log('edit ', e);
     // }
-    componentDidUpdate(prevProps, prevState) {
-        // if (
-        //     prevProps.heatData != this.props.heatData &&
-        //     this.props.heatData != null
-        // ) {
-        //     //获得top 10 elements
-        //     let temp = this.props.heatData.sort((a, b) => b.count - a.count);
-        //     this.setState({
-        //         topTen: temp.slice(0, 10),
-        //         showTopTen: true,
-        //         maxValue: temp[0].count,
-        //         minValue: temp.pop().count
-        //     });
-        // }
-    }
 
     createAMarker(index) {
         let { $markers, topTen } = this.state;
@@ -242,18 +227,20 @@ class MapPanel extends Component {
             isShowTooltipLine: false
         })
     }
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.deleteRect !== -1 && nextProps.deleteRect !== this.props.deleteRect) {
+    componentDidUpdate(prevProps) {
+        if (this.props.deleteRect !== -1 && this.props.deleteRect !== prevProps.deleteRect) {
             //删除指定rect
-            let rect = document.getElementsByClassName("drawRect-" + nextProps.deleteRect)[0];
-            // rect.parentNode.removeChild(rect);
-        } else if (nextProps.selectRect !== -1 && nextProps.selectRect !== this.props.selectRect) {
+            if (document.getElementsByClassName("drawRect-" + this.props.deleteRect).length > 0) {// 如果直接删的矩形 则元素已不存在
+                let rect = document.getElementsByClassName("drawRect-" + this.props.deleteRect)[0];
+                rect.parentNode.removeChild(rect);
+            }
+        } else if (this.props.selectRect !== -1 && this.props.selectRect !== prevProps.selectRect) {
             // 创建新的rect 把之前的rect隐藏
             let prevRects = document.getElementsByClassName('drawRect');
             for (let i = 0; i < prevRects.length; i++) {
                 prevRects[i].style.display = 'none';
             }
-            document.getElementsByClassName('drawRect-' + nextProps.selectRect)[0].style.display = 'block';
+            document.getElementsByClassName('drawRect-' + this.props.selectRect)[0].style.display = 'block';
         }
     }
     render() {
