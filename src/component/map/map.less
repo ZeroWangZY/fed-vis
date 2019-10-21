@@ -1,4 +1,7 @@
 #map-content {
+    .linkline {
+        cursor: pointer;
+    }
     .panel-title {
         color: #333;
         line-height: 50px;
@@ -10,11 +13,16 @@
         border-left: none;
         border-right: none;
         position: relative;
+        span {
+            color: #333;
+            line-height: 50px;
+            font-size: 16px;
+        }
         button {
             background-color: #fff;
             position: absolute;
             top: 15px;
-            right: 10px;
+            right: 30px;
             line-height: 20px;
             height: 20px;
             border: solid #333 1px;
@@ -25,6 +33,13 @@
             width: 50px;
             border-radius: 5px;
         }
+    }
+    #odmap-label {
+        position: absolute;
+        z-index: 9999;
+        left: 1640px;
+        color: #0078a8;
+        font-size: 16px;
     }
     .map-container {
         // width: 100%;

@@ -32,9 +32,12 @@ class MapPanel extends Component {
             // 数据经纬度范围
             latRange: [19.902, 20.07],
             lngRange: [110.14, 110.52],
-            odmapOuterrectSize: [0.0336, 0.038], //一格的经纬度范围 lat lng
+            odmapOuterrectSize: [0.0336, 0.038], //外部矩形一格的经纬度范围 lat lng
             odmapInnerrectSize: [0.00672, 0.0038], //一小格的经纬度范围
+            odmapSize: [5, 10],// 默认5行10列
             currentDisplayType: 1,// 1为热力图 0为odmap 默认显示热力图
+            currentSpaceTypeOuter: 'O', // 外部大矩形代表的空间 O for origin, D for des
+            odmapDataForDesSpace: [],//转换到D space的数据 原始的odmapData都是O space
             tooltipLinePos: [],
             isShowTooltipLine: false,
             // 跟barchrt的联动
@@ -48,10 +51,10 @@ class MapPanel extends Component {
 
         this.computeColor = this.computeColor.bind(this);// 计算热力图的插值
         this.handleOverlayerType = this.handleOverlayerType.bind(this);// 热力图和odmap的切换
+        this.handleConvertOD = this.handleConvertOD.bind(this);// o和d的切换
         this.createARect = this.createARect.bind(this);
         this.handleODmapClick = this.handleODmapClick.bind(this);
-        this.handleODmapMouseOut= this.handleODmapMouseOut.bind(this);
-        // this.handleMapClick = this.handleMapClick.bind(this);
+        this.handleLinklineClick = this.handleLinklineClick.bind(this);// 点击删除链接线
     }
 
     /**
@@ -152,13 +155,14 @@ class MapPanel extends Component {
         let compute = d3.interpolate(d3.rgb(236,213,214), d3.rgb(240,100,102));//d3.rgb(215,25,28));
         return compute(num);
     }
+    //切换到odmap时默认outer grid是O space
     handleOverlayerType () {
         const {currentDisplayType, selectedRectsNum, selectedRectsOnMap, latRange, lngRange, odmapOuterrectSize } = this.state;
         const {selectRect} = this.props;
         const {odmapData} = this.props;
         let displayType = (currentDisplayType + 1) % 2;
         // 切换到odmap时 如果有框选 在odmap上高亮selectrect对应的格子
-        if (selectedRectsOnMap.length !== 0) {
+        if (selectedRectsOnMap.length !== 0 && displayType === 0) {
             let arrIndex = selectedRectsOnMap.length-1;
             if (selectRect !== -1)  {
                 for (let i = 0; i <selectedRectsOnMap.length; i++) {
@@ -196,6 +200,51 @@ class MapPanel extends Component {
             });
         }
     }
+    handleConvertOD () {
+        const {currentSpaceTypeOuter} = this.state;
+        const {odmapData} = this.props;
+        let newCurrentSpaceTypeOuter = (currentSpaceTypeOuter === 'O') ? 'D' : 'O';
+        // 计算odmapDataForDesSpace
+        let odmapDataForDesSpace = [];
+        let temp1 = [], temp2 = [], temp3 = [];
+        // 初始化一个全为0的四维数组
+        for (let i = 0; i < odmapData.data.length; i++) {
+            temp1 = [];
+            for (let j = 0; j < odmapData.data[i].length; j++) {
+                temp2 = [];
+                for (let m = 0; m < odmapData.data[i][j].length; m++) {
+                    temp3 = [];
+                    for (let n = 0; n < odmapData.data[i][j][m].length; n++) {
+                        temp3.push(0);
+                    }
+                    temp2.push(temp3)
+                }
+                temp1.push(temp2);
+            }
+            odmapDataForDesSpace.push(temp1);
+        }
+        // 从原始的odmap转化为ForDesSpace
+        for (let i = 0; i < odmapDataForDesSpace.length; i++) {
+            for (let j = 0; j < odmapDataForDesSpace[i].length; j++) {
+                for (let m = 0; m < odmapDataForDesSpace[i][j].length; m++) {
+                    for (let n = 0; n < odmapDataForDesSpace[i][j][m].length; n++) {
+                        if (i === m && j === n) {
+                            odmapDataForDesSpace[i][j][m][n] = odmapData.data[i][j][m][n];
+                        } else {
+                            odmapDataForDesSpace[i][j][m][n] = odmapData.data[m][n][i][j];
+                        }
+                    }
+                    
+                }
+                
+            }
+            
+        }
+        this.setState({
+            currentSpaceTypeOuter: newCurrentSpaceTypeOuter,
+            odmapDataForDesSpace: odmapDataForDesSpace
+        });
+    }
     handleODmapClick (e) {
         const { latRange, lngRange, odmapOuterrectSize, odmapInnerrectSize} = this.state;
         let hoveredRectId = e.originalEvent.target.className.baseVal.split(' ')[0];
@@ -207,8 +256,8 @@ class MapPanel extends Component {
             lngRange[0] + outerRectX * odmapOuterrectSize[1] + innerRectX * odmapInnerrectSize[1] + 0.5*odmapInnerrectSize[1],
         ];
         let endPointPos = [
-            latRange[0] + innerRectY * odmapOuterrectSize[0] + outerRectY * odmapInnerrectSize[0],
-            lngRange[0] + innerRectX * odmapOuterrectSize[1] + outerRectX * odmapInnerrectSize[1],
+            latRange[0] + innerRectY * odmapOuterrectSize[0] + odmapOuterrectSize[0] * 0.5,
+            lngRange[0] + innerRectX * odmapOuterrectSize[1] + odmapOuterrectSize[1] * 0.5,
         ];
         let newPos = [startPointPos, endPointPos];
         this.setState({
@@ -216,13 +265,7 @@ class MapPanel extends Component {
             tooltipLinePos: newPos
         })
     }
-    // handleMapClick () {
-    //     console.log('111')
-    //     this.setState({
-    //         isShowTooltipLine: false
-    //     })
-    // }
-    handleODmapMouseOut() {
+    handleLinklineClick (e) {
         this.setState({
             isShowTooltipLine: false
         })
@@ -233,6 +276,18 @@ class MapPanel extends Component {
             if (document.getElementsByClassName("drawRect-" + this.props.deleteRect).length > 0) {// 如果直接删的矩形 则元素已不存在
                 let rect = document.getElementsByClassName("drawRect-" + this.props.deleteRect)[0];
                 rect.parentNode.removeChild(rect);
+                // 更新selectedRectsOnMap
+                const {selectedRectsOnMap} = this.state;
+                let newSelectedRectsOnMap = selectedRectsOnMap;
+                for (let i = 0; i < selectedRectsOnMap.length; i++) {
+                    if (selectedRectsOnMap[i].index === parseInt(this.props.deleteRect)) {
+                        // 删除
+                        newSelectedRectsOnMap.splice(i, 1);
+                    }
+                }
+                this.setState ({
+                    selectedRectsOnMap: newSelectedRectsOnMap
+                });
             }
         } else if (this.props.selectRect !== -1 && this.props.selectRect !== prevProps.selectRect) {
             // 创建新的rect 把之前的rect隐藏
@@ -256,7 +311,9 @@ class MapPanel extends Component {
             odmapInnerrectSize,
             tooltipLinePos,
             isShowTooltipLine,
-            userrectIndexBounds
+            userrectIndexBounds,
+            currentSpaceTypeOuter,
+            odmapDataForDesSpace
         } = this.state;
         let heatmapRects = null;
         // heatmap
@@ -287,9 +344,10 @@ class MapPanel extends Component {
         let odmapRects = null;
         if (odmapData.length !== 0) {
             let colorLinear = d3.scaleLinear()
-                .domain([odmapData.min, odmapData.max])
+                .domain([odmapData.min, odmapData.max / 8])
                 .range([0, 1]);
-            odmapRects = odmapData.data.map((column, column_index) => {
+            let usedOdmapData = (currentSpaceTypeOuter === 'O') ? odmapData.data : odmapDataForDesSpace;
+            odmapRects = usedOdmapData.map((column, column_index) => {
                 return column.map((outerRect, outerRectId) => {
                     // 默认是5*10
                     let outerRectBounds = [[latRange[0] + odmapOuterrectSize[0] * outerRectId, lngRange[0] + odmapOuterrectSize[1] * column_index], [latRange[0] + odmapOuterrectSize[0] * (outerRectId+1), lngRange[0] + odmapOuterrectSize[1] * (column_index+1)]];
@@ -318,7 +376,6 @@ class MapPanel extends Component {
                                                     className={'odmaprect-'+ column_index + '-'+ outerRectId + '-'+ innerColumnId + '-' + innerRectId}
                                                     id={'odmaprect-'+ column_index + '-'+ outerRectId + '-'+ innerColumnId + '-' + innerRectId}
                                                     onclick={me.handleODmapClick}
-                                                    // onmouseout={me.handleODmapMouseOut}
                                             />
                                         </FeatureGroup>
                             }
@@ -343,9 +400,14 @@ class MapPanel extends Component {
             <div id="map-content">
                 <div className="panel-title">
                     Map View
+                    {/* <span>Current space type of outer grid: {currentSpaceTypeOuter}</span> */}
                     <button onClick={this.handleOverlayerType}>H⇋O</button>
-                    <button style={{right: '70px', backgroundColor: (currentDisplayType?'#eee':'#fff')}} disabled={currentDisplayType?"disabled":""}>O⇋D</button>
+                    <button
+                        style={{right: '85px', backgroundColor: (currentDisplayType?'#eee':'#fff')}}
+                        disabled={currentDisplayType?"disabled":""}
+                        onClick={this.handleConvertOD}>O⇋D</button>
                 </div>
+                {!currentDisplayType && <div id='odmap-label'>Current space type of outer grid: {currentSpaceTypeOuter}</div>}
                 <Map
                     center={basicConfig.center}
                     zoom={basicConfig.zoom}
@@ -364,7 +426,14 @@ class MapPanel extends Component {
                         <LayersControl.Overlay name="Heatmap" checked>
                             <FeatureGroup>
                                 {currentDisplayType ? heatmapRects : odmapRects}
-                                {isShowTooltipLine && <Polyline color={'#D7191C'} weight={2} positions={tooltipLinePos}/>}
+                                {isShowTooltipLine
+                                && <Polyline
+                                        color={'#D7191C'}
+                                        weight={4}
+                                        opacity={0.5}
+                                        positions={tooltipLinePos}
+                                        className="linkline"
+                                        onclick={this.handleLinklineClick}/>}
                             </FeatureGroup>
                         </LayersControl.Overlay>
                         <LayersControl.Overlay name="Brush" checked>
