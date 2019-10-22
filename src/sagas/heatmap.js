@@ -6,6 +6,7 @@ import api from 'api';
 function * updateHeatmap (action) {
   const params = {
     dataType: action.dataType,
+    dataMode: action.dataMode,
     startTime: action.startTime,
     endTime: action.endTime
   };
@@ -14,9 +15,13 @@ function * updateHeatmap (action) {
   });
 
   yield put({ type: SHOW_HEATMAP, heatmapData });
-  yield put({ type: SET_BASE_PARAM, dataType: action.dataType,
-      startTime: action.startTime,
-      endTime: action.endTime});
+  yield put({ 
+    type: SET_BASE_PARAM, 
+    dataType: action.dataType,
+    dataMode: action.dataMode,
+    startTime: action.startTime,
+    endTime: action.endTime,
+  });
 }
 
 export function * watchHeatmapByTimeRange () {

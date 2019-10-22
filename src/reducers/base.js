@@ -26,3 +26,12 @@ export const endTime = (state = '2017/7/19Z12:00', action) => {
       return state;
   }
 }
+
+export const dataMode = (state = 'normal', action) => {
+  switch(action.type) {
+    case SET_BASE_PARAM:
+      return action.dataMode;
+    default:
+      return state;
+  }
+}

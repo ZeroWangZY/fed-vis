@@ -7,6 +7,7 @@ export default class ControlPanel extends React.PureComponent {
     this.state = { 
       // 默认
       dataType: 'start',
+      dataMode: 'normal',
       startDate: '2017-05-19',
       endDate: '2017-05-19',
       startHour: '10:00',
@@ -14,6 +15,7 @@ export default class ControlPanel extends React.PureComponent {
      }
     this.handleLoadClick = this.handleLoadClick.bind(this);
     this.updateDatatype = this.updateDatatype.bind(this);
+    this.updateDatamode = this.updateDatamode.bind(this);
     this.updateStartDate = this.updateStartDate.bind(this);
     this.updateEndDate = this.updateEndDate.bind(this);
     this.updateStartHour = this.updateStartHour.bind(this);
@@ -24,11 +26,21 @@ export default class ControlPanel extends React.PureComponent {
     let startTime = this.state.startDate.replace(/-/g, '/') + 'Z' + this.state.startHour;
     let endTime = this.state.endDate.replace(/-/g, '/') + 'Z' + this.state.endHour;
     // load data
-    this.props.onSelect(this.state.dataType, startTime, endTime);
+    this.props.onSelect(
+      this.state.dataType,
+      this.state.dataMode,
+      startTime,
+      endTime
+    );
   }
   updateDatatype (e) {
     this.setState({
       dataType: e.target.value
+    })
+  }
+  updateDatamode (e) {
+    this.setState({
+      dataMode: e.target.value
     })
   }
   updateStartDate (e) {
@@ -74,6 +86,11 @@ export default class ControlPanel extends React.PureComponent {
               Select data type:
               <label><input name="dataType" type="radio" value="start" defaultChecked onChange={this.updateDatatype}/>start</label> 
               <label><input name="dataType" type="radio" value="end" onChange={this.updateDatatype}/>end</label> 
+            </form>
+            <form action="" method="get">
+              Select data mode:
+              <label><input name="dataType" type="radio" value="normal" defaultChecked onChange={this.updateDatamode}/>normal</label> 
+              <label><input name="dataType" type="radio" value="fitting" onChange={this.updateDatamode}/>fitting</label> 
             </form>
           </div>
           <div id="acc-select">

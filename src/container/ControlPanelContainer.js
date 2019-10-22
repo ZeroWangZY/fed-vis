@@ -10,8 +10,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSelect: (dataType, startTime, endTime) => {
-      dispatch(getHeatmapByTimeRange(dataType, startTime, endTime));
+    onSelect: (dataType, dataMode, startTime, endTime) => {
+      dispatch(getHeatmapByTimeRange(dataType, dataMode, startTime, endTime));
     }
   };
 };
