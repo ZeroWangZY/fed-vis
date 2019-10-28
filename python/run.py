@@ -6,4 +6,4 @@ if __name__ == '__main__':
         http_server = WSGIServer(('0.0.0.0', 5001), app)
         http_server.serve_forever()
     else:
-        app.run(debug=True, host='0.0.0.0', port=5000)
+        app.run(debug=True, host='0.0.0.0', port=5001)

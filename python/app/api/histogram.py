@@ -36,7 +36,7 @@ def get_histogram_api():
                 get_histogram(start_time,
                               end_time,
                               lng_from,
-                              lng_to,
+                               lng_to,
                               lat_from,
                               lat_to,
                               type_=type_))

@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import numpy as np
 from app.dao.order import query_count, get_order_data_on_memory, is_order_data_on_memory
-from .model_service import get_model, train_model_fed, gen_x, predict, clear
+from .model_service import get_model, train_model_fed, gen_x, predict, reset_keras
 
 
 def get_histogram(start_time,
@@ -32,6 +32,7 @@ def get_histogram_on_memory(start_time, end_time, lng_from, lng_to, lat_from,
 
 def get_histogram_with_fed_learning(start_time, end_time, lng_from, lng_to,
                                     lat_from, lat_to, type_):
+    reset_keras()
     x = gen_x(7, 24)
     y = get_5_histograms_on_memory(start_time, end_time, lng_from, lng_to,
                                    lat_from, lat_to, type_)
@@ -41,8 +42,10 @@ def get_histogram_with_fed_learning(start_time, end_time, lng_from, lng_to,
     model = get_model(24, 2)
     train_model_fed(model, x, y, round=100)
     res = predict(model, mean, std, x) * 5
-    clear()
-    return res.round().astype(np.int32).reshape(7, 24).tolist()
+    res = res.round().astype(np.int32).reshape(7, 24).tolist()
+    del model
+    reset_keras()
+    return res
 
 
 def get_5_histograms_on_memory(start_time, end_time, lng_from, lng_to,

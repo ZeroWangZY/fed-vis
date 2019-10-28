@@ -4,12 +4,18 @@ from keras.layers import (LSTM, Activation, Conv1D, Conv2D, Dense, Dropout,
                           Flatten, Lambda, MaxPooling1D, MaxPooling2D,
                           embeddings, regularizers)
 from keras.models import Sequential
+from keras.backend.tensorflow_backend import set_session
+from keras.backend.tensorflow_backend import clear_session
+from keras.backend.tensorflow_backend import get_session
+import tensorflow
+import gc
+import random
 
 
 def get_model(embedding_size, input_length, layers=3, width=128):
     model = Sequential()
     model.add(
-        embeddings.Embedding(embedding_size, 256, input_length=input_length))
+        embeddings.Embedding(embedding_size, 128, input_length=input_length))
     model.add(Flatten())
     for i in range(layers):
         model.add(
@@ -21,7 +27,13 @@ def get_model(embedding_size, input_length, layers=3, width=128):
                 activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
                 bias_regularizer=regularizers.l1_l2(l1=0., l2=0.),
             ))
-    model.add(Dense(1))
+    model.add(
+        Dense(
+            1,
+            kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+            activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+            bias_regularizer=regularizers.l1_l2(l1=0., l2=0.)
+        ))
 
     adam = optimizers.Adam(lr=0.01,
                            beta_1=0.9,
@@ -53,7 +65,9 @@ def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800):
             model.fit(x, ys[i], epochs=epoch, batch_size=batch)
             weights_set.append(model.get_weights())
         print('weights aggregation')
-        model.set_weights(np.mean(weights_set, axis=0))
+        if len(weights_set) != 0:
+            model.set_weights(np.mean(weights_set, axis=0))
+
 
 
 def gen_x(size_1, size_2):
@@ -64,5 +78,23 @@ def gen_x(size_1, size_2):
     return np.array(x)
 
 
-def clear():
-    backend.clear_session()
+# Reset Keras Session
+def reset_keras():
+    sess = get_session()
+    clear_session()
+    sess.close()
+    sess = get_session()
+
+    try:
+        del classifier  # this is from global space - change this as you need
+    except:
+        pass
+
+    print(gc.collect()
+          )  # if it's done something you should see a number being outputted
+
+    # use the same config as you used to create the session
+    config = tensorflow.ConfigProto()
+    config.gpu_options.per_process_gpu_memory_fraction = 1
+    config.gpu_options.visible_device_list = "0"
+    set_session(tensorflow.Session(config=config))
