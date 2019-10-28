@@ -46,7 +46,7 @@ def get_heatmap_with_fed_learning(start_time, end_time, type_):
     def pruner(x):
         if x < 0:
             return 0
-        return x
+        return int(x)
     res = np.array([pruner(v) for v in res.round().astype(np.int32)
                     ]).reshape(LNG_SIZE, LAT_SIZE).tolist()
     del model
