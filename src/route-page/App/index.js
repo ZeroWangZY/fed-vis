@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.less';
+import './index.less';
 // import clsx from 'clsx';
 // import Paper from '@material-ui/core/Paper';
 // import InputBase from '@material-ui/core/InputBase';
@@ -11,10 +11,10 @@ import './App.less';
 // import { withStyles } from '@material-ui/styles';
 
 // import MapPanel from './component/map/MapPanel';
-import ControlPanelContainer from 'container/ControlPanelContainer';
-import MapPanelContainer from 'container/MapPanelContainer';
-import DetailPanelContainer from 'container/DetailPanelContainer';
-import DataOverviewPanel from './component/dataoverviewPanel/DataOverviewPanel';
+import ControlPanelContainer from '../../container/ControlPanelContainer';
+import MapPanelContainer from '../../container/MapPanelContainer';
+import DetailPanelContainer from '../../container/DetailPanelContainer';
+import DataOverviewPanel from '../../component/dataoverviewPanel/DataOverviewPanel';
 // import DetailPanel from './component/detailPanel/DetailPanel'
 
 class App extends React.Component {
