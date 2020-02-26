@@ -1,16 +1,39 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
+import history from "./history";
 import './index.css';
-import App from './App';
+import App from './route-page/App';
+import Gallery from "./route-page/Gallery";
+import Treemap from "./component/treemap";
 import * as serviceWorker from './serviceWorker';
 import configureStore from 'store';
+
 
 const store = configureStore();
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <Router history={history}>
+      <Switch>
+        <Route exact path="/gallery">
+          <Gallery />
+        </Route>
+        <Route exact path="/">
+          <App />
+        </Route>
+        <Route exact path="/treemap">
+          <Treemap />
+        </Route>
+        <Redirect to="/" />
+      </Switch>
+    </Router>
   </Provider>,
   document.getElementById('root')
 );
