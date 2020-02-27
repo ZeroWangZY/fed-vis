@@ -433,14 +433,14 @@ class Treemap extends React.Component {
       <svg className="treemap" style={svgStyles}>
         <g style={groupStyles}>
         {
-          treemap.leaves().map(node => (
-            <g key={node.id} transform={`translate(${node.x0 + 1}, ${node.y0 + 1})`}>
-              <rect id={node.id}
+          treemap.leaves().map((node, i) => (
+            <g key={i} transform={`translate(${node.x0 + 1}, ${node.y0 + 1})`}>
+              <rect
                 width={node.x1 - node.x0 - 2}
                 height={node.y1 - node.y0 - 2}
                 fill={this.genColor(node)}
               />
-              <text class="treemap__label"
+              <text className="treemap__label"
                 x={2}
                 y={2}
               >
