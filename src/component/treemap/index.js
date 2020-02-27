@@ -9,24 +9,16 @@ class Treemap extends React.Component {
     super(props);
 
     this.colorMap = d3.scaleOrdinal(d3.schemeCategory10);
-  }
 
-  calcChartSize = () => {
-    const height = svgHeight - innerPadding.top - innerPadding.bottom;
-    const width = svgWidth - innerPadding.left - innerPadding.right;
-    return [width, height];
-  }
+    this.chartSize = [svgWidth - innerPadding.left - innerPadding.right, svgHeight - innerPadding.top - innerPadding.bottom];
 
-  genSvgStyles = () => {
-    return {
+    this.svgStyles = {
       width: svgWidth,
       height: svgHeight,
     };
-  }
 
-  genGroupStyles = () => {
-    return {
-      transform: `translate(${innerPadding.left}, ${innerPadding.top})`,
+    this.groupStyles = {
+      transform: `translate(${innerPadding.left}px, ${innerPadding.top}px)`,
     };
   }
 
@@ -36,10 +28,6 @@ class Treemap extends React.Component {
       d = d.parent;
     }
     return this.colorMap(d.data.name);
-  }
-
-  genId = () => {
-
   }
 
   mockData = () => {
@@ -427,9 +415,11 @@ class Treemap extends React.Component {
 
 
   render() {
-    const chartSize = this.calcChartSize();
-    const svgStyles = this.genSvgStyles();
-    const groupStyles = this.genGroupStyles();
+    const {
+      chartSize,
+      svgStyles,
+      groupStyles,
+    } = this;
     const data = this.mockData();
 
     const treemap = d3.treemap()
@@ -438,7 +428,7 @@ class Treemap extends React.Component {
           .sum(d => d.value)
           .sort((a, b) => b.value - a.value)
       );
-    // debugger;
+
     return (
       <svg className="treemap" style={svgStyles}>
         <g style={groupStyles}>
