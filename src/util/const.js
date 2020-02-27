@@ -1,6 +1,6 @@
-export const svgWidth = 1600;
+export const svgWidth = 1200;
 
-export const svgHeight = 700;
+export const svgHeight = 900;
 
 export const innerPadding = {
   top: 50,
