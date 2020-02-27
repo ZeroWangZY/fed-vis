@@ -13,6 +13,7 @@ import App from './route-page/App';
 import Gallery from "./route-page/Gallery";
 import Treemap from "./component/treemap";
 import LineChart from "./component/linechart";
+import Sankey from "./component/sankey";
 import * as serviceWorker from './serviceWorker';
 import configureStore from 'store';
 
@@ -34,6 +35,9 @@ ReactDOM.render(
         </Route>
         <Route exact path="/linechart">
           <LineChart />
+        </Route>
+        <Route exact path="/sankey">
+          <Sankey />
         </Route>
         <Redirect to="/" />
       </Switch>
