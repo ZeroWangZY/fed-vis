@@ -21,6 +21,9 @@ class Gallery extends React.Component {
       },
       {
         url: "/ridgeline"
+      },
+      {
+        url: "/violin"
       }
     ];
   }
