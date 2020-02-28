@@ -16,6 +16,7 @@ import LineChart from "./component/linechart";
 import Sankey from "./component/sankey";
 import Bar from "./component/bar";
 import Ridgeline from "./component/ridgeline";
+import Violin from "./component/violin";
 import configureStore from 'store';
 
 
@@ -45,6 +46,9 @@ ReactDOM.render(
         </Route>
         <Route exact path="/ridgeline">
           <Ridgeline />
+        </Route>
+        <Route exact path="/violin">
+          <Violin />
         </Route>
         <Redirect to="/" />
       </Switch>
