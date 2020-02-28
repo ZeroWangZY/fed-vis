@@ -24,6 +24,9 @@ class Gallery extends React.Component {
       },
       {
         url: "/violin"
+      },
+      {
+        url: "/radar"
       }
     ];
   }

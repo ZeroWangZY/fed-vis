@@ -17,6 +17,7 @@ import Sankey from "./component/sankey";
 import Bar from "./component/bar";
 import Ridgeline from "./component/ridgeline";
 import Violin from "./component/violin";
+import Radar from "./component/radar";
 import configureStore from 'store';
 
 
@@ -49,6 +50,9 @@ ReactDOM.render(
         </Route>
         <Route exact path="/violin">
           <Violin />
+        </Route>
+        <Route exact path="/radar">
+          <Radar />
         </Route>
         <Redirect to="/" />
       </Switch>
