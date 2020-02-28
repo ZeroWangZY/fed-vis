@@ -4,7 +4,7 @@ import { svgHeight, svgWidth, innerPadding } from "../../util/const";
 
 import "./index.less";
 
-class Bar extends React.Component {
+class Lollipop extends React.Component {
   constructor(props) {
     super(props);
 
@@ -17,7 +17,6 @@ class Bar extends React.Component {
 
     this.groupStyles = {
       transform: `translate(${innerPadding.left}px, ${innerPadding.top}px)`,
-      fill: "steelblue"
     };
   }
 
@@ -38,9 +37,7 @@ class Bar extends React.Component {
 
     const xScale = d3.scaleBand()
       .domain(data.map(d => d.name))
-      .rangeRound([0, chartSize[0]])
-      .paddingInner(0.3)
-      .paddingOuter(0.2);
+      .range([0, chartSize[0]]);
     
     const yScale = d3.scaleLinear()
       .domain([0, d3.max(data, d => d.value)])
@@ -52,15 +49,27 @@ class Bar extends React.Component {
 
     const yAxis = g => g
       .call(d3.axisLeft(yScale));
-      // .call(g => g.select(".domain").remove())
-    gChart.selectAll("rect")
+  // debugger;
+    gChart.selectAll("myline")
       .data(data)
-      .join("rect")
-      .style("mix-blend-mode", "multiply")
-      .attr("x", d => xScale(d.name))
-      .attr("y", d => yScale(d.value))
-      .attr("height", d => yScale(0) - yScale(d.value))
-      .attr("width", xScale.bandwidth());
+      .enter()
+      .append("line")
+      .attr("x1", d => xScale(d.name) + xScale.bandwidth() / 2)
+      .attr("x2", d => xScale(d.name) + xScale.bandwidth() / 2)
+      .attr("y1", d => yScale(d.value))
+      .attr("y2", yScale(0))
+      .attr("stroke", "#a4c969")
+      .attr("stroke-width", "3")
+
+    gChart.selectAll("mycircle")
+      .data(data)
+      .enter()
+      .append("circle")
+      .attr("cx", d => xScale(d.name) + xScale.bandwidth() / 2)
+      .attr("cy", d => yScale(d.value))
+      .attr("r", "6")
+      .style("fill", "#a4c969")
+      // .attr("stroke", "black");
 
     gChart.append("g")
       .call(xAxis);
@@ -185,7 +194,7 @@ class Bar extends React.Component {
     } = this;
 
     return (
-      <svg className="bar" style={svgStyles}>
+      <svg className="lollipop" style={svgStyles}>
         <g style={groupStyles} ref={node => this.node = node}>
         </g>
       </svg>
@@ -193,4 +202,4 @@ class Bar extends React.Component {
   }
 }
 
-export default Bar;
+export default Lollipop;
