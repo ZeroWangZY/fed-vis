@@ -17,7 +17,6 @@ class Violin extends React.Component {
 
     this.groupStyles = {
       transform: `translate(${innerPadding.left}px, ${innerPadding.top}px)`,
-      fill: "steelblue"
     };
 
     this.binNum = 30; // 这个受纵坐标范围影响，太大就有很多细叉，太小又没有波动
