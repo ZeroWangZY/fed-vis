@@ -17,10 +17,10 @@ class Gallery extends React.Component {
         url: "/sankey"
       },
       {
-        url: "/treemap"
+        url: "/barchart"
       },
       {
-        url: "/linechart"
+        url: "/ridgeline"
       }
     ];
   }
