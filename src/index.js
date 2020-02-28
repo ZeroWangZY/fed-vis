@@ -18,6 +18,7 @@ import Bar from "./component/bar";
 import Ridgeline from "./component/ridgeline";
 import Violin from "./component/violin";
 import Radar from "./component/radar";
+import Lollipop from "./component/lollipop";
 import configureStore from 'store';
 
 
@@ -53,6 +54,9 @@ ReactDOM.render(
         </Route>
         <Route exact path="/radar">
           <Radar />
+        </Route>
+        <Route exact path="/lollipop">
+          <Lollipop />
         </Route>
         <Redirect to="/" />
       </Switch>
