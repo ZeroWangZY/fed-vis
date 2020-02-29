@@ -45,6 +45,9 @@ class Gallery extends React.Component {
       },
       {
         url: "/sunburst"
+      },
+      {
+        url: "/icicle"
       }
     ];
   }
