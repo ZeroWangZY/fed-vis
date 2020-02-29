@@ -23,6 +23,7 @@ import CircularBar from "./component/circularbar";
 import Area from "./component/area";
 import Pie from "./component/pie";
 import CirclePacking from "./component/circle-packing";
+import Sunburst from "./component/sunburst";
 import configureStore from 'store';
 
 
@@ -73,6 +74,9 @@ ReactDOM.render(
         </Route>
         <Route exact path="/circlepacking">
           <CirclePacking />
+        </Route>
+        <Route exact path="/sunburst">
+          <Sunburst />
         </Route>
         <Redirect to="/" />
       </Switch>
