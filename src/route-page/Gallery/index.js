@@ -36,6 +36,12 @@ class Gallery extends React.Component {
       },
       {
         url: "/area"
+      },
+      {
+        url: "/pie"
+      },
+      {
+        url: "/circlepacking"
       }
     ];
   }

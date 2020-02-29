@@ -21,6 +21,8 @@ import Radar from "./component/radar";
 import Lollipop from "./component/lollipop";
 import CircularBar from "./component/circularbar";
 import Area from "./component/area";
+import Pie from "./component/pie";
+import CirclePacking from "./component/circle-packing";
 import configureStore from 'store';
 
 
@@ -65,6 +67,12 @@ ReactDOM.render(
         </Route>
         <Route exact path="/area">
           <Area />
+        </Route>
+        <Route exact path="/pie">
+          <Pie />
+        </Route>
+        <Route exact path="/circlepacking">
+          <CirclePacking />
         </Route>
         <Redirect to="/" />
       </Switch>
