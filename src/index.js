@@ -20,6 +20,7 @@ import Violin from "./component/violin";
 import Radar from "./component/radar";
 import Lollipop from "./component/lollipop";
 import CircularBar from "./component/circularbar";
+import Area from "./component/area";
 import configureStore from 'store';
 
 
@@ -61,6 +62,9 @@ ReactDOM.render(
         </Route>
         <Route exact path="/circularbar">
           <CircularBar />
+        </Route>
+        <Route exact path="/area">
+          <Area />
         </Route>
         <Redirect to="/" />
       </Switch>

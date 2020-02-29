@@ -1,6 +1,11 @@
 .gallery {
   width: 1920px;
   height: 1080px;
+  overflow-y: auto;
+}
+
+.gallery::-webkit-scrollbar {
+  width: 0px;
 }
 
 .gallery__title {
@@ -14,9 +19,8 @@
 
 .gallery__content {
   width: 1320px;
-  height: calc(100% - 100px);
+  // height: calc(100% - 100px);
   margin: auto;
-  overflow-y: auto;
 }
 
 .gallery__content__wrapper {
