@@ -30,6 +30,9 @@ class Gallery extends React.Component {
       },
       {
         url: "/lollipop"
+      },
+      {
+        url: "/circularbar"
       }
     ];
   }
