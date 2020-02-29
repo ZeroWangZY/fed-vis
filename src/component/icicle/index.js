@@ -449,6 +449,7 @@ class Icicle extends React.Component {
           descendants.map((d, i) => (
             <g key={i}
               transform={`translate(${d.y0}, ${d.x0})`}
+              clipPath={`polygon(0 0, ${d.y1 - d.y0} 0, ${d.y1 - d.y0} ${d.x1 - d.x0}, 0 ${d.x1 - d.x0})`}
             >
               <rect
                 width={d.y1 - d.y0}

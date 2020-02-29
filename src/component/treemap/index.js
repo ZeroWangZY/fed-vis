@@ -434,7 +434,10 @@ class Treemap extends React.Component {
         <g style={groupStyles}>
         {
           treemap.leaves().map((node, i) => (
-            <g key={i} transform={`translate(${node.x0 + 1}, ${node.y0 + 1})`}>
+            <g key={i}
+              transform={`translate(${node.x0 + 1}, ${node.y0 + 1})`}
+              clipPath={`polygon(0 0, ${node.x1 - node.x0 - 2} 0, ${node.x1 - node.x0 - 2} ${node.y1 - node.y0 - 2}, 0 ${node.y1 - node.y0 - 2})`}
+            >
               <rect
                 width={node.x1 - node.x0 - 2}
                 height={node.y1 - node.y0 - 2}
