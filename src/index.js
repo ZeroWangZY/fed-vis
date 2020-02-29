@@ -24,6 +24,7 @@ import Area from "./component/area";
 import Pie from "./component/pie";
 import CirclePacking from "./component/circle-packing";
 import Sunburst from "./component/sunburst";
+import Icicle from "./component/icicle";
 import configureStore from 'store';
 
 
@@ -77,6 +78,9 @@ ReactDOM.render(
         </Route>
         <Route exact path="/sunburst">
           <Sunburst />
+        </Route>
+        <Route exact path="/icicle">
+          <Icicle />
         </Route>
         <Redirect to="/" />
       </Switch>
