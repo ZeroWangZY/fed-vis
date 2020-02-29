@@ -33,6 +33,9 @@ class Gallery extends React.Component {
       },
       {
         url: "/circularbar"
+      },
+      {
+        url: "/area"
       }
     ];
   }
