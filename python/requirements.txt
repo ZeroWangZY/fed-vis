@@ -6,3 +6,5 @@ socketIO_client
 pymongo
 Gevent
 psycopg2
+python-socketio
+grequests
