@@ -57,14 +57,14 @@ def predict(model, mean, std, x):
 
 def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800):
     for r in range(round):
-        print('round ', r)
+        # print('round ', r)
         golbal_weights = model.get_weights()
         weights_set = []
         for i in range(len(ys)):
             model.set_weights(golbal_weights)
-            model.fit(x, ys[i], epochs=epoch, batch_size=batch)
+            model.fit(x, ys[i], epochs=epoch, batch_size=batch, verbose=1)
             weights_set.append(model.get_weights())
-        print('weights aggregation')
+        # print('weights aggregation')
         if len(weights_set) != 0:
             model.set_weights(np.mean(weights_set, axis=0))
 

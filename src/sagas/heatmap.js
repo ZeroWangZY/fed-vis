@@ -8,7 +8,8 @@ function * updateHeatmap (action) {
     dataType: action.dataType,
     dataMode: action.dataMode,
     startTime: action.startTime,
-    endTime: action.endTime
+    endTime: action.endTime,
+    dataMode: action.dataMode,
   };
   const { heatmapData}  = yield all({
     heatmapData: call(api.getHeatmap, params)

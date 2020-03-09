@@ -3,13 +3,15 @@ import numpy as np
 import json
 import os
 import datetime
+import sys
+from app.dao.common import size_param
 
 MIN_LNG = 110.14
 MAX_LNG = 110.520
 MIN_LAT = 19.902
 MAX_LAT = 20.070
-LNG_SIZE = int((MAX_LNG - MIN_LNG) * 1000) + 1
-LAT_SIZE = int((MAX_LAT - MIN_LAT) * 1000) + 1
+LNG_SIZE = int((MAX_LNG - MIN_LNG) * size_param) + 1
+LAT_SIZE = int((MAX_LAT - MIN_LAT) * size_param) + 1
 
 
 def rawDataToJson(index):
@@ -22,10 +24,10 @@ def rawDataToJson(index):
         for row in haikouData:
             if float(row[16]) >= MIN_LNG and float(row[18]) >= MIN_LNG  and float(row[16]) < MAX_LNG and float(row[18]) < MAX_LNG \
                 and float(row[17]) >= MIN_LAT and float(row[17]) < MAX_LAT and float(row[19]) >= MIN_LAT and float(row[19]) < MAX_LAT:
-                i1 = int((float(row[18]) - MIN_LNG) * 1000)
-                j1 = int((float(row[19]) - MIN_LAT) * 1000)
-                i2 = int((float(row[16]) - MIN_LNG) * 1000)
-                j2 = int((float(row[17]) - MIN_LAT) * 1000)
+                i1 = int((float(row[18]) - MIN_LNG) * size_param)
+                j1 = int((float(row[19]) - MIN_LAT) * size_param)
+                i2 = int((float(row[16]) - MIN_LNG) * size_param)
+                j2 = int((float(row[17]) - MIN_LAT) * size_param)
                 startingPosData[i1][j1] += 1
                 desPosData[i2][j2] += 1
     with open('data/source/start' + str(index) + '.json', 'w') as outfile:
@@ -80,13 +82,13 @@ def rawDataToDb(index):
 def rawDataToPostgres(index):
     import psycopg2
     import datetime
-    conn = psycopg2.connect(host='localhost',
-                            database='haikou',
-                            user='postgres',
-                            password='ni99woba')
+    conn = psycopg2.connect(host='127.0.0.1',
+                           database='haikou',
+                           user='postgres',
+                           password='12345678')
     cur = conn.cursor()
 
-    with open('data/raw/dwv_order_make_haikou_' + str(index) + '.txt',
+    with open('/Users/bingrulin/Downloads/order_haikou_0628/dwv_order_make_haikou_' + str(index) + '.txt',
               newline='') as csvfile:
         haikouData = csv.reader(csvfile, delimiter='\t', quotechar='|')
         next(haikouData)
@@ -113,6 +115,7 @@ def rawDataToPostgres(index):
                     "INSERT INTO orders(client, start_lng, start_lat, des_lng, des_lat, start_time, des_time) VALUES(%s, %s, %s, %s, %s, %s, %s);",
                     (index, float(row[18]), float(row[19]), float(
                         row[16]), float(row[17]), start_time, des_time))
+                # except
                 if i % 1000 == 0:
                     conn.commit()
 
@@ -152,4 +155,4 @@ def writeTo(results, dir, file):
 
 if __name__ == '__main__':
     for i in range(6, 9):
-        rawDataToDb(i)
+        rawDataToPostgres(i)

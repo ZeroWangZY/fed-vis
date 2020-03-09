@@ -5,7 +5,6 @@ haikou_database = myclient["haikou"]
 models_info_collection = haikou_database['models_info']
 data_collection = haikou_database['data']
 
-
 def insert_models_info(name, description, means, stds, locations):
     document = {
         'name': name,

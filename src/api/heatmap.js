@@ -14,5 +14,6 @@ function getUrlPath (params) {
   arr.push(Apis.get_heatmap_by_time_range + '?' + 'type=' + params.dataType);
   arr.push('start_time=' + params.startTime);
   arr.push('end_time=' + params.endTime);
+  arr.push(`mode=${params.dataMode}`)
   return arr.join('&');
 }

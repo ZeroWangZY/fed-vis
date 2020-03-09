@@ -64,6 +64,13 @@ export default class ControlPanel extends React.PureComponent {
     })
   }
   render() {
+    const {
+      startDate,
+      endDate,
+      startHour,
+      endHour,
+    } = this.state;
+
     return (
       <div id="control-panel">
         <div className="panel-title">Control Panel</div>
@@ -72,13 +79,13 @@ export default class ControlPanel extends React.PureComponent {
             <p>Select a time range:</p>
             <div className="line">
               <p>Start time:</p>
-              <input type="date" defaultValue="2017-05-19" onChange={this.updateStartDate}></input>
-              <input type="time" defaultValue="10:00" onChange={this.updateStartHour}></input>
+              <input type="date" defaultValue={startDate} onChange={this.updateStartDate}></input>
+              <input type="time" defaultValue={startHour} onChange={this.updateStartHour}></input>
             </div>
             <div className="line">
               <p>End time:</p>
-              <input type="date" style={{marginLeft: 15}} defaultValue="2017-05-19" onChange={this.updateEndDate}></input>
-              <input type="time" defaultValue="12:00" onChange={this.updateEndHour}></input>
+              <input type="date" style={{marginLeft: 15}} defaultValue={endDate} onChange={this.updateEndDate}></input>
+              <input type="time" defaultValue={endHour} onChange={this.updateEndHour}></input>
             </div>
           </div>
           <div id="datatype-select">

@@ -1,6 +1,8 @@
 from datetime import datetime
+import time
 
 from .db_setting import mongo_client, pg_cur
+from .common import size_param, num_client
 
 haikou_database = mongo_client["haikou"]
 orders_info_collection = haikou_database['orders']
@@ -135,9 +137,12 @@ def is_order_data_on_memory():
 
 
 def load_order_data_to_memory():
-    pg_cur.execute('select * from orders ORDER BY start_time')
+    time_start = time.time()
+    pg_cur.execute('select * from orders where client < {} ORDER BY start_time'.format(num_client + 1))
     global ORDER_DATA_ON_MEMORY
     ORDER_DATA_ON_MEMORY = pg_cur.fetchall()
+    time_end = time.time()
+    print("loading data cost {} s".format(time_end - time_start))
 
 
 def get_order_data_on_memory():
@@ -157,12 +162,12 @@ if __name__ == "__main__":
     MAX_LNG = 110.520
     MIN_LAT = 19.902
     MAX_LAT = 20.070
-    LNG_SIZE = int((MAX_LNG - MIN_LNG) * 1000) + 1
-    LAT_SIZE = int((MAX_LAT - MIN_LAT) * 1000) + 1
+    LNG_SIZE = int((MAX_LNG - MIN_LNG) * size_param) + 1
+    LAT_SIZE = int((MAX_LAT - MIN_LAT) * size_param) + 1
 
     heatmap_matrix = np.zeros((LNG_SIZE, LAT_SIZE))
     for row in rows:
         heatmap_matrix[int(
-            (row[2] - MIN_LNG) * 1000
-        ), int((row[3] - MIN_LAT) * 1000)] += 1
+            (row[2] - MIN_LNG) * size_param
+        ), int((row[3] - MIN_LAT) * size_param)] += 1
     print(heatmap_matrix)

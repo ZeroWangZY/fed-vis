@@ -46,18 +46,25 @@ function* processAddBarchart(action) {
     id,
     bounds,
   } = action;
-  const latFrom = bounds._southWest.lat;
-  const latTo = bounds._northEast.lat;
-  const lngFrom = bounds._southWest.lng;
-  const lngTo = bounds._northEast.lng;
+  let latFrom = bounds._southWest.lat;
+  let latTo = bounds._northEast.lat;
+  let lngFrom = bounds._southWest.lng;
+  let lngTo = bounds._northEast.lng;
 
   let newBarchartData = [...barchartData];
 
-  let url = `${Apis.get_barchart}?type=${dataType}&start_time=${startTime}&end_time=${endTime}&lng_from=${lngFrom}&lng_to=${lngTo}&lat_from=${latFrom}&lat_to=${latTo}`;
+  // 测试用，先写死
+  lngFrom = 110.28307780623439;
+  lngTo = 110.372608602047;
+  latFrom = 19.982050270924308;
+  latTo = 20.033669866332083;
 
-  if (dataMode !== "normal") {
-    url += `&mode=${dataMode}`;
-  }
+
+  let url = `${Apis.get_barchart}?type=${dataType}&start_time=${startTime}&end_time=${endTime}&lng_from=${lngFrom}&lng_to=${lngTo}&lat_from=${latFrom}&lat_to=${latTo}`;
+  url += `&mode=fitting`;
+  // if (dataMode !== "normal") {
+    // url += `&mode=${dataMode}`;
+  // }
 
   const resp = yield call(() => get({
     url,

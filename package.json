@@ -1,7 +1,7 @@
 {
   "name": "fed-vis",
   "version": "0.1.0",
-  "proxy": "http://10.76.0.163:5001",
+  "proxy": "http://localhost:5000",
   "private": true,
   "dependencies": {
     "@babel/core": "7.4.3",
