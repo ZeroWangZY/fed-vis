@@ -138,7 +138,7 @@ def is_order_data_on_memory():
 
 def load_order_data_to_memory():
     time_start = time.time()
-    pg_cur.execute('select * from orders where client < {} ORDER BY start_time'.format(num_client + 1))
+    pg_cur.execute('select * from orders_all where client < {} ORDER BY start_time'.format(num_client + 1))
     global ORDER_DATA_ON_MEMORY
     ORDER_DATA_ON_MEMORY = pg_cur.fetchall()
     time_end = time.time()
