@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from app.dao.order import query_count
 
 
-def get_overview(cached=True):
+def get_overview(cached=True, type='start'):
     if cached:
         return {
             4: [
@@ -36,7 +36,12 @@ def get_overview(cached=True):
     date = datetime(2017, 4, 1)
     res = {4: [], 5: [], 6: [], 7: [], 8: []}
     while not (date.month == 9 and date.day == 1):
-        count = query_count(date, date + timedelta(days=1))
+        count = 0
+        if type == 'all':
+            count += query_count(date, date + timedelta(days=1), type_='start')
+            count += query_count(date, date + timedelta(days=1), type_='des')
+        else:
+            count = query_count(date, date + timedelta(days=1), type_=type)
         print(date.month, '.', date.day, ' ', count)
         res[date.month].append(count)
         date += timedelta(days=1)
