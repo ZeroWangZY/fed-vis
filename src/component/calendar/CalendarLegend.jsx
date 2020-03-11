@@ -18,7 +18,7 @@ export default class CalendarChart extends React.PureComponent {
 
     return (
       <g className="calendar__legend"
-      transform={`translate(${0}, ${655})`}
+      transform={`translate(${0}, ${660})`}
       >
         <text 
           x={baseTranslateX + cellSize * colorSet.length / 2}

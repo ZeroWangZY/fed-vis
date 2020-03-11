@@ -18,7 +18,7 @@ export default class Calendar extends Component {
 
     this.colorSet = ['#fbf9db', '#B3D8DF', '#95C0DA', '#215ea5', '#273a90'];
 
-    this.cellSize = 24;
+    this.cellSize = 17;
 
     this.svgWidth = 318;
 
@@ -77,12 +77,13 @@ export default class Calendar extends Component {
               y={dayTextTranslateY}
               textAnchor='middle'
               dominantBaseline='baseline'
+              opacity={(index + 6) % 3 ? 0 : 1}
             >{day}</text>
           )
         }
         <CalendarMap
           baseTranslateX={baseTranslateX}
-          baseTranslateY={50 + baseTranslateY}
+          baseTranslateY={40 + baseTranslateY}
           cellSize={cellSize}
           dataset={dataset}
           colorSet={colorSet}
