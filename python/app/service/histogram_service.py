@@ -2,6 +2,9 @@ from datetime import datetime, timedelta
 import numpy as np
 from app.dao.order import query_count, get_order_data_on_memory, is_order_data_on_memory
 from .model_service import get_model, train_model_fed, gen_x, predict, reset_keras
+from app.dao.common import num_client
+import time
+from .tools import test_accuracy
 
 
 def get_histogram(start_time,
@@ -22,11 +25,16 @@ def get_histogram_on_memory(start_time, end_time, lng_from, lng_to, lat_from,
                             lat_to, type_):
     data = get_order_data_on_memory()
     res = np.zeros((7, 24), dtype=int)
+
+    time_start = time.time()
     for row in data:
         if row[6] < end_time and row[6] > start_time and row[
                 2] > lng_from and row[2] < lng_to and row[
                     3] > lat_from and row[3] < lat_to:
             res[row[6].weekday()][row[6].hour] += 1
+    time_end = time.time()
+    print("partition & aggregation cost: {} s".format(time_end - time_start))
+
     return res.tolist()
 
 
@@ -36,13 +44,31 @@ def get_histogram_with_fed_learning(start_time, end_time, lng_from, lng_to,
     x = gen_x(7, 24)
     y = get_5_histograms_on_memory(start_time, end_time, lng_from, lng_to,
                                    lat_from, lat_to, type_)
+
+    # 节点个数
+    print("# clients: {}".format(len(y)))
+
     mean = np.mean(y)
     std = np.std(y)
     y = (y - mean) / std
     model = get_model(24, 2)
-    train_model_fed(model, x, y, round=100)
-    res = predict(model, mean, std, x) * 5
-    res = res.round().astype(np.int32).reshape(7, 24).tolist()
+
+    fl_start_time = time.time()
+    train_model_fed(model, x, y, round=100, epoch=1)
+    fl_end_time = time.time()
+    print("fl training cost: {} s".format(fl_end_time - fl_start_time))
+
+    res = predict(model, mean, std, x) * num_client
+
+    def pruner(x):
+        if x < 0:
+            return 0
+        return int(x)
+
+    res = np.array([pruner(v) for v in res.round().astype(np.int32)]).reshape(7, 24).tolist()
+
+    # test_accuracy(res, get_histogram_on_memory(start_time, end_time, lng_from, lng_to, lat_from, lat_to, type_))
+
     del model
     reset_keras()
     return res
@@ -51,7 +77,7 @@ def get_histogram_with_fed_learning(start_time, end_time, lng_from, lng_to,
 def get_5_histograms_on_memory(start_time, end_time, lng_from, lng_to,
                                lat_from, lat_to, type_):
     data = get_order_data_on_memory()
-    res = np.zeros((5, 7 * 24), dtype=int)
+    res = np.zeros((num_client, 7 * 24), dtype=int)
     for row in data:
         if row[6] < end_time and row[6] > start_time and row[
                 2] > lng_from and row[2] < lng_to and row[

@@ -3,12 +3,14 @@ import numpy as np
 import json
 import os
 import datetime
+from app.dao.common import size_param
+
 MIN_LNG = 110.14
 MAX_LNG = 110.520
 MIN_LAT = 19.902
 MAX_LAT = 20.070
-LNG_SIZE = int((MAX_LNG - MIN_LNG) * 1000) + 1
-LAT_SIZE = int((MAX_LAT - MIN_LAT) * 1000) + 1
+LNG_SIZE = int((MAX_LNG - MIN_LNG) * size_param) + 1
+LAT_SIZE = int((MAX_LAT - MIN_LAT) * size_param) + 1
 
 
 def satEncode(data):
@@ -32,10 +34,10 @@ def rawDataToJsonTask2(index):
         for row in haikouData:
             if float(row[16]) >= MIN_LNG and float(row[18]) >= MIN_LNG  and float(row[16]) < MAX_LNG and float(row[18]) < MAX_LNG \
                 and float(row[17]) >= MIN_LAT and float(row[17]) < MAX_LAT and float(row[19]) >= MIN_LAT and float(row[19]) < MAX_LAT:
-                i1 = int((float(row[18]) - MIN_LNG) * 1000)
-                j1 = int((float(row[19]) - MIN_LAT) * 1000)
-                i2 = int((float(row[16]) - MIN_LNG) * 1000)
-                j2 = int((float(row[17]) - MIN_LAT) * 1000)
+                i1 = int((float(row[18]) - MIN_LNG) * size_param)
+                j1 = int((float(row[19]) - MIN_LAT) * size_param)
+                i2 = int((float(row[16]) - MIN_LNG) * size_param)
+                j2 = int((float(row[17]) - MIN_LAT) * size_param)
                 weekday = datetime.date(int(row[20]), int(row[21]),
                                         int(row[22])).weekday()
                 startingPosData[weekday][i1][j1] += 1

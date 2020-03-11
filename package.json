@@ -79,6 +79,7 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
+    "server": "serve python/two-dim/data",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js"
   },
