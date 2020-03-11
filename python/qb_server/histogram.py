@@ -1,4 +1,4 @@
-import datetime
+import time
 import grequests
 from flask import request
 from qb_server.regi import get_clients
@@ -12,6 +12,7 @@ def get_histogram_api():
         return "no clients"
 
     # get clients ready
+    start_time = time.time()
     clients = get_clients()
     urls = []
     for client in clients:
@@ -22,8 +23,11 @@ def get_histogram_api():
     for res in responses:
         if res.status_code != 200:
             return 'ready failed', 500
-
+    print("get ready time: %4.4f" \
+          % (time.time() - start_time))
     # 交换随机向量
+    start_time = time.time()
+
     urls = []
     for client in clients:
         url = 'http://' + client['addr'] + ':' + client['port'] + '/api/encryption/start_to_exchange_vector'
@@ -34,7 +38,11 @@ def get_histogram_api():
         if res.status_code != 200:
             return 'exchange vector failed', 500
 
+    print("exchange rand vector time: %4.4f" \
+          % (time.time() - start_time))
     # 请求加密的数据
+
+    start_time = time.time()
     urls = []
     for client in clients:
         url = 'http://' + client['addr'] + ':' + client['port'] + '/api/get_encrypted_histogram'
@@ -44,7 +52,9 @@ def get_histogram_api():
     decrypted_data = np.zeros(7)
     for res in responses:
         encrypted_data = np.array(json.loads(res.content))
-        print('encrypted_data: ', encrypted_data)
+        # print('encrypted_data: ', encrypted_data)
         decrypted_data += encrypted_data
-    print('decrypted_data: ', decrypted_data)
+    # print('decrypted_data: ', decrypted_data)
+    print("get data and decryption time: %4.4f" \
+          % (time.time() - start_time))
     return json.dumps(decrypted_data.tolist())
