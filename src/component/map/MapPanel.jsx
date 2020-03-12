@@ -20,6 +20,19 @@ import clsx from 'clsx';
 // import { rankIcon } from '../icons/RankIcon';
 import * as d3 from 'd3'
 
+function getMinMax(data) {
+  let min = Number.MAX_SAFE_INTEGER, max = Number.MIN_SAFE_INTEGER;
+  for (let i = 0; i < data.length; i++) {
+    for (let j = 0; j < data[i].length; j++) {
+      if (data[i][j] < min) min = data[i][j];
+      if (data[i][j] > max) max = data[i][j];
+    }
+  }
+  return [min, max];
+}
+
+const size_param = 500;
+
 class MapPanel extends Component {
     constructor(props) {
         super(props);
@@ -55,6 +68,7 @@ class MapPanel extends Component {
         this.createARect = this.createARect.bind(this);
         this.handleODmapClick = this.handleODmapClick.bind(this);
         this.handleLinklineClick = this.handleLinklineClick.bind(this);// 点击删除链接线
+        this.genHeatmapData = this.genHeatmapData.bind(this);
     }
 
     /**
@@ -298,9 +312,22 @@ class MapPanel extends Component {
             document.getElementsByClassName('drawRect-' + this.props.selectRect)[0].style.display = 'block';
         }
     }
+
+    genHeatmapData() {
+      const { heatmapNerror, useError } = this.props;
+      const heatmap = useError ? heatmapNerror[1] : heatmapNerror[0];
+      let [min, max] = getMinMax(heatmap);
+      return {
+        heatmapData: heatmap, 
+        heatmapMinCount: min, 
+        heatmapMaxCount: max
+      };// 找到heatdata的最大值和最小值 为了在地图上做颜色映射
+    }
+
     render() {
         let me = this;
-        const { isDrawerOpen, heatmapData, odmapData } = this.props;
+        const { isDrawerOpen, odmapData } = this.props;
+        const heatmapData = this.genHeatmapData();
         const {
             latRange,
             lngRange,
@@ -317,15 +344,15 @@ class MapPanel extends Component {
         } = this.state;
         let heatmapRects = null;
         // heatmap
-        if (heatmapData.length !== 0) {
+        if (heatmapData.heatmapData.length !== 0) {
             let colorLinear = d3.scaleLinear()
-                .domain([heatmapData.heatmapMinCount, heatmapData.heatmapMaxCount /8])
+                .domain([heatmapData.heatmapMinCount, heatmapData.heatmapMaxCount])
                 .range([0, 1]);
             let data = heatmapData.heatmapData;
             heatmapRects = data.map((column, column_index) => {
                 return column.map((singleRect, rect_index) => {
                     // 算rect的经纬度
-                    let bounds = [[latRange[0] + 0.001 * rect_index, lngRange[0] + 0.001 * column_index], [latRange[0] + 0.001 * (rect_index+1), lngRange[0] + 0.001 * (column_index+1)]];
+                    let bounds = [[latRange[0] + rect_index / size_param, lngRange[0] + column_index / size_param], [latRange[0] + (rect_index+1) / size_param, lngRange[0] + (column_index+1) / size_param]];
                     if ( (singleRect - 0) <= 0.1) {
                         return null;
                     } else {
@@ -342,7 +369,7 @@ class MapPanel extends Component {
         }
         // odmap
         let odmapRects = null;
-        if (odmapData.length !== 0) {
+        if (Array.isArray(odmapData.data) && odmapData.data.length !== 0) {
             let colorLinear = d3.scaleLinear()
                 .domain([odmapData.min, odmapData.max / 8])
                 .range([0, 1]);

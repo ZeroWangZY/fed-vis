@@ -1,5 +1,7 @@
 import React from 'react';
 import './ControlPanel.less';
+import { Switch } from 'antd';
+import "antd/lib/switch/style/index.css";
 
 export default class ControlPanel extends React.PureComponent {
   constructor () {
@@ -8,6 +10,8 @@ export default class ControlPanel extends React.PureComponent {
       // 默认
       dataType: 'start',
       dataMode: 'normal',
+      enableError: false,
+      checkedError: false,
       startDate: '2017-05-19',
       endDate: '2017-05-19',
       startHour: '10:00',
@@ -40,8 +44,11 @@ export default class ControlPanel extends React.PureComponent {
   }
   updateDatamode (e) {
     this.setState({
-      dataMode: e.target.value
+      dataMode: e.target.value,
+      enableError: e.target.value === "fitting",
+      checkedError: false,
     })
+    this.props.onChangeHeatmapType(false);
   }
   updateStartDate (e) {
     this.setState({
@@ -63,6 +70,19 @@ export default class ControlPanel extends React.PureComponent {
       endHour: e.target.value
     })
   }
+
+  isErrorEnabled = () => {
+    return this.state.dataMode === "fitting"
+  }
+
+  onToggle = (checked) => {
+    // error matrix
+    this.setState({
+      checkedError: checked
+    })
+    this.props.onChangeHeatmapType(checked);
+  }
+
   render() {
     return (
       <div id="control-panel">
@@ -93,12 +113,22 @@ export default class ControlPanel extends React.PureComponent {
               <label><input name="dataType" type="radio" value="fitting" onChange={this.updateDatamode}/>fitting</label> 
             </form>
           </div>
+          <div className="err-switch">
+            <span className="err-switch__text">Enable error matrix:</span>
+            <Switch
+              defaultChecked
+              checked={this.state.checkedError}
+              size="small"
+              disabled={!this.state.enableError}
+              onClick={this.onToggle}
+            />
+          </div>
           <div id="acc-select">
             <p>Select a result accuracy:</p>
             <input type="range"></input>
           </div>
         </div>
-        <button onClick={this.handleLoadClick}>Load data</button>
+        <button className="load-btn" onClick={this.handleLoadClick}>Load data</button>
       </div>
     );
   }

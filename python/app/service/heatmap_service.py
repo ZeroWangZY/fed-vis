@@ -23,16 +23,21 @@ LAT_SIZE = int((MAX_LAT - MIN_LAT) * size_param) + 1
 def get_heatmap(start_time, end_time, type_):
     res = fetch_heatmap_from_cache(type_, start_time, end_time)
     if res != None:
-        return res['heatmap_matrix']
+        res = res['heatmap_matrix']
+        errorHeatmap = (np.array(res) - np.array(res)).tolist()
+        return [res, errorHeatmap]
 
     res = get_heatmap_on_memory(start_time, end_time)
     if res != None:
         save_heatmap_to_cache(type_, start_time, end_time, res)
-        return res
+        errorHeatmap = (np.array(res) - np.array(res)).tolist()
+        return [res, errorHeatmap]
 
     res = get_heatmap_from_db(start_time, end_time, type_=type_)
     save_heatmap_to_cache(type_, start_time, end_time, res)
-    return res
+
+    errorHeatmap = (np.array(res) - np.array(res)).tolist()
+    return [res, errorHeatmap]
 
 
 def get_heatmap_with_fed_learning(start_time, end_time, type_):
@@ -50,7 +55,7 @@ def get_heatmap_with_fed_learning(start_time, end_time, type_):
     
     model = get_model(max([LNG_SIZE, LAT_SIZE]), 2, layers=3)
     fl_start_time = time.time()
-    train_model_fed(model, x, y, round=200, epoch=1, batch=128000)
+    train_model_fed(model, x, y, round=150, epoch=1, batch=128000)
     fl_end_time = time.time()
     print("fl training cost: {} s".format(fl_end_time - fl_start_time))
 
@@ -62,11 +67,13 @@ def get_heatmap_with_fed_learning(start_time, end_time, type_):
     res = np.array([pruner(v) for v in res.round().astype(np.int32)
                     ]).reshape(LNG_SIZE, LAT_SIZE).tolist()
 
+    normalHeatmap = get_heatmap(start_time, end_time, type_)[0]
+    errorHeatmap = np.abs(np.array(res) - np.array(normalHeatmap)).tolist()
     # test_accuracy(res, get_heatmap_on_memory(start_time, end_time))
 
     del model
     reset_keras()
-    return res
+    return [res, errorHeatmap]
    
 
 def get_5_heatmap_on_memory(start_time, end_time):

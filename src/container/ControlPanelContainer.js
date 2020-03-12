@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import ControlPanel from 'components/controlPanel/ControlPanel';
-import {getHeatmapByTimeRange} from 'actions/heatmap'
+import {getHeatmapByTimeRange, changeHeatmapType} from 'actions/heatmap'
 
 const mapStateToProps = (state) => {
   return {
@@ -12,6 +12,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onSelect: (dataType, dataMode, startTime, endTime) => {
       dispatch(getHeatmapByTimeRange(dataType, dataMode, startTime, endTime));
+    },
+    onChangeHeatmapType: (useError) => {
+      dispatch(changeHeatmapType(useError));
     }
   };
 };

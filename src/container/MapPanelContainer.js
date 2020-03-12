@@ -4,10 +4,11 @@ import {addBarchart, deleteBarchart} from 'actions/barchart'
 
 const mapStateToProps = (state) => {
   return {
-    heatmapData: state.heatmapData,
+    heatmapNerror: state.heatmapData,
     odmapData: state.odmapData,
     selectRect: state.highlightId,
-    deleteRect: state.deleteRectId
+    deleteRect: state.deleteRectId,
+    useError: state.useError
   };
 };
 
