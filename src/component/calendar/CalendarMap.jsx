@@ -100,6 +100,7 @@ export default class CalendarChart extends React.PureComponent {
             return (
               <g key={monthIndex}
                 transform={`translate(0, ${monthIndex > 0 ? cellSize * 1.5 * monthIndex : 0})`}
+                // transform={`translate(${((monthIndex + 6) % 3) * 7 * cellSize}, ${monthIndex > 2 ? cellSize * 1.5 * 1 : 0})`}
               >
                 {
                   dataByMonth.map((val, dateIndex) => {

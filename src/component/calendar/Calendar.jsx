@@ -18,7 +18,7 @@ export default class Calendar extends Component {
 
     this.colorSet = ['#fbf9db', '#B3D8DF', '#95C0DA', '#215ea5', '#273a90'];
 
-    this.cellSize = 17;
+    this.cellSize = 16;
 
     this.svgWidth = 318;
 

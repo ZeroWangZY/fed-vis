@@ -13,5 +13,5 @@ function getOdmapUrlPath (params) {
   arr.push(Apis.get_odmap_by_time_range + '?' + 'type=' + params.dataType);
   arr.push('start_time=' + params.startTime);
   arr.push('end_time=' + params.endTime);
-  return arr.join('&') + '&vertical_size=5&horizon_size=10';// to modify
+  return arr.join('&') + '&vertical_size=20&horizon_size=20';// to modify
 }

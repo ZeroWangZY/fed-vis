@@ -1,7 +1,15 @@
 import React from 'react';
 import './ControlPanel.less';
 import { Switch } from 'antd';
+import { Slider } from 'antd';
 import "antd/lib/switch/style/index.css";
+import "antd/lib/slider/style/index.css";
+
+const sliderMarks = {
+  60: '60%',
+  90: '90%',
+  100: '100%'
+};
 
 export default class ControlPanel extends React.PureComponent {
   constructor () {
@@ -107,10 +115,10 @@ export default class ControlPanel extends React.PureComponent {
               <label><input name="dataType" type="radio" value="start" defaultChecked onChange={this.updateDatatype}/>start</label> 
               <label><input name="dataType" type="radio" value="end" onChange={this.updateDatatype}/>end</label> 
             </form>
-            <form action="" method="get">
-              Select data mode:
-              <label><input name="dataType" type="radio" value="normal" defaultChecked onChange={this.updateDatamode}/>normal</label> 
-              <label><input name="dataType" type="radio" value="fitting" onChange={this.updateDatamode}/>fitting</label> 
+            <form action="" method="get" className="datatype-select__second">
+              Select representation mode:<br />
+              <label><input name="dataType" type="radio" value="normal" defaultChecked onChange={this.updateDatamode}/>query-based</label> 
+              <label><input name="dataType" type="radio" value="fitting" onChange={this.updateDatamode}/>prediction-based</label> 
             </form>
           </div>
           <div className="err-switch">
@@ -125,7 +133,17 @@ export default class ControlPanel extends React.PureComponent {
           </div>
           <div id="acc-select">
             <p>Select a result accuracy:</p>
-            <input type="range"></input>
+            <div className="acc-select__slider">
+              <Slider
+                marks={sliderMarks}
+                tooltipPlacement="bottom"
+                defaultValue={90} 
+                max={100}
+                min={60}
+                tooltipVisible={false}
+                // getTooltipPopupContainer={() => document.body.querySelector("#root")}
+              />
+            </div>
           </div>
         </div>
         <button className="load-btn" onClick={this.handleLoadClick}>Load data</button>

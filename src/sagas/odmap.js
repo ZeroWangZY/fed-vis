@@ -7,7 +7,9 @@ function * updateOdmap (action) {
   const params = {
     dataType: action.dataType,
     startTime: action.startTime,
-    endTime: action.endTime
+    endTime: action.endTime,
+    horizion_size: action.horizion_size || 10,
+    vertical_size: action.vertical_size || 5
   };
   const { odmapData}  = yield all({
     odmapData: call(api.getOdmap, params)

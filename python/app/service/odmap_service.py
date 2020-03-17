@@ -13,10 +13,10 @@ MAX_LAT = 20.070
 
 def get_odmap(start_time, end_time, horizon_size, vertical_size,
               type_='start'):
-    cache_data = fetch_odmap_from_cache(start_time, end_time, horizon_size,
-                                        vertical_size, type_)
-    if cache_data != None:
-        return cache_data['data']
+    # cache_data = fetch_odmap_from_cache(start_time, end_time, horizon_size,
+    #                                     vertical_size, type_)
+    # if cache_data != None:
+    #     return cache_data['data']
 
     if is_order_data_on_memory():
         return get_odmap_on_memory(start_time, end_time, horizon_size, vertical_size,

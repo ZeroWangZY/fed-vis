@@ -13,12 +13,22 @@ import {
 // import HeatmapLayer from '../heatmap/heatmap';
 import { basicConfig, heatMapConfig } from '../../util/mapsetting';
 import { EditControl } from 'react-leaflet-draw';
+import HeatmapLayer from 'react-leaflet-heatmap-layer/lib/HeatmapLayer';
 import './map.less';
 import clsx from 'clsx';
 // import SelectedListItem from '../displayItems/ItemLists';
 // import HeatmapLegend from '../legend/legend';
 // import { rankIcon } from '../icons/RankIcon';
 import * as d3 from 'd3'
+
+let colorRange = [
+  d3.rgb(255, 255, 212), 
+  d3.rgb(254, 217, 142), 
+  d3.rgb(254, 153, 41), 
+  d3.rgb(217, 95, 14), 
+  d3.rgb(153, 52, 4), 
+  d3.rgb(153, 52, 4)
+];
 
 function getMinMax(data) {
   let min = Number.MAX_SAFE_INTEGER, max = Number.MIN_SAFE_INTEGER;
@@ -32,6 +42,12 @@ function getMinMax(data) {
 }
 
 const size_param = 500;
+const LAT_START = 19.902;
+const LAT_END = 20.07;
+const LNG_START = 110.14;
+const LNG_END = 110.52;
+const OD_ROW_SIZE = 20;
+const OD_COL_SIZE = 20;
 
 class MapPanel extends Component {
     constructor(props) {
@@ -43,11 +59,11 @@ class MapPanel extends Component {
             minValue: null,
             maxValue: null,
             // 数据经纬度范围
-            latRange: [19.902, 20.07],
-            lngRange: [110.14, 110.52],
-            odmapOuterrectSize: [0.0336, 0.038], //外部矩形一格的经纬度范围 lat lng
-            odmapInnerrectSize: [0.00672, 0.0038], //一小格的经纬度范围
-            odmapSize: [5, 10],// 默认5行10列
+            latRange: [LAT_START, LAT_END],
+            lngRange: [LNG_START, LNG_END],
+            odmapOuterrectSize: [(LAT_END - LAT_START) / OD_ROW_SIZE, (LNG_END - LNG_START) / OD_COL_SIZE], //外部矩形一格的经纬度范围 lat lng
+            odmapInnerrectSize: [(LAT_END - LAT_START) / OD_ROW_SIZE / OD_ROW_SIZE, (LNG_END - LNG_START) / OD_COL_SIZE / OD_COL_SIZE], //一小格的经纬度范围
+            odmapSize: [OD_ROW_SIZE, OD_COL_SIZE],// 默认5行10列
             currentDisplayType: 1,// 1为热力图 0为odmap 默认显示热力图
             currentSpaceTypeOuter: 'O', // 外部大矩形代表的空间 O for origin, D for des
             odmapDataForDesSpace: [],//转换到D space的数据 原始的odmapData都是O space
@@ -69,6 +85,8 @@ class MapPanel extends Component {
         this.handleODmapClick = this.handleODmapClick.bind(this);
         this.handleLinklineClick = this.handleLinklineClick.bind(this);// 点击删除链接线
         this.genHeatmapData = this.genHeatmapData.bind(this);
+        this.genColor = this.genColor.bind(this);
+        this.reshapeHeatmap = this.reshapeHeatmap.bind(this);
     }
 
     /**
@@ -324,6 +342,33 @@ class MapPanel extends Component {
       };// 找到heatdata的最大值和最小值 为了在地图上做颜色映射
     }
 
+    genColor(colorScale, opacityScale, val) {
+      let color = colorScale(val);
+      let opacity = opacityScale(val);
+      let startRgb = d3.rgb(color);
+      startRgb.opacity = opacity;
+      let endRgb = d3.rgb(colorScale.range()[0])
+      endRgb.opacity = opacityScale.range()[0]
+      // debugger;
+      return `radial-gradient(${color.toString()} 0%, ${endRgb.toString()} 100%)`;
+    }
+
+    reshapeHeatmap(data) {
+      const { latRange, lngRange } = this.state;
+
+      let ret = [];
+      data.forEach((column, column_index) => {
+        column.forEach((singleRect, rect_index) => {
+          let bounds = [[latRange[0] + rect_index / size_param, lngRange[0] + column_index / size_param], [latRange[0] + (rect_index+1) / size_param, lngRange[0] + (column_index+1) / size_param]];
+          let lat = (bounds[0][0] + bounds[1][0]) / 2;
+          let lng = (bounds[0][1] + bounds[1][1]) / 2;
+          ret.push([lat, lng, singleRect])
+        });
+      })
+
+      return ret;
+    }
+
     render() {
         let me = this;
         const { isDrawerOpen, odmapData } = this.props;
@@ -345,27 +390,58 @@ class MapPanel extends Component {
         let heatmapRects = null;
         // heatmap
         if (heatmapData.heatmapData.length !== 0) {
-            let colorLinear = d3.scaleLinear()
-                .domain([heatmapData.heatmapMinCount, heatmapData.heatmapMaxCount])
-                .range([0, 1]);
-            let data = heatmapData.heatmapData;
-            heatmapRects = data.map((column, column_index) => {
-                return column.map((singleRect, rect_index) => {
-                    // 算rect的经纬度
-                    let bounds = [[latRange[0] + rect_index / size_param, lngRange[0] + column_index / size_param], [latRange[0] + (rect_index+1) / size_param, lngRange[0] + (column_index+1) / size_param]];
-                    if ( (singleRect - 0) <= 0.1) {
-                        return null;
-                    } else {
-                        return <FeatureGroup key={'heatmap-column' + column_index + '-' + rect_index}><Rectangle
-                            bounds={bounds}
-                            color={me.computeColor(colorLinear(singleRect))}
-                            weight={0}
-                            fillOpacity={0.6}
-                            key={'heatmap-rect' + column_index + '-' + rect_index}
-                        /></FeatureGroup>
-                    }
-                });
-            });
+            const maxValue = Math.log(heatmapData.heatmapMaxCount + 1);
+            console.log("max:", heatmapData.heatmapMaxCount);
+            const domain = [
+              0, maxValue / 6, maxValue / 6 * 2, maxValue / 6 * 3,
+              maxValue / 6 * 4, maxValue / 6 * 5, maxValue
+            ];
+            let color = d3.scaleLinear().domain(domain)
+              .interpolate(d3.interpolateRgb)
+              .range(colorRange);
+
+            let opacity = d3.scaleLinear().domain(domain)
+              .range([0, 0.05, 0.2, 0.3, 0.4, 0.5, 1])
+
+            // let colorLinear = d3.scaleLinear()
+            //     .domain([heatmapData.heatmapMinCount, Math.max(heatmapData.heatmapMinCount, heatmapData.heatmapMaxCount / 2)])
+            //     .range([0, 1]);
+            let data = this.reshapeHeatmap(heatmapData.heatmapData);
+            data.sort((a, b) => a[2] - b[2]);
+            // heatmapRects = data.map((column, column_index) => {
+            //     return column.map((singleRect, rect_index) => {
+            //         // 算rect的经纬度
+            //         let bounds = [[latRange[0] + rect_index / size_param, lngRange[0] + column_index / size_param], [latRange[0] + (rect_index+1) / size_param, lngRange[0] + (column_index+1) / size_param]];
+            //         if ( (singleRect - 0) <= 0.1) {
+            //             return null;
+            //         } else {
+            //             return (
+            //               <FeatureGroup key={'heatmap-column' + column_index + '-' + rect_index}>
+            //                 <Rectangle
+            //                   bounds={bounds}
+            //                   stroke="none"
+            //                   color={this.genColor(color, opacity, Math.log(singleRect + 1))}
+            //                   weight={0}
+            //                   key={'heatmap-rect' + column_index + '-' + rect_index}
+            //                 />
+            //               </FeatureGroup>
+            //             )
+            //         }
+            //     });
+            // });
+            heatmapRects = (
+              <HeatmapLayer
+                // fitBoundsOnLoad
+                // fitBoundsOnUpdate
+                points={data}
+                radius={20}
+                max={data[Math.ceil(data.length / 11 * 10)][2]}
+                // blur={10}
+                longitudeExtractor={d => d[1]}
+                latitudeExtractor={d => d[0]}
+                intensityExtractor={d => d[2]}
+              />
+            );
         }
         // odmap
         let odmapRects = null;
@@ -434,7 +510,7 @@ class MapPanel extends Component {
                         disabled={currentDisplayType?"disabled":""}
                         onClick={this.handleConvertOD}>O⇋D</button>
                 </div>
-                {!currentDisplayType && <div id='odmap-label'>Current space type of outer grid: {currentSpaceTypeOuter}</div>}
+                {/* {!currentDisplayType && <div id='odmap-label'>Current space type of outer grid: {currentSpaceTypeOuter}</div>} */}
                 <Map
                     center={basicConfig.center}
                     zoom={basicConfig.zoom}
