@@ -42,20 +42,27 @@ def query_count(start_time,
                 }
             })
     else:
-        res = orders_info_collection.count_documents({
-            "des_time": {
-                "$gt": start_time,
-                "$lt": end_time
-            },
-            "des_lng": {
-                "$gt": lng_from,
-                "$lt": lng_to
-            },
-            "des_lat": {
-                "$gt": lat_from,
-                "$lt": lat_to
-            }
-        })
+        if lng_from == None:
+            res = orders_info_collection.count_documents(
+                {"des_time": {
+                    "$gt": start_time,
+                    "$lt": end_time
+                }})
+        else:
+            res = orders_info_collection.count_documents({
+                "des_time": {
+                    "$gt": start_time,
+                    "$lt": end_time
+                },
+                "des_lng": {
+                    "$gt": lng_from,
+                    "$lt": lng_to
+                },
+                "des_lat": {
+                    "$gt": lat_from,
+                    "$lt": lat_to
+                }
+            })
     return res
 
 

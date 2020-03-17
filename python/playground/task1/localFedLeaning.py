@@ -16,10 +16,13 @@ x = dataTool.initX()
 
 mean = 0
 std = 0
+ground_true = 0
 
 for i in range(len(y)):
     mean += np.mean(y[i])
     std += np.std(y[i])
+    ground_true += y[i]
+ground_true = ground_true.flatten()
 mean /= 5    
 std /= 5
 
@@ -27,6 +30,9 @@ for i in range(len(y)):
     y[i] = (y[i] - mean) / std
 
 model = modelSetting.getModel()
+model.compile(loss='mean_squared_error',
+              optimizer=optimizers.Adam(lr=0.01),
+              metrics=['mse'])
 global_weights = model.get_weights()
 
 def update_weights(weightsArray):
@@ -34,20 +40,20 @@ def update_weights(weightsArray):
         return new_weights
 
 
-round = 1
-while round < 10000:
+for i in range(10):
     w = [0,0,0,0,0]
 
     for i in range(len(y)):
         model.set_weights(global_weights)
-        model.fit(x, y[i], epochs=1, batch_size=12800)
+        model.fit(x, y[i], epochs=1, batch_size=128000)
         w[i] = model.get_weights()
 
     global_weights = update_weights(w)
 
-    if round % 100 == 0:
-        results = model.predict(x)
-        results = mean + std * results
-        dataTool.writeTo(results, 'data/predict/avgfed5client', str(round))
-    round+=1
+predict = model.predict(x).flatten()
+predict = np.around(predict * std + mean) * 5
+diff = np.abs(predict - ground_true)
+max_sum = ground_true.sum() if ground_true.sum() > predict.sum() else predict.sum()
+print('ARE: ', diff.sum() / max_sum)
+        # dataTool.writeTo(results, 'data/predict/avgfed5client', str(round))
 

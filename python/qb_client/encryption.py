@@ -14,6 +14,7 @@ perturbations = None
 clients = []
 my_id = None
 
+shape = (380,168)
 
 # 获取clients_list
 # 生成随机向量
@@ -59,7 +60,7 @@ def get_rand_vector():
     return json.dumps(my_rand_vectors[request_client_id])
 
 
-def gen_rand_vectors(shape=7):
+def gen_rand_vectors():
     global my_rand_vectors
     my_rand_vectors = []
     for i in range(len(clients)):

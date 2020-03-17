@@ -23,7 +23,7 @@ def get_histogram_api():
     for res in responses:
         if res.status_code != 200:
             return 'ready failed', 500
-    print("get ready time: %4.4f" \
+    print("%4.4f" \
           % (time.time() - start_time))
     # 交换随机向量
     start_time = time.time()
@@ -38,7 +38,7 @@ def get_histogram_api():
         if res.status_code != 200:
             return 'exchange vector failed', 500
 
-    print("exchange rand vector time: %4.4f" \
+    print("%4.4f" \
           % (time.time() - start_time))
     # 请求加密的数据
 
@@ -49,12 +49,15 @@ def get_histogram_api():
         urls.append(url)
     rs = (grequests.get(u) for u in urls)
     responses = grequests.map(rs)
-    decrypted_data = np.zeros(7)
+    decrypted_data = None
     for res in responses:
         encrypted_data = np.array(json.loads(res.content))
+        if decrypted_data is None:
+            decrypted_data = encrypted_data
+            continue
         # print('encrypted_data: ', encrypted_data)
         decrypted_data += encrypted_data
     # print('decrypted_data: ', decrypted_data)
-    print("get data and decryption time: %4.4f" \
+    print("%4.4f" \
           % (time.time() - start_time))
     return json.dumps(decrypted_data.tolist())
