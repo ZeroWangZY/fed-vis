@@ -19,18 +19,10 @@ sgd = optimizers.SGD(lr=0.1, decay=1e-6)
 rms = optimizers.RMSprop()
 
 model.compile(loss='mean_squared_error',
-              optimizer=optimizers.Adam(lr=0.01),
+              optimizer=optimizers.Adam(lr=0.008),
               metrics=['mse'])
 
-model.fit(x, y, epochs=100, batch_size=128000)
-
-weights = model.get_weights()
-model = modelSetting.getModel()
-model.compile(loss='mean_squared_error',
-              optimizer=optimizers.Adam(lr=0.005),
-              metrics=['mse'])
-model.set_weights(weights)
-model.fit(x, y, epochs=50, batch_size=128000)
+model.fit(x, y, epochs=250, batch_size=128000)
 
 results = model.predict(x)
 

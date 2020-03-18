@@ -130,10 +130,12 @@ def readFrom(str):
 
 
 def initX():
-    x = [[0, 0]]
+    x = [[0]]
+    count = 0
     for longitude in range(LNG_SIZE):
         for latitude in range(LAT_SIZE):
-            x = np.append(x, [[longitude, latitude]], axis=0)
+            x = np.append(x, [count])
+            count += 1
     return x[1:]
 
 
