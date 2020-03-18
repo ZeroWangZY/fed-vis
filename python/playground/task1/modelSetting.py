@@ -22,12 +22,12 @@ def backend_reshape(x):
 def getModel(conv=False):
     model = Sequential()
 
-    model.add(embeddings.Embedding(127680, 128, input_length=1))
+    model.add(embeddings.Embedding(63840, 64, input_length=1))
 
     model.add(Flatten())
 
-    for i in range(3):
-        model.add(Dense(128,
+    for i in range(1):
+        model.add(Dense(64,
                         kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
                         activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
                         bias_regularizer=regularizers.l1_l2(l1=0., l2=0.),

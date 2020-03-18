@@ -31,7 +31,8 @@ for i in range(len(y)):
 
 model = modelSetting.getModel()
 model.compile(loss='mean_squared_error',
-              optimizer=optimizers.Adam(lr=0.008),
+              optimizer=optimizers.Adam(lr=0.01),
+              # optimizer=optimizers.Adam(lr=0.008),
               metrics=['mse'])
 global_weights = model.get_weights()
 
@@ -41,7 +42,23 @@ def update_weights(weightsArray):
     return new_weights
 
 
-for round in range(250):
+for round in range(50):
+    print('round: ', str(round+1))
+    w = [0, 0, 0, 0, 0]
+
+    for i in range(len(y)):
+        model.set_weights(global_weights)
+        model.fit(x, y[i], epochs=1, batch_size=128000)
+        w[i] = model.get_weights()
+
+    global_weights = update_weights(w)
+
+model = modelSetting.getModel()
+model.compile(loss='mean_squared_error',
+              optimizer=optimizers.Adam(lr=0.0005),
+              metrics=['mse'])
+
+for round in range(50):
     print('round: ', str(round+1))
     w = [0, 0, 0, 0, 0]
 

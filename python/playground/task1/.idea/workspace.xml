@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9c9b39ac-6a4c-4298-a232-b85bac770965" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/other.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/all-in-one.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dataTool.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataTool.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/localFedLeaning.py" beforeDir="false" afterPath="$PROJECT_DIR$/localFedLeaning.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modelSetting.py" beforeDir="false" afterPath="$PROJECT_DIR$/modelSetting.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/naiveLearning.py" beforeDir="false" afterPath="$PROJECT_DIR$/naiveLearning.py" afterDir="false" />
@@ -73,9 +69,9 @@
       <list>
         <item itemvalue="Python.localFedLeaning" />
         <item itemvalue="Python.localFedLeaning" />
-        <item itemvalue="Python.naiveLearning" />
-        <item itemvalue="Python.naiveLearning" />
-        <item itemvalue="Python.naiveLearning" />
+        <item itemvalue="Python.localFedLeaning" />
+        <item itemvalue="Python.localFedLeaning" />
+        <item itemvalue="Python.localFedLeaning" />
       </list>
     </recent_temporary>
   </component>
@@ -89,7 +85,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1584524109216</updated>
-      <workItem from="1584524110364" duration="1854000" />
+      <workItem from="1584524110364" duration="4632000" />
     </task>
     <servers />
   </component>
