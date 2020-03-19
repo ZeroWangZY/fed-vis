@@ -54,20 +54,21 @@ def get_heatmap_with_fed_learning(start_time, end_time, type_):
     # y = (y - mean) / std
     mean = 0
     std = 0
-    ground_true = []
+    ground_true = np.zeros(LNG_SIZE * LAT_SIZE)
     for i in range(num_client):
         mean += np.mean(y[i])
         std += np.std(y[i])
-        ground_true.append(y[i])
+        ground_true += y[i]
+
     mean /= num_client
     std /= num_client
     for i in range(num_client):
         y[i] = (y[i] - mean) / std
 
     
-    model = get_model(LNG_SIZE * LAT_SIZE)
+    model = get_model(LNG_SIZE * LAT_SIZE, layers=3)
     fl_start_time = time.time()
-    train_model_fed(model, x, y, round=300, epoch=1, batch=128000)
+    train_model_fed(model, x, y, round=100, epoch=1, batch=128000)
     fl_end_time = time.time()
     print("fl training cost: {} s".format(fl_end_time - fl_start_time))
 
@@ -79,7 +80,7 @@ def get_heatmap_with_fed_learning(start_time, end_time, type_):
     res = np.array([pruner(v) for v in res.round().astype(np.int32)
                     ]).reshape(LNG_SIZE, LAT_SIZE).tolist()
 
-    normalHeatmap = ground_true
+    normalHeatmap = ground_true.reshape(LNG_SIZE, LAT_SIZE).tolist()
     errorHeatmap = np.abs(np.array(res) - np.array(normalHeatmap)).tolist()
     test_accuracy(res, normalHeatmap)
 

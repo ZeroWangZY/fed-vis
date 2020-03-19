@@ -15,7 +15,7 @@ import random
 def get_model(embedding_size, input_length=1, layers=1, width=64):
     model = Sequential()
     
-    model.add(embeddings.Embedding(embedding_size, width, input_length))
+    model.add(embeddings.Embedding(embedding_size, width, input_length=input_length))
 
     model.add(Flatten())
 
@@ -49,19 +49,22 @@ def predict(model, mean, std, x, num_client):
     result = np.around(result * std + mean) * num_client
     return result
 
+def update_weights(weightsArray):
+    new_weights = np.sum(weightsArray, axis=0) / len(weightsArray)
+    return new_weights
 
 def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800):
     for r in range(round):
         print('round ', r)
-        golbal_weights = model.get_weights()
+        global_weights = model.get_weights()
         weights_set = []
         for i in range(len(ys)):
-            model.set_weights(golbal_weights)
+            model.set_weights(global_weights)
             model.fit(x, ys[i], epochs=epoch, batch_size=batch)
             weights_set.append(model.get_weights())
         print('weights aggregation')
         if len(weights_set) != 0:
-            model.set_weights(np.mean(weights_set, axis=0))
+            global_weights = update_weights(weights_set)
 
 
 

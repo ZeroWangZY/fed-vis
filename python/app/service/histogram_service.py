@@ -54,11 +54,11 @@ def get_histogram_with_fed_learning(start_time, end_time, lng_from, lng_to,
     # y = (y - mean) / std
     mean = 0
     std = 0
-    ground_true = []
+    ground_true = np.zeros(7 * 24)
     for i in range(num_client):
         mean += np.mean(y[i])
         std += np.std(y[i])
-        ground_true.append(y[i])
+        ground_true += y[i]
     mean /= num_client
     std /= num_client
     for i in range(num_client):
@@ -80,7 +80,7 @@ def get_histogram_with_fed_learning(start_time, end_time, lng_from, lng_to,
 
     res = np.array([pruner(v) for v in res.round().astype(np.int32)]).reshape(7, 24).tolist()
 
-    test_accuracy(res, ground_true)
+    test_accuracy(res, ground_true.reshape(7, 24).tolist())
 
     del model
     reset_keras()
