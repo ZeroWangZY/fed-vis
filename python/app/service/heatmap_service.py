@@ -46,20 +46,32 @@ def get_heatmap_with_fed_learning(start_time, end_time, type_):
     y = get_5_heatmap_on_memory(start_time, end_time)
 
     # 节点个数
-    print("# clients: {}".format(len(y)))
+    num_client = len(y)
+    print("# clients: {}".format(num_client))
 
-    mean = np.mean(y)
-    std = np.std(y)
-    y = (y - mean) / std
+    # mean = np.mean(y)
+    # std = np.std(y)
+    # y = (y - mean) / std
+    mean = 0
+    std = 0
+    ground_true = []
+    for i in range(num_client):
+        mean += np.mean(y[i])
+        std += np.std(y[i])
+        ground_true.append(y[i])
+    mean /= num_client
+    std /= num_client
+    for i in range(num_client):
+        y[i] = (y[i] - mean) / std
 
     
-    model = get_model(max([LNG_SIZE, LAT_SIZE]), 2, layers=3)
+    model = get_model(LNG_SIZE * LAT_SIZE)
     fl_start_time = time.time()
     train_model_fed(model, x, y, round=300, epoch=1, batch=128000)
     fl_end_time = time.time()
     print("fl training cost: {} s".format(fl_end_time - fl_start_time))
 
-    res = predict(model, mean, std, x) * num_client
+    res = predict(model, mean, std, x, num_client)
     def pruner(x):
         if x < 0:
             return 0
@@ -67,7 +79,7 @@ def get_heatmap_with_fed_learning(start_time, end_time, type_):
     res = np.array([pruner(v) for v in res.round().astype(np.int32)
                     ]).reshape(LNG_SIZE, LAT_SIZE).tolist()
 
-    normalHeatmap = get_heatmap(start_time, end_time, type_)[0]
+    normalHeatmap = ground_true
     errorHeatmap = np.abs(np.array(res) - np.array(normalHeatmap)).tolist()
     test_accuracy(res, normalHeatmap)
 

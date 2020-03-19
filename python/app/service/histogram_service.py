@@ -46,19 +46,32 @@ def get_histogram_with_fed_learning(start_time, end_time, lng_from, lng_to,
                                    lat_from, lat_to, type_)
 
     # 节点个数
-    print("# clients: {}".format(len(y)))
+    num_client = len(y)
+    print("# clients: {}".format(num_client))
 
-    mean = np.mean(y)
-    std = np.std(y)
-    y = (y - mean) / std
-    model = get_model(24, 2)
+    # mean = np.mean(y)
+    # std = np.std(y)
+    # y = (y - mean) / std
+    mean = 0
+    std = 0
+    ground_true = []
+    for i in range(num_client):
+        mean += np.mean(y[i])
+        std += np.std(y[i])
+        ground_true.append(y[i])
+    mean /= num_client
+    std /= num_client
+    for i in range(num_client):
+        y[i] = (y[i] - mean) / std
+
+    model = get_model(24 * 7)
 
     fl_start_time = time.time()
     train_model_fed(model, x, y, round=100, epoch=1)
     fl_end_time = time.time()
     print("fl training cost: {} s".format(fl_end_time - fl_start_time))
 
-    res = predict(model, mean, std, x) * num_client
+    res = predict(model, mean, std, x, num_client)
 
     def pruner(x):
         if x < 0:
@@ -67,7 +80,7 @@ def get_histogram_with_fed_learning(start_time, end_time, lng_from, lng_to,
 
     res = np.array([pruner(v) for v in res.round().astype(np.int32)]).reshape(7, 24).tolist()
 
-    # test_accuracy(res, get_histogram_on_memory(start_time, end_time, lng_from, lng_to, lat_from, lat_to, type_))
+    test_accuracy(res, ground_true)
 
     del model
     reset_keras()

@@ -12,46 +12,41 @@ import gc
 import random
 
 
-def get_model(embedding_size, input_length, layers=3, width=128):
+def get_model(embedding_size, input_length=1, layers=1, width=64):
     model = Sequential()
-    model.add(
-        embeddings.Embedding(embedding_size, 128, input_length=input_length))
+    
+    model.add(embeddings.Embedding(embedding_size, width, input_length))
+
     model.add(Flatten())
+
     for i in range(layers):
-        model.add(
-            Dense(
-                width,
-                input_dim=input_length,
-                activation='relu',
-                kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
-                activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
-                bias_regularizer=regularizers.l1_l2(l1=0., l2=0.),
-            ))
-    model.add(
-        Dense(
-            1,
-            kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
-            activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
-            bias_regularizer=regularizers.l1_l2(l1=0., l2=0.)
-        ))
+        model.add(Dense(width,
+                        kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                        activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                        bias_regularizer=regularizers.l1_l2(l1=0., l2=0.),
+                        kernel_initializer=initializers.RandomNormal(mean=0.0, stddev=np.sqrt(2 / 128), seed=None),
+                        bias_initializer=initializers.RandomNormal(mean=0.0, stddev=np.sqrt(2 / 128), seed=None),
+                        ))
+        # model.add(BatchNormalization())
+        model.add(Activation('relu'))
 
-    adam = optimizers.Adam(lr=0.01,
-                           beta_1=0.9,
-                           beta_2=0.999,
-                           epsilon=None,
-                           decay=0.0,
-                           amsgrad=False)
-    sgd = optimizers.SGD(lr=0.1, decay=1e-6)
-    rms = optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
+    model.add(Dense(1))
 
-    model.compile(loss='mean_squared_error', optimizer=adam, metrics=['mse'])
+    adam = optimizers.Adam(lr=0.05)
+    sgd = optimizers.SGD(lr=0.001, decay=1e-6)
+    rms = optimizers.RMSprop()
+
+    # model.compile(loss='mean_squared_error', optimizer=adam, metrics=['mse'])
+    model.compile(loss='mean_squared_error',
+              optimizer=adam,
+              metrics=['mse'])
 
     return model
 
 
-def predict(model, mean, std, x):
-    result = model.predict(x)
-    result = mean + std * result
+def predict(model, mean, std, x, num_client):
+    result = model.predict(x).flatten()
+    result = np.around(result * std + mean) * num_client
     return result
 
 
@@ -71,11 +66,13 @@ def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800):
 
 
 def gen_x(size_1, size_2):
-    x = []
-    for i in range(size_1):
-        for j in range(size_2):
-            x.append([i, j])
-    return np.array(x)
+    x = [[0]]
+    count = 0
+    for longitude in range(size_1):
+        for latitude in range(size_2):
+            x = np.append(x, [count])
+            count += 1
+    return x[1:]
 
 
 # Reset Keras Session
