@@ -31,10 +31,10 @@ def getModel(conv=False):
                         kernel_regularizer=regularizers.l1_l2(l1=0., l2=0.),
                         activity_regularizer=regularizers.l1_l2(l1=0., l2=0.),
                         bias_regularizer=regularizers.l1_l2(l1=0., l2=0.),
-                        kernel_initializer=initializers.RandomNormal(mean=0.0, stddev=np.sqrt(2 / 128), seed=None),
-                        bias_initializer=initializers.RandomNormal(mean=0.0, stddev=np.sqrt(2 / 128), seed=None),
+                        # kernel_initializer=initializers.RandomNormal(mean=0.0, stddev=np.sqrt(2 / 128), seed=None),
+                        # bias_initializer=initializers.RandomNormal(mean=0.0, stddev=np.sqrt(2 / 128), seed=None),
                         ))
-        # model.add(BatchNormalization())
+        model.add(BatchNormalization())
         model.add(Activation('relu'))
 
     model.add(Dense(1))

@@ -10,6 +10,19 @@ import dataTool
 import modelSetting
 import os
 
+
+def calc_are(p, q):
+    length = np.size(p)
+    ret = 0.0
+    for i in range(0, length):
+        a = p[i]
+        b = q[i]
+        abs_diff = abs(a - b)
+        max_val = max(a, b)
+        ret += abs_diff / max_val if max_val != 0 else 0
+    return ret / length
+
+
 y = [dataTool.readFrom('des1'), dataTool.readFrom('des2'), dataTool.readFrom('des3'), dataTool.readFrom('des4'),
      dataTool.readFrom('des5')]
 x = dataTool.initX()
@@ -73,5 +86,5 @@ predict = model.predict(x).flatten()
 predict = np.around(predict * std + mean) * 5
 diff = np.abs(predict - ground_true)
 max_sum = ground_true.sum() if ground_true.sum() > predict.sum() else predict.sum()
-print('ARE: ', diff.sum() / max_sum)
+print('zyARE: {}, ARE: {}'.format(diff.sum() / max_sum, calc_are(predict, ground_true)))
 # dataTool.writeTo(results, 'data/predict/avgfed5client', str(round))

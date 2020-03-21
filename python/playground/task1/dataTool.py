@@ -3,8 +3,8 @@ import numpy as np
 import json
 import os
 import datetime
-from app.dao.common import size_param
-
+#from app.dao.common import size_param
+size_param = 1000
 MIN_LNG = 110.14
 MAX_LNG = 110.520
 MIN_LAT = 19.902

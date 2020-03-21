@@ -2,7 +2,7 @@ import numpy as np
 from keras import backend, initializers, optimizers
 from keras.layers import (LSTM, Activation, Conv1D, Conv2D, Dense, Dropout,
                           Flatten, Lambda, MaxPooling1D, MaxPooling2D,
-                          embeddings, regularizers)
+                          embeddings, regularizers, BatchNormalization)
 from keras.models import Sequential
 from keras.backend.tensorflow_backend import set_session
 from keras.backend.tensorflow_backend import clear_session
@@ -37,10 +37,10 @@ def get_model(embedding_size, input_length=1, layers=1, width=64):
     rms = optimizers.RMSprop()
 
     # model.compile(loss='mean_squared_error', optimizer=adam, metrics=['mse'])
-    model.compile(loss='mean_squared_error',
-              optimizer=adam,
-              metrics=['mse'])
-
+    # model.compile(loss='mean_squared_error',
+    #           optimizer=optimizers.Adam(lr=0.01),
+    #           # optimizer=optimizers.Adam(lr=0.008),
+    #           metrics=['mse'])
     return model
 
 
@@ -54,9 +54,9 @@ def update_weights(weightsArray):
     return new_weights
 
 def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800):
+    global_weights = model.get_weights()
     for r in range(round):
         print('round ', r)
-        global_weights = model.get_weights()
         weights_set = []
         for i in range(len(ys)):
             model.set_weights(global_weights)

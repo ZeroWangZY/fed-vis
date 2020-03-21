@@ -1,6 +1,8 @@
 import numpy as np
 import time
 
+from keras import optimizers
+
 from app.dao.heatmap_cache import (fetch_heatmap_from_cache,
                                    save_heatmap_to_cache)
 from app.dao.order import (get_order_data_on_memory, is_order_data_on_memory,
@@ -11,6 +13,8 @@ from .model_service import get_model, train_model_fed, gen_x, predict, reset_ker
 from app.dao.common import size_param, num_client
 
 from .tools import test_accuracy
+
+import sys
 
 MIN_LNG = 110.14
 MAX_LNG = 110.520
@@ -49,30 +53,51 @@ def get_heatmap_with_fed_learning(start_time, end_time, type_):
     num_client = len(y)
     print("# clients: {}".format(num_client))
 
-    # mean = np.mean(y)
-    # std = np.std(y)
-    # y = (y - mean) / std
+    #mean = np.mean(y)
+    #std = np.std(y)
+    #y = (y - mean) / std
     mean = 0
     std = 0
+    mx = []
     ground_true = np.zeros(LNG_SIZE * LAT_SIZE)
     for i in range(num_client):
         mean += np.mean(y[i])
         std += np.std(y[i])
         ground_true += y[i]
+        mx.append(np.max(y[i]))
 
     mean /= num_client
     std /= num_client
+    mean = 0
+    std = 1
+    print("mean - {}, std - {}".format(mean, std))
+    #sys.exit(0)
     for i in range(num_client):
         y[i] = (y[i] - mean) / std
+        #y[i] = y[i] / mx[i]
 
     
-    model = get_model(LNG_SIZE * LAT_SIZE, layers=3)
-    fl_start_time = time.time()
-    train_model_fed(model, x, y, round=100, epoch=1, batch=128000)
-    fl_end_time = time.time()
-    print("fl training cost: {} s".format(fl_end_time - fl_start_time))
+    model1 = get_model(LNG_SIZE * LAT_SIZE, layers=1)
+    model1.compile(loss='mean_squared_error',
+              optimizer=optimizers.Adam(lr=0.055),
+              # optimizer=optimizers.Adam(lr=0.008),
+              metrics=['mse'])
+    fl_start_time1 = time.time()
+    train_model_fed(model1, x, y, round=100, epoch=1, batch=128000)
+    fl_end_time1 = time.time()
 
-    res = predict(model, mean, std, x, num_client)
+    model2 = get_model(LNG_SIZE * LAT_SIZE, layers=1)
+    model2.compile(loss='mean_squared_error',
+              optimizer=optimizers.Adam(lr=0.006),
+              # optimizer=optimizers.Adam(lr=0.008),
+              metrics=['mse'])
+    model2.set_weights(model1.get_weights())
+    fl_start_time2 = time.time()
+    train_model_fed(model2, x, y, round=100, epoch=1, batch=128000)
+    fl_end_time2 = time.time()
+    print("fl training cost: {} s".format(fl_end_time1 - fl_start_time1 + fl_end_time2 - fl_start_time2))
+
+    res = predict(model2, 0, 1, x, num_client)
     def pruner(x):
         if x < 0:
             return 0
@@ -80,11 +105,18 @@ def get_heatmap_with_fed_learning(start_time, end_time, type_):
     res = np.array([pruner(v) for v in res.round().astype(np.int32)
                     ]).reshape(LNG_SIZE, LAT_SIZE).tolist()
 
+
+    # mean_0 = np.mean(ground_true)
+    # std_0 = np.std(ground_true)
+    # ground_true = (ground_true - mean_0) / std_0
+    # ground_true = np.array([pruner(v) for v in ground_true.round().astype(np.int32)])
+
     normalHeatmap = ground_true.reshape(LNG_SIZE, LAT_SIZE).tolist()
     errorHeatmap = np.abs(np.array(res) - np.array(normalHeatmap)).tolist()
     test_accuracy(res, normalHeatmap)
 
-    del model
+    del model1
+    del model2
     reset_keras()
     return [res, errorHeatmap]
    
