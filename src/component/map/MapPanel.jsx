@@ -41,7 +41,7 @@ function getMinMax(data) {
   return [min, max];
 }
 
-const size_param = 500;
+const size_param = 1000;
 const LAT_START = 19.902;
 const LAT_END = 20.07;
 const LNG_START = 110.14;

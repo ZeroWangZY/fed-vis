@@ -20,10 +20,10 @@ export default class ControlPanel extends React.PureComponent {
       dataMode: 'normal',
       enableError: false,
       checkedError: false,
-      startDate: '2017-05-19',
-      endDate: '2017-05-19',
-      startHour: '10:00',
-      endHour: '12:00'
+      startDate: '2017-05-01',
+      endDate: '2017-10-31',
+      startHour: '00:00',
+      endHour: '23:00'
      }
     this.handleLoadClick = this.handleLoadClick.bind(this);
     this.updateDatatype = this.updateDatatype.bind(this);
@@ -100,13 +100,13 @@ export default class ControlPanel extends React.PureComponent {
             <p>Select a time range:</p>
             <div className="line">
               <p>Start time:</p>
-              <input type="date" defaultValue="2017-05-19" onChange={this.updateStartDate}></input>
-              <input type="time" defaultValue="10:00" onChange={this.updateStartHour}></input>
+              <input type="date" defaultValue="2017-05-01" onChange={this.updateStartDate}></input>
+              <input type="time" defaultValue="00:00" onChange={this.updateStartHour}></input>
             </div>
             <div className="line">
               <p>End time:</p>
-              <input type="date" style={{marginLeft: 15}} defaultValue="2017-05-19" onChange={this.updateEndDate}></input>
-              <input type="time" defaultValue="12:00" onChange={this.updateEndHour}></input>
+              <input type="date" style={{marginLeft: 15}} defaultValue="2017-10-31" onChange={this.updateEndDate}></input>
+              <input type="time" defaultValue="23:00" onChange={this.updateEndHour}></input>
             </div>
           </div>
           <div id="datatype-select">
