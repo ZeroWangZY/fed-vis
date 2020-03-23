@@ -83,21 +83,21 @@ def get_heatmap_with_fed_learning(start_time, end_time, type_):
               # optimizer=optimizers.Adam(lr=0.008),
               metrics=['mse'])
     fl_start_time1 = time.time()
-    train_model_fed(model1, x, y, round=100, epoch=1, batch=128000)
+    train_model_fed(model1, x, y, round=75, epoch=1, batch=128000)
     fl_end_time1 = time.time()
 
     model2 = get_model(LNG_SIZE * LAT_SIZE, layers=1)
     model2.compile(loss='mean_squared_error',
-              optimizer=optimizers.Adam(lr=0.006),
+              optimizer=optimizers.Adam(lr=0.003),
               # optimizer=optimizers.Adam(lr=0.008),
               metrics=['mse'])
     model2.set_weights(model1.get_weights())
     fl_start_time2 = time.time()
-    train_model_fed(model2, x, y, round=100, epoch=1, batch=128000)
+    train_model_fed(model2, x, y, round=75, epoch=1, batch=128000)
     fl_end_time2 = time.time()
     print("fl training cost: {} s".format(fl_end_time1 - fl_start_time1 + fl_end_time2 - fl_start_time2))
 
-    res = predict(model2, 0, 1, x, num_client)
+    res = predict(model2, mean, std, x, num_client)
     def pruner(x):
         if x < 0:
             return 0

@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import numpy as np
+from keras import optimizers
 from app.dao.order import query_count, get_order_data_on_memory, is_order_data_on_memory
 from .model_service import get_model, train_model_fed, gen_x, predict, reset_keras
 from app.dao.common import num_client
@@ -61,17 +62,32 @@ def get_histogram_with_fed_learning(start_time, end_time, lng_from, lng_to,
         ground_true += y[i]
     mean /= num_client
     std /= num_client
+    mean = 0
+    std = 1
     for i in range(num_client):
         y[i] = (y[i] - mean) / std
 
-    model = get_model(24 * 7)
+    model1 = get_model(24 * 7, layers=1)
+    model1.compile(loss='mean_squared_error',
+              optimizer=optimizers.Adam(lr=0.055),
+              # optimizer=optimizers.Adam(lr=0.008),
+              metrics=['mse'])
+    fl_start_time1 = time.time()
+    train_model_fed(model1, x, y, round=75, epoch=1, batch=20)
+    fl_end_time1 = time.time()
 
-    fl_start_time = time.time()
-    train_model_fed(model, x, y, round=100, epoch=1)
-    fl_end_time = time.time()
-    print("fl training cost: {} s".format(fl_end_time - fl_start_time))
+    model2 = get_model(24 * 7, layers=1)
+    model2.compile(loss='mean_squared_error',
+              optimizer=optimizers.Adam(lr=0.003),
+              # optimizer=optimizers.Adam(lr=0.008),
+              metrics=['mse'])
+    model2.set_weights(model1.get_weights())
+    fl_start_time2 = time.time()
+    train_model_fed(model2, x, y, round=75, epoch=1, batch=20)
+    fl_end_time2 = time.time()
+    print("fl training cost: {} s".format(fl_end_time1 - fl_start_time1 + fl_end_time2 - fl_start_time2))
 
-    res = predict(model, mean, std, x, num_client)
+    res = predict(model2, mean, std, x, num_client)
 
     def pruner(x):
         if x < 0:
@@ -82,7 +98,8 @@ def get_histogram_with_fed_learning(start_time, end_time, lng_from, lng_to,
 
     test_accuracy(res, ground_true.reshape(7, 24).tolist())
 
-    del model
+    del model1
+    del model2
     reset_keras()
     return res
 
