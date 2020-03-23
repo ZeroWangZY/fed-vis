@@ -1,14 +1,25 @@
 import numpy as np
 import time
+import math
 from tools import test_accuracy
 from keras import optimizers
 from model_service import get_model, train_model_fed, gen_x, predict, reset_keras
-
+import sys
+np.random.seed(0)
 
 num_client = 5
 record_size = 1000
 records_size = [record_size for i in range(num_client)]
 default_template = [2, [3, [4]]]
+
+transformDict = {
+  "pow": lambda x: x ** 2,
+  "scale": lambda x: x * 2 + 1,
+  "complementary": lambda x: record_size - x,
+  "cos": lambda x: math.cos(2 * x + math.pi),
+  "tanh": lambda x: (math.exp(x) - math.exp(-x)) / (math.exp(x) + math.exp(-x)),
+  "log": lambda x: math.log(x + record_size)
+}
 
 
 def gen_tree(template):
@@ -38,20 +49,30 @@ def gen_tree(template):
     return tree_root, leaf_map
 
 
-def gen_data(length, records_size=records_size, iid=False):
-    np.random.seed(0)
-
+def gen_data(length, records_size=records_size, iid=True):
     data = []
     ground_truth = np.zeros(length)
     if iid:
-        return
-    else:
         for i in range(len(records_size)):
             disribution = np.random.random(length)
             disribution /= disribution.sum()
             data.append(disribution * records_size[i])
             ground_truth += disribution * records_size[i]
         return data, ground_truth
+    else:
+        base_distbtn = np.random.randn(length) * records_size[0]
+        data.append(base_distbtn)
+        ground_truth += base_distbtn
+        transforms = list(transformDict.values())
+
+        for i in range(len(records_size) - 1):
+            transform = transforms[i]
+            derived_distbtn = np.array([transform(v) for v in base_distbtn])
+            data.append(derived_distbtn)
+            ground_truth += derived_distbtn
+
+        return data, ground_truth
+
 
 def assign_value_to_tree(data, leaf_nodes):
     for i in range(len(data)):
@@ -96,8 +117,10 @@ def evaluation(fitted_data, ground_truth):
 
 def get_treemap(template=default_template):
     tree, leaf_map = gen_tree(template)
-    data, ground_truth = gen_data(len(leaf_map))
-
+    data, ground_truth = gen_data(len(leaf_map), iid=False)
+    print(data)
+    print(ground_truth)
+    sys.exit(0)
     y = data
     x = gen_x(len(ground_truth), 1)
 
