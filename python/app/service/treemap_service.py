@@ -7,18 +7,23 @@ from model_service import get_model, train_model_fed, gen_x, predict, reset_kera
 import sys
 np.random.seed(0)
 
-num_client = 5
-record_size = 1000
+num_client = 3
+record_size = 10000000
 records_size = [record_size for i in range(num_client)]
-default_template = [2, [3, [4]]]
+default_template = [2, [3, [4, [5, [6, [100000]]]]]]
 
 transformDict = {
-  "pow": lambda x: x ** 2,
-  "scale": lambda x: x * 2 + 1,
+  "pow2": lambda x: x ** 2,
+  "scale2": lambda x: x * 2 + 1,
   "complementary": lambda x: record_size - x,
-  "cos": lambda x: math.cos(2 * x + math.pi),
-  "tanh": lambda x: (math.exp(x) - math.exp(-x)) / (math.exp(x) + math.exp(-x)),
-  "log": lambda x: math.log(x + record_size)
+  "pow0.5": lambda x: x ** 0.5,
+  "scale3": lambda x: x * 3 + record_size,
+  "pow2+pow1": lambda x: x * (x - 1),
+  "scale4": lambda x: x * 4 + 10
+#   "cos": lambda x: math.cos(2 * x + math.pi),
+#   "tanh": lambda x: (math.exp(x) - math.exp(-x)) / (math.exp(x) + math.exp(-x)),
+#   "log": lambda x: math.log(x + record_size),
+#   "sigmoid": lambda x: 1 / (1 + math.exp(-x)) * record_size
 }
 
 
@@ -49,18 +54,27 @@ def gen_tree(template):
     return tree_root, leaf_map
 
 
+def reBound(ndarr, record_size):
+    arr_range = np.max(ndarr) - np.min(ndarr)
+    ndarr += arr_range
+    ndarr /= ndarr.sum()
+    ndarr *= record_size
+    return np.round(ndarr)
+
+
 def gen_data(length, records_size=records_size, iid=True):
     data = []
     ground_truth = np.zeros(length)
     if iid:
         for i in range(len(records_size)):
             disribution = np.random.random(length)
-            disribution /= disribution.sum()
-            data.append(disribution * records_size[i])
-            ground_truth += disribution * records_size[i]
+            disribution = reBound(disribution, records_size[i])
+            data.append(disribution)
+            ground_truth += disribution
         return data, ground_truth
     else:
-        base_distbtn = np.random.randn(length) * records_size[0]
+        base_distbtn = np.random.randn(length)
+        base_distbtn = reBound(base_distbtn, records_size[0])
         data.append(base_distbtn)
         ground_truth += base_distbtn
         transforms = list(transformDict.values())
@@ -68,6 +82,7 @@ def gen_data(length, records_size=records_size, iid=True):
         for i in range(len(records_size) - 1):
             transform = transforms[i]
             derived_distbtn = np.array([transform(v) for v in base_distbtn])
+            derived_distbtn = reBound(derived_distbtn, records_size[i + 1])
             data.append(derived_distbtn)
             ground_truth += derived_distbtn
 
@@ -111,27 +126,41 @@ def train(x, y):
     
     return res
 
+
 def evaluation(fitted_data, ground_truth):
     test_accuracy(fitted_data, ground_truth)
+
+
+def simulate_cnt(arr):
+    time_start = time.time()
+    for i in range(len(arr)):
+        cnt = 0
+        total = arr[i]
+        for j in range(int(total)):
+            cnt += 1
+    time_end = time.time()
+    print("partition & aggregation cost: {} s".format(time_end - time_start))
 
 
 def get_treemap(template=default_template):
     tree, leaf_map = gen_tree(template)
     data, ground_truth = gen_data(len(leaf_map), iid=False)
-    print(data)
-    print(ground_truth)
-    sys.exit(0)
+    #print(data)
+    #print(ground_truth)
     y = data
     x = gen_x(len(ground_truth), 1)
 
     fitted_data = train(x, y)
     assign_value_to_tree(fitted_data, leaf_map)
     evaluation(fitted_data, ground_truth)
+
+    simulate_cnt(ground_truth)
+
     return tree
 
 if __name__ == '__main__':
     # 用于描述treemap结构的数组，如[2,[3,4]]表示有2+3+4个叶节点，有2个在第1层，3个在第二层, 4个在第三层
-    template = [2, [3, [4]]]
+    template = default_template
 
     get_treemap(template)
 

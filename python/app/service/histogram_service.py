@@ -73,7 +73,7 @@ def get_histogram_with_fed_learning(start_time, end_time, lng_from, lng_to,
               # optimizer=optimizers.Adam(lr=0.008),
               metrics=['mse'])
     fl_start_time1 = time.time()
-    train_model_fed(model1, x, y, round=75, epoch=1, batch=20)
+    train_model_fed(model1, x, y, round=150, epoch=1, batch=20)
     fl_end_time1 = time.time()
 
     model2 = get_model(24 * 7, layers=1)
@@ -83,7 +83,7 @@ def get_histogram_with_fed_learning(start_time, end_time, lng_from, lng_to,
               metrics=['mse'])
     model2.set_weights(model1.get_weights())
     fl_start_time2 = time.time()
-    train_model_fed(model2, x, y, round=75, epoch=1, batch=20)
+    train_model_fed(model2, x, y, round=150, epoch=1, batch=20)
     fl_end_time2 = time.time()
     print("fl training cost: {} s".format(fl_end_time1 - fl_start_time1 + fl_end_time2 - fl_start_time2))
 
@@ -97,6 +97,8 @@ def get_histogram_with_fed_learning(start_time, end_time, lng_from, lng_to,
     res = np.array([pruner(v) for v in res.round().astype(np.int32)]).reshape(7, 24).tolist()
 
     test_accuracy(res, ground_true.reshape(7, 24).tolist())
+
+    get_histogram_on_memory(start_time, end_time, lng_from, lng_to, lat_from, lat_to, type_)
 
     del model1
     del model2
