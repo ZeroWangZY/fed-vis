@@ -25,6 +25,8 @@ import Pie from "./component/pie";
 import CirclePacking from "./component/circle-packing";
 import Sunburst from "./component/sunburst";
 import Icicle from "./component/icicle";
+import PaperLineChart from "./paper-charts/linechart";
+import PaperGroupBar from "./paper-charts/group-bar";
 import configureStore from 'store';
 
 
@@ -81,6 +83,12 @@ ReactDOM.render(
         </Route>
         <Route exact path="/icicle">
           <Icicle />
+        </Route>
+        <Route exact path="/paper-line">
+          <PaperLineChart />
+        </Route>
+        <Route exact path="/paper-groupbar">
+          <PaperGroupBar />
         </Route>
         <Redirect to="/" />
       </Switch>

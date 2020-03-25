@@ -334,11 +334,13 @@ class MapPanel extends Component {
     genHeatmapData() {
       const { heatmapNerror, useError } = this.props;
       const heatmap = useError ? heatmapNerror[1] : heatmapNerror[0];
+      const heatmapNonError = heatmapNerror[0];
       let [min, max] = getMinMax(heatmap);
       return {
         heatmapData: heatmap, 
         heatmapMinCount: min, 
-        heatmapMaxCount: max
+        heatmapMaxCount: max,
+        heatmapNonError,
       };// 找到heatdata的最大值和最小值 为了在地图上做颜色映射
     }
 
@@ -408,6 +410,12 @@ class MapPanel extends Component {
             //     .range([0, 1]);
             let data = this.reshapeHeatmap(heatmapData.heatmapData);
             data.sort((a, b) => a[2] - b[2]);
+            let maxHeat = data[Math.ceil(data.length / 11 * 10)][2];
+            if (this.props.useError) {
+              let nonErrorData = this.reshapeHeatmap(heatmapData.heatmapNonError);
+              nonErrorData.sort((a, b) => a[2] - b[2]);
+              maxHeat = nonErrorData[Math.ceil(data.length / 11 * 10)][2];
+            }
             // heatmapRects = data.map((column, column_index) => {
             //     return column.map((singleRect, rect_index) => {
             //         // 算rect的经纬度
@@ -435,7 +443,7 @@ class MapPanel extends Component {
                 // fitBoundsOnUpdate
                 points={data}
                 radius={20}
-                max={data[Math.ceil(data.length / 11 * 10)][2]}
+                max={maxHeat}
                 // blur={10}
                 longitudeExtractor={d => d[1]}
                 latitudeExtractor={d => d[0]}
