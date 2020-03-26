@@ -10,21 +10,21 @@ import json
 def get_histogram_api():
     if len(get_clients()) == 0:
         return "no clients"
-
+    params = request.args
+    partition = params['partition']
     # get clients ready
     start_time = time.time()
     clients = get_clients()
     urls = []
     for client in clients:
-        url = 'http://' + client['addr'] + ':' + client['port'] + '/api/encryption/get_ready'
+        url = 'http://' + client['addr'] + ':' + client['port'] + '/api/encryption/get_ready?partition=' + partition
         urls.append(url)
     rs = (grequests.get(u) for u in urls)
     responses = grequests.map(rs, gtimeout=30000)
     for res in responses:
         if res.status_code != 200:
             return 'ready failed', 500
-    print("%4.4f" \
-          % (time.time() - start_time))
+    time1 = time.time() - start_time
     # 交换随机向量
     start_time = time.time()
 
@@ -38,14 +38,13 @@ def get_histogram_api():
         if res.status_code != 200:
             return 'exchange vector failed', 500
 
-    print("%4.4f" \
-          % (time.time() - start_time))
+    time2 = time.time() - start_time
     # 请求加密的数据
 
     start_time = time.time()
     urls = []
     for client in clients:
-        url = 'http://' + client['addr'] + ':' + client['port'] + '/api/get_encrypted_histogram'
+        url = 'http://' + client['addr'] + ':' + client['port'] + '/api/get_encrypted_histogram?partition=' + partition
         urls.append(url)
     rs = (grequests.get(u) for u in urls)
     responses = grequests.map(rs)
@@ -58,6 +57,9 @@ def get_histogram_api():
         # print('encrypted_data: ', encrypted_data)
         decrypted_data += encrypted_data
     # print('decrypted_data: ', decrypted_data)
-    print("%4.4f" \
-          % (time.time() - start_time))
+    time3 = time.time() - start_time
+
+    with open("./query_based_performance.txt", 'a+') as f:
+        print("%s\t%d\t%4.4f\t%4.4f\t%4.4f" \
+              % (partition, len(clients), time1, time2, time3), file=f)
     return json.dumps(decrypted_data.tolist())

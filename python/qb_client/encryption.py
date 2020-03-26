@@ -22,6 +22,9 @@ shape = (380,168)
 def get_ready():
     global clients
     global my_id
+    global shape
+    params = request.args
+    shape = int(params['partition'])
     server = get_server()
     url = 'http://' + server['addr'] + ':' + server['port'] + '/api/get_clients'
     clients = json.loads(requests.get(url).content)
