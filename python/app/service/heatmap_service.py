@@ -14,6 +14,7 @@ from app.dao.common import size_param, num_client
 
 from .tools import test_accuracy
 
+from app.api.data import set_progress
 import sys
 
 MIN_LNG = 110.14
@@ -44,7 +45,7 @@ def get_heatmap(start_time, end_time, type_):
     return [res, errorHeatmap]
 
 
-def get_heatmap_with_fed_learning(start_time, end_time, type_):
+def get_heatmap_with_fed_learning(start_time, end_time, type_, id):
     reset_keras()
     x = gen_x(LNG_SIZE, LAT_SIZE)
     y = get_5_heatmap_on_memory(start_time, end_time)
@@ -83,7 +84,7 @@ def get_heatmap_with_fed_learning(start_time, end_time, type_):
               # optimizer=optimizers.Adam(lr=0.008),
               metrics=['mse'])
     fl_start_time1 = time.time()
-    train_model_fed(model1, x, y, round=25, epoch=1, batch=128000)
+    train_model_fed(model1, x, y, round=25, epoch=1, batch=128000, base_round=0, max_round=50, id=id)
     fl_end_time1 = time.time()
 
     model2 = get_model(LNG_SIZE * LAT_SIZE, layers=1)
@@ -93,7 +94,7 @@ def get_heatmap_with_fed_learning(start_time, end_time, type_):
               metrics=['mse'])
     model2.set_weights(model1.get_weights())
     fl_start_time2 = time.time()
-    train_model_fed(model2, x, y, round=25, epoch=1, batch=128000)
+    train_model_fed(model2, x, y, round=25, epoch=1, batch=128000, base_round=25, max_round=50, id=id)
     fl_end_time2 = time.time()
     print("fl training cost: {} s".format(fl_end_time1 - fl_start_time1 + fl_end_time2 - fl_start_time2))
 

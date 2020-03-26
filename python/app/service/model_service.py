@@ -1,5 +1,5 @@
 import numpy as np
-from keras import backend, initializers, optimizers
+from keras import backend, initializers, optimizers, callbacks
 from keras.layers import (LSTM, Activation, Conv1D, Conv2D, Dense, Dropout,
                           Flatten, Lambda, MaxPooling1D, MaxPooling2D,
                           embeddings, regularizers, BatchNormalization)
@@ -7,6 +7,8 @@ from keras.models import Sequential
 from keras.backend.tensorflow_backend import set_session
 from keras.backend.tensorflow_backend import clear_session
 from keras.backend.tensorflow_backend import get_session
+from app.api.data import set_progress
+
 import tensorflow
 import gc
 import random
@@ -53,15 +55,23 @@ def update_weights(weightsArray):
     new_weights = np.sum(weightsArray, axis=0) / len(weightsArray)
     return new_weights
 
-def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800):
+class LossHistory(callbacks.Callback):
+    def on_batch_end(self, batch, logs={}):
+        self.loss = np.asscalar(logs.get('loss'))
+
+def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800, base_round=0, max_round=100, id='id'):
     global_weights = model.get_weights()
     for r in range(round):
         print('round ', r)
         weights_set = []
+        losses = []
         for i in range(len(ys)):
-            model.set_weights(global_weights)
-            model.fit(x, ys[i], epochs=epoch, batch_size=batch)
+            model.set_weights(global_weights)   
+            history = LossHistory()
+            model.fit(x, ys[i], epochs=epoch, batch_size=batch, callbacks=[history])
+            losses.append(history.loss)
             weights_set.append(model.get_weights())
+        set_progress(id, r+base_round, max_round, losses, False)
         print('weights aggregation')
         if len(weights_set) != 0:
             global_weights = update_weights(weights_set)
