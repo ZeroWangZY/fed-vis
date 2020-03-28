@@ -19,6 +19,13 @@ export function getHeatmapById(id) {
   };
 }
 
+export function stopHeatmapPoll() {
+  return {
+    type: TRIGGER_HEATMAP_POLL,
+    shouldPoll: false,
+  };
+}
+
 export function showHeatmap (heatmapData) {
   return { type: SHOW_HEATMAP, heatmapData };
 }

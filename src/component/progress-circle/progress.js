@@ -23,7 +23,9 @@ class ProgressCircle extends React.Component {
       this.startPoll(id);
     }
 
-    if (nextProps.progressInfo && nextProps.progressInfo.done) {
+    if (nextProps.progressInfo 
+      && nextProps.progressInfo.done !== progressInfo.done 
+      && nextProps.progressInfo.done) {
       this.stopPoll(id);
     }
   }
@@ -40,6 +42,7 @@ class ProgressCircle extends React.Component {
     // 清空计时器
     window.clearInterval(this.timeout);
 
+    this.props.stopPoll()
     // 根据id去拿数据
     this.props.onRetrieveData(id);
   }

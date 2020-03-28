@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import ProgressCircle from "./progress";
 
-import { getHeatmapById } from "../../actions/heatmap";
+import { getHeatmapById, stopHeatmapPoll } from "../../actions/heatmap";
 import { checkProgress } from "../../actions/base";
 import { chartTypes } from "../..//util/const";
 
@@ -22,6 +22,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     onRetrieveData: (id) => {
       dispatch(getHeatmapById(id));
+    },
+    stopPoll: () => {
+      dispatch(stopHeatmapPoll())
     }
   };
 };
