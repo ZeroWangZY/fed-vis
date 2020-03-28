@@ -18,7 +18,7 @@ class BoxplotView extends React.Component {
       },
       yTicks: 5,
       height: 200,
-      width: 1080,
+      width: 1030,
       boxplotNum: 15,// 初始设定的展示个数，如果不能整除会上下浮动
       dataForBoxplot: [],
       xTick: [],
