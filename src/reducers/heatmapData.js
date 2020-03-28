@@ -22,7 +22,7 @@ export const deleteRectId = (state = -1, action) => {
 export const heatmapData = (state = [[], []], action) => {
   switch (action.type) {
     case SAVE_HEATMAP_DATA:
-      return action.heatmapData.data;
+      return action.data;
     default:
       return state;
   }

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Progress } from 'antd';
-import { Modal } from 'antd';
-
+import { Modal, Button, Progress } from 'antd';
+import ProgressModal from '../progress-modal'
 import "./index.less";
 import "antd/lib/progress/style/index.css";
+import "antd/dist/antd.css";
 
 class ProgressCircle extends React.Component {
   constructor(props) {
@@ -23,7 +23,7 @@ class ProgressCircle extends React.Component {
       this.startPoll(id);
     }
 
-    if (progressInfo.done !== nextProps.progressInfo.done && nextProps.progressInfo.done) {
+    if (nextProps.progressInfo && nextProps.progressInfo.done) {
       this.stopPoll(id);
     }
   }
@@ -52,31 +52,37 @@ class ProgressCircle extends React.Component {
 
   handleCloseModal = () => {
     this.setState({
-      false: true,
+      enableModal: false,
     });
   }
 
   render() {
     const { progressInfo } = this.props;
-    const { enableModal } = this.state;
-    const { current_round: currentRound = 0, 
+    const { 
+      current_round: currentRound = 0, 
       max_round: maxRound = 1, 
       losses = [],
     } = progressInfo;
-    const percent = currentRound / maxRound;
+    const percent = currentRound / maxRound * 100;
 
     return (
-      <div className="progress-btn"
-        onClick={this.handleClickBtn}
-      >
+      <div className="progress-btn">
         <Progress
           type="circle"
           percent={percent}
-          showInfo={false}
+          showInfo={true}
+          onClick={this.handleClickBtn}
         />
-        <Modal visible={enableModal}
+        <Modal 
+          visible={this.state.enableModal}
+          title="progress"
           onOk={this.handleCloseModal}
           onCancel={this.handleCloseModal}
+          footer={[
+            <Button key="back" onClick={this.handleCloseModal.bind(this)}>
+              Return
+            </Button>,
+          ]}
         >
           <ProgressModal
             percent={percent}

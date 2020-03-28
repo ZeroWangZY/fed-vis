@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { heatmapData, deleteRectId, useError, shouldHeatmapPoll, heatmapProgress } from './heatmapData';
+import { heatmapData, deleteRectId, useError, shouldHeatmapPoll, heatmapProgress, heatmapDataId } from './heatmapData';
 import odmapData from './odmapData';
 import calendarData from './calendarData';
 import { dataType, startTime, endTime, dataMode, bbox } from './base';
@@ -21,6 +21,7 @@ const rootReducer = combineReducers({
   aggregateHour,
   shouldHeatmapPoll,
   heatmapProgress,
+  heatmapDataId
 });
 
 export default rootReducer;

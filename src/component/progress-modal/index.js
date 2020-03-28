@@ -19,7 +19,7 @@ class ProgressModal extends React.Component {
     return (
       <div className="progress-modal">
         <svg className="progress-modal__overview">
-          
+          progress
         </svg>
         <svg className="progress-modal__boxplot"></svg>
       </div>

@@ -13,6 +13,7 @@ import {
 // import HeatmapLayer from '../heatmap/heatmap';
 import { basicConfig, heatMapConfig } from '../../util/mapsetting';
 import { EditControl } from 'react-leaflet-draw';
+import HeatmapProgress from '../progress-circle/heatmap-progress'
 import HeatmapLayer from 'react-leaflet-heatmap-layer/lib/HeatmapLayer';
 import './map.less';
 import clsx from 'clsx';
@@ -518,7 +519,7 @@ class MapPanel extends Component {
                         disabled={currentDisplayType?"disabled":""}
                         onClick={this.handleConvertOD}>O⇋D</button>
 
-                    
+                    <HeatmapProgress />
                 </div>
                 {/* {!currentDisplayType && <div id='odmap-label'>Current space type of outer grid: {currentSpaceTypeOuter}</div>} */}
                 <Map
