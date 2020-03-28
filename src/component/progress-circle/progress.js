@@ -23,8 +23,8 @@ class ProgressCircle extends React.Component {
       this.startPoll(id);
     }
 
-    if (nextProps.progressInfo 
-      && nextProps.progressInfo.done !== progressInfo.done 
+    if (nextProps.progressInfo
+      && nextProps.progressInfo.done !== progressInfo.done
       && nextProps.progressInfo.done) {
       this.stopPoll(id);
     }
@@ -61,22 +61,29 @@ class ProgressCircle extends React.Component {
 
   render() {
     const { progressInfo } = this.props;
-    const { 
-      current_round: currentRound = 0, 
-      max_round: maxRound = 1, 
+    const {
+      current_round: currentRound = 0,
+      max_round: maxRound = 1,
       losses = [],
     } = progressInfo;
     const percent = currentRound / maxRound * 100;
 
     return (
-      <div className="progress-btn">
+      <div className="progress-btn" style={{
+        display: "inline-block",
+        position: "absolute",
+        right: 145,
+        top: -6
+      }} >
         <Progress
           type="circle"
           percent={percent}
-          showInfo={true}
+          showInfo={false}
           onClick={this.handleClickBtn}
+          width={20}
         />
-        <Modal 
+        <Modal
+          width={1080}
           visible={this.state.enableModal}
           title="progress"
           onOk={this.handleCloseModal}

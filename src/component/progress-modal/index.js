@@ -1,6 +1,6 @@
 import React from 'react';
 import * as d3 from "d3";
-
+import WaterOverview from './WaterOverview'
 
 
 import "./index.less";
@@ -9,7 +9,7 @@ class ProgressModal extends React.Component {
   constructor(props) {
     super(props);
 
-    
+
   }
 
   render() {
@@ -18,9 +18,9 @@ class ProgressModal extends React.Component {
 
     return (
       <div className="progress-modal">
-        <svg className="progress-modal__overview">
-          progress
-        </svg>
+        <div className="progress-modal__overview">
+          <WaterOverview losses={losses} />
+        </div>
         <svg className="progress-modal__boxplot"></svg>
       </div>
     );
