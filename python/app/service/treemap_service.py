@@ -1,9 +1,9 @@
 import numpy as np
 import time
 import math
-from tools import test_accuracy
+from .tools import test_accuracy
 from keras import optimizers
-from model_service import get_model, train_model_fed, gen_x, predict, reset_keras
+from .model_service import get_model, train_model_fed, gen_x, predict, reset_keras
 import sys
 np.random.seed(0)
 

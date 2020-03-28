@@ -5,10 +5,10 @@ from flask import request
 
 from app import app
 from app.service.histogram_service import get_histogram, get_default_histogram, get_histogram_with_fed_learning
-from .response import gen_response
+from .response import gen_response, cors
 from .data import gen_id, add_res_data
 
-
+@cors
 @app.route('/api/histogram')
 def get_histogram_api():
 
@@ -51,6 +51,4 @@ def get_histogram_api():
                               type_=type_)), ())
             except:
                 return "Error: unable to start thread"
-            return gen_response(
-                )
     return gen_response({"id": id})

@@ -1,23 +1,11 @@
 import datetime
-from functools import wraps
 from flask import request, make_response
 
 from app import app
 from app.service.odmap_service import get_default_odmap, get_odmap
 
-from .response import gen_response
+from .response import gen_response, cors
 
-def cors(func):  
-    @wraps(func)
-    def wrapper_func(*args, **kwargs):
-        r = make_response(func(*args, **kwargs))
-        r.headers['Access-Control-Allow-Origin'] = '*'
-        r.headers['Access-Control-Allow-Methods'] = 'HEAD, OPTIONS, GET, POST, DELETE, PUT'
-        allow_headers = "Referer, Accept, Origin, User-Agent, X-Requested-With, Content-Type"
-        r.headers['Access-Control-Allow-Headers'] = allow_headers
-        return r
-
-    return wrapper_func
 
 @app.route('/api/odmap/')
 @cors

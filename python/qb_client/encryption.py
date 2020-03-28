@@ -27,7 +27,9 @@ def get_ready():
     shape = int(params['partition'])
     server = get_server()
     url = 'http://' + server['addr'] + ':' + server['port'] + '/api/get_clients'
-    clients = json.loads(requests.get(url).content)
+    r = requests.get(url)
+    clients = json.loads(r.content)
+    r.close()
     for i in range(len(clients)):
         client = clients[i]
         if client['addr'] == request.environ["SERVER_NAME"] and int(client['port']) == int(
@@ -50,9 +52,10 @@ def start_to_exchange_vector():
         urls.append(url)
 
     rs = (grequests.get(u) for u in urls)
-    responses = grequests.map(rs, gtimeout=30000)
+    responses = grequests.map(rs, gtimeout=3000000)
     for i in range(len(clients)):
         rand_vectors_from_other.append(json.loads(responses[i].content))
+    rs.close()
     perturbations = np.sum(np.array(my_rand_vectors), axis=0) - np.sum(np.array(rand_vectors_from_other), axis=0)
     return 'done'
 

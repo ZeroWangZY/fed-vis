@@ -20,10 +20,11 @@ def get_histogram_api():
         url = 'http://' + client['addr'] + ':' + client['port'] + '/api/encryption/get_ready?partition=' + partition
         urls.append(url)
     rs = (grequests.get(u) for u in urls)
-    responses = grequests.map(rs, gtimeout=30000)
+    responses = grequests.map(rs, gtimeout=30000000)
     for res in responses:
         if res.status_code != 200:
             return 'ready failed', 500
+    rs.close()
     time1 = time.time() - start_time
     # 交换随机向量
     start_time = time.time()
@@ -33,11 +34,11 @@ def get_histogram_api():
         url = 'http://' + client['addr'] + ':' + client['port'] + '/api/encryption/start_to_exchange_vector'
         urls.append(url)
     rs = (grequests.get(u) for u in urls)
-    responses = grequests.map(rs, gtimeout=30000)
+    responses = grequests.map(rs, gtimeout=30000000)
     for res in responses:
         if res.status_code != 200:
             return 'exchange vector failed', 500
-
+    rs.close()
     time2 = time.time() - start_time
     # 请求加密的数据
 
@@ -47,7 +48,7 @@ def get_histogram_api():
         url = 'http://' + client['addr'] + ':' + client['port'] + '/api/get_encrypted_histogram?partition=' + partition
         urls.append(url)
     rs = (grequests.get(u) for u in urls)
-    responses = grequests.map(rs)
+    responses = grequests.map(rs, gtimeout=30000000)
     decrypted_data = None
     for res in responses:
         encrypted_data = np.array(json.loads(res.content))
@@ -57,9 +58,10 @@ def get_histogram_api():
         # print('encrypted_data: ', encrypted_data)
         decrypted_data += encrypted_data
     # print('decrypted_data: ', decrypted_data)
+    rs.close()
     time3 = time.time() - start_time
 
-    with open("./query_based_performance.txt", 'a+') as f:
+    with open("./query_based_performance_6.txt", 'a+') as f:
         print("%s\t%d\t%4.4f\t%4.4f\t%4.4f" \
               % (partition, len(clients), time1, time2, time3), file=f)
     return json.dumps(decrypted_data.tolist())

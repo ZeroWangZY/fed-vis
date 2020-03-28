@@ -6,9 +6,10 @@ from flask import request
 from app import app
 from app.service.heatmap_service import get_default_heatmap, get_heatmap, get_heatmap_with_fed_learning
 
-from .response import gen_response
+from .response import gen_response, cors
 from .data import gen_id, add_res_data
 
+@cors
 @app.route('/api/heatmap/all')
 def get_heatmap_all_api():
     params = request.args
@@ -25,6 +26,8 @@ def get_heatmap_all_api():
                 _thread.start_new_thread(lambda: add_res_data(id, get_heatmap_with_fed_learning(start_time, end_time, type_, id)), ())
             except:
                 return "Error: unable to start thread"
+        else:
+            add_res_data(id, get_default_heatmap())
     else:
         add_res_data(id, get_default_heatmap())
     return gen_response({"id": id})

@@ -33,6 +33,7 @@ def register_client():
             'addr': server_addr,
             'port': server_port
         }
+    r.close()
     return r.content
 
 

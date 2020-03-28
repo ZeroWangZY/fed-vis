@@ -2,7 +2,7 @@ import random
 import string
 from app import app
 from flask import request
-from .response import gen_response
+from .response import gen_response, cors
 
 res_data_map = {}
 progress_info_map = {}
@@ -47,14 +47,16 @@ def set_progress(id, current_round, max_round, losses, done):
 def gen_id():
     return ''.join(random.sample(string.ascii_letters + string.digits, 8))
 
+@cors
 @app.route('/api/progress')
 def get_progress():
     params = request.args
     id = params.get('id')
     if id == None:
         return gen_response(progress_info_map)
-    return gen_response(progress_info_map[id])
+    return gen_response(progress_info_map.get(id))
 
+@cors
 @app.route('/api/data')
 def get_data():
     global res_data_map
