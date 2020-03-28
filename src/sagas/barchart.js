@@ -1,6 +1,7 @@
 import { put, takeLatest, select, call } from 'redux-saga/effects';
 import { RENEW_BARCHART, DELETE_BARCHART, ADD_BARCHART, SELECT_BARCHART } from 'actions/barchart';
-import { DELETE_RECT_ON_MAP } from 'actions/heatmap'
+import { DELETE_RECT_ON_MAP } from 'actions/heatmap';
+import { SET_BBOX } from "actions/base";
 import Apis from '../api/apis';
 import { get } from '../api/tools';
 
@@ -68,6 +69,16 @@ function* processAddBarchart(action) {
       data: resp.data.data,
     });
   }
+
+  yield put({
+    type: SET_BBOX,
+    bbox: {
+      latFrom,
+      latTo,
+      lngFrom,
+      lngTo,
+    }
+  });
 
   yield put({
     type: RENEW_BARCHART,

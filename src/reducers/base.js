@@ -1,4 +1,4 @@
-import { SET_BASE_PARAM } from '../actions/base';
+import { SET_BASE_PARAM, SET_BBOX } from '../actions/base';
 
 export const dataType = (state = 'start', action) => {
   switch(action.type) {
@@ -31,6 +31,15 @@ export const dataMode = (state = 'normal', action) => {
   switch(action.type) {
     case SET_BASE_PARAM:
       return action.dataMode;
+    default:
+      return state;
+  }
+}
+
+export const bbox = (state = {}, action) => {
+  switch(action.type) {
+    case SET_BBOX:
+      return action.bbox;
     default:
       return state;
   }

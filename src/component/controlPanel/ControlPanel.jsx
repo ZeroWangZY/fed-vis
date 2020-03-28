@@ -1,15 +1,10 @@
 import React from 'react';
 import './ControlPanel.less';
 import { Switch } from 'antd';
-import { Slider } from 'antd';
+import { Select } from 'antd';
 import "antd/lib/switch/style/index.css";
-import "antd/lib/slider/style/index.css";
-
-const sliderMarks = {
-  60: '60%',
-  90: '90%',
-  100: '100%'
-};
+import "antd/lib/select/style/index.css";
+const { Option } = Select;
 
 export default class ControlPanel extends React.PureComponent {
   constructor () {
@@ -18,16 +13,28 @@ export default class ControlPanel extends React.PureComponent {
       // 默认
       dataType: 'start',
       dataMode: 'normal',
+      precision: 'high',
       enableError: false,
       checkedError: false,
       startDate: '2017-05-01',
       endDate: '2017-10-31',
       startHour: '00:00',
       endHour: '23:00'
-     }
+    };
+
+    this.clientOptions = [
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8"
+    ];
+
     this.handleLoadClick = this.handleLoadClick.bind(this);
     this.updateDatatype = this.updateDatatype.bind(this);
     this.updateDatamode = this.updateDatamode.bind(this);
+    this.updatePrecision = this.updatePrecision.bind(this);
     this.updateStartDate = this.updateStartDate.bind(this);
     this.updateEndDate = this.updateEndDate.bind(this);
     this.updateStartHour = this.updateStartHour.bind(this);
@@ -58,6 +65,15 @@ export default class ControlPanel extends React.PureComponent {
     })
     this.props.onChangeHeatmapType(false);
   }
+
+  updatePrecision(e) {
+    this.setState({
+      precision: e.target.value,
+    });
+
+    // TODO: add api call
+  }
+
   updateStartDate (e) {
     this.setState({
       startDate: e.target.value
@@ -91,11 +107,61 @@ export default class ControlPanel extends React.PureComponent {
     this.props.onChangeHeatmapType(checked);
   }
 
+  handleClientChange = () => {
+
+  }
+
   render() {
+    const { clientOptions } = this;
+    const {
+      lngFrom = null,
+      lngTo = null,
+      latFrom = null,
+      latTo = null,
+    } = this.props.bbox;
+
     return (
       <div id="control-panel">
         <div className="panel-title">Control Panel</div>
+        <div className="control-panel__data">
+          <div className="control-panel__data__item">
+            <div>Dataset: Orders</div>
+          </div>
+
+          <div className="control-panel__data__item">
+            <div># Record: 8279059</div>
+          </div>
+
+          <div className="control-panel__data__item control-panel__data__client">
+            <div className="control-panel__data__client__title"># Client:</div>
+            <Select 
+              defaultValue={clientOptions[clientOptions.length - 1]} 
+              style={{ width: 80 }} 
+              onChange={this.handleClientChange}
+              size="small"
+            >
+              {
+                clientOptions.map((option, optionIndex) =>
+                  <Option
+                    key={optionIndex}
+                    value={option}
+                  >{option}</Option>
+                )
+              }
+            </Select>
+          </div>
+
+          <div className="control-panel__data__item">
+            <div>Time: May - Oct</div>
+          </div>
+
+          <div className="control-panel__data__item">
+            <div>{`Target area: (${latFrom}, ${lngFrom}) - (${latTo}, ${lngTo})`}</div>
+          </div>
+        </div>
+
         <div id="control-panel-content">
+          <div className="control-panel-content__split"></div>
           <div id="timerange-select">
             <p>Select a time range:</p>
             <div className="line">
@@ -132,17 +198,36 @@ export default class ControlPanel extends React.PureComponent {
             />
           </div>
           <div id="acc-select">
-            <p>Select a result accuracy:</p>
+            <p>Select result precision:</p>
             <div className="acc-select__slider">
-              <Slider
-                marks={sliderMarks}
-                tooltipPlacement="bottom"
-                defaultValue={90} 
-                max={100}
-                min={60}
-                tooltipVisible={false}
-                // getTooltipPopupContainer={() => document.body.querySelector("#root")}
-              />
+              <label>
+                <input 
+                  name="precision" 
+                  type="radio" 
+                  value="low" 
+                  onChange={this.updatePrecision}
+                />
+                low
+              </label> 
+              <label>
+                <input 
+                  name="precision" 
+                  type="radio" 
+                  value="medium" 
+                  onChange={this.updatePrecision}
+                />
+                medium
+              </label>
+              <label>
+                <input 
+                  name="precision" 
+                  type="radio" 
+                  value="high"
+                  defaultChecked 
+                  onChange={this.updatePrecision}
+                />
+                high
+              </label>
             </div>
           </div>
         </div>

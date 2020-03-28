@@ -6,6 +6,8 @@ const Apis = {
   get_odmap_by_time_range: '/api/odmap',
   get_barchart: '/api/histogram',
   get_treemap: '/api/treemap',
+  get_progress: '/api/progress',
+  get_data: 'api/data',
 }
 
 export default Apis;

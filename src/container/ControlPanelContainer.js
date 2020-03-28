@@ -5,6 +5,7 @@ import {getHeatmapByTimeRange, changeHeatmapType} from 'actions/heatmap'
 const mapStateToProps = (state) => {
   return {
     // heatmapData: state.heatmapData
+    bbox: state.bbox,
   };
 };
 

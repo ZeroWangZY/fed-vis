@@ -20,7 +20,7 @@ export default class Calendar extends Component {
 
     this.cellSize = 16;
 
-    this.svgWidth = 318;
+    this.svgWidth = 347;
 
     this.legendSpacingX = 10;
     this.legendSpacingY = 10;
@@ -73,7 +73,20 @@ export default class Calendar extends Component {
             <text
               className='calendar__day'
               key={index}
-              x={baseTranslateX + (index + 0.5) * cellSize}
+              x={baseTranslateX + (index + 0.5 - 5) * cellSize}
+              y={dayTextTranslateY}
+              textAnchor='middle'
+              dominantBaseline='baseline'
+              opacity={(index + 6) % 3 ? 0 : 1}
+            >{day}</text>
+          )
+        }
+        {
+          daySet.map((day, index) =>
+            <text
+              className='calendar__day'
+              key={index}
+              x={baseTranslateX + (index + 0.5 + 5) * cellSize}
               y={dayTextTranslateY}
               textAnchor='middle'
               dominantBaseline='baseline'
@@ -82,7 +95,7 @@ export default class Calendar extends Component {
           )
         }
         <CalendarMap
-          baseTranslateX={baseTranslateX}
+          baseTranslateX={svgWidth / 2}
           baseTranslateY={40 + baseTranslateY}
           cellSize={cellSize}
           dataset={dataset}

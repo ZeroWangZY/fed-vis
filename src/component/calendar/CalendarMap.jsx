@@ -25,6 +25,7 @@ export default class CalendarChart extends React.PureComponent {
     this.generateDate = this.generateDate.bind(this);
     this.generateScale = this.generateScale.bind(this);
     this.generateMonthText = this.generateMonthText.bind(this);
+    this.genBaseRectY = this.genBaseRectY.bind(this);
   }
 
   generateDate(month, day) {
@@ -76,6 +77,25 @@ export default class CalendarChart extends React.PureComponent {
     return bbox;
   }
 
+  genBaseRectY(dataset) {
+    const { cellSize } = this.props;
+    let keys = Object.keys(dataset);
+    let startMonth = keys[0];
+    const startFormattedDate = this.generateDate(parseInt(startMonth, 10), 1);
+    let ret = [];
+    for (let i = 0, len = keys.length; i < len; i += 1) {
+      const formattedDate = this.generateDate(parseInt(keys[i], 10), 1);
+      let diff = d3TimeWeek.count(d3TimeYear(formattedDate), formattedDate) * cellSize - d3TimeWeek.count(d3TimeYear(startFormattedDate), startFormattedDate) * cellSize;
+      if (i > 3) {
+        diff -= 12 * cellSize;
+      } else if (i > 1) {
+        diff -= 6 * cellSize;
+      }
+      ret.push(diff);
+    }
+    return ret;
+  }
+
   render() {
     const {
       baseTranslateX,
@@ -86,20 +106,23 @@ export default class CalendarChart extends React.PureComponent {
 
     const scale = this.generateScale();
 
+    const baseRectY = this.genBaseRectY(dataset);
+
     return (
       <g className='calendar__map'
-        transform={`translate(${baseTranslateX}, ${baseTranslateY})`}
+        transform={`translate(${baseTranslateX - (2 * 7 + 3) * cellSize / 2}, ${baseTranslateY})`}
       >
         {
           Object.keys(dataset).map((month, monthIndex) => {
             const dataByMonth = dataset[month];
             const monthText = this.generateMonthText(month);
             const bbox = this.generateMonthBbox(month);
-            const monthTextTransform = `translate(${-20},${bbox.y + bbox.height / 2})`;
+            const monthTextTransform = `translate(${bbox.x + bbox.width / 2},${bbox.y + cellSize * (monthIndex > 1 ? 5 : 6) + 10 - baseRectY[monthIndex]})`;
 
             return (
               <g key={monthIndex}
-                transform={`translate(0, ${monthIndex > 0 ? cellSize * 1.5 * monthIndex : 0})`}
+                // transform={`translate(0, ${monthIndex > 0 ? cellSize * 1.5 * monthIndex : 0})`}
+                transform={`translate(${((monthIndex + 2) % 2) * 10 * cellSize}, ${Math.floor(monthIndex / 2) * 3 * cellSize})`}
                 // transform={`translate(${((monthIndex + 6) % 3) * 7 * cellSize}, ${monthIndex > 2 ? cellSize * 1.5 * 1 : 0})`}
               >
                 {
@@ -111,7 +134,7 @@ export default class CalendarChart extends React.PureComponent {
                         width={cellSize}
                         height={cellSize}
                         y={
-                          d3TimeWeek.count(d3TimeYear(formattedDate), formattedDate) * cellSize
+                          d3TimeWeek.count(d3TimeYear(formattedDate), formattedDate) * cellSize - baseRectY[monthIndex]
                         }
                         x={formattedDate.getDay() * cellSize}
                         fill={scale(val)}
@@ -124,9 +147,9 @@ export default class CalendarChart extends React.PureComponent {
                 }
                 <text
                   className='calendar__map__monthtext'
-                  transform={`${monthTextTransform}rotate(270)`}
+                  transform={`${monthTextTransform}`}
                   textAnchor="middle"
-                  dominantBaseline="baseline"
+                  dominantBaseline="hanging"
                 >{monthText}</text>
               </g>
             );

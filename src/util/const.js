@@ -8,3 +8,9 @@ export const innerPadding = {
   bottom: 70,
   right: 100,
 };
+
+export const chartTypes = {
+  heatmap: "heatmap",
+  histogram: "histogram",
+  calendar: "calendar",
+}

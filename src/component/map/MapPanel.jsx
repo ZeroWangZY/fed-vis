@@ -517,6 +517,8 @@ class MapPanel extends Component {
                         style={{right: '85px', backgroundColor: (currentDisplayType?'#eee':'#fff')}}
                         disabled={currentDisplayType?"disabled":""}
                         onClick={this.handleConvertOD}>O⇋D</button>
+
+                    
                 </div>
                 {/* {!currentDisplayType && <div id='odmap-label'>Current space type of outer grid: {currentSpaceTypeOuter}</div>} */}
                 <Map
