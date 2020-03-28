@@ -1,27 +1,24 @@
 import React from 'react';
 import * as d3 from "d3";
 import WaterOverview from './WaterOverview'
-
+import BoxplotView from './BoxplotView'
 
 import "./index.less";
 
 class ProgressModal extends React.Component {
   constructor(props) {
     super(props);
-
-
   }
 
   render() {
-    const { percent, losses } = this.props;
-    const numClient = losses.length;
+    const { percent, losses, maxRound } = this.props;
 
     return (
       <div className="progress-modal">
         <div className="progress-modal__overview">
           <WaterOverview losses={losses} />
         </div>
-        <svg className="progress-modal__boxplot"></svg>
+        <BoxplotView losses={losses} maxRound={maxRound}/>
       </div>
     );
   }

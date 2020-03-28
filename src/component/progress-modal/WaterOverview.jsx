@@ -36,8 +36,7 @@ class WaterOverview extends React.Component {
           display: 'block',
           margin: 'auto'
         }} />
-        {waterLevels.map((waterLevel) => <WaterProgress value={waterLevel} />)}
-
+        {waterLevels.map((waterLevel, i) => <WaterProgress key={i} value={waterLevel} />)}
       </div >
     );
   }

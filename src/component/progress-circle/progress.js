@@ -70,6 +70,7 @@ class ProgressCircle extends React.Component {
 
     return (
       <div className="progress-btn" style={{
+        cursor: "pointer",
         display: "inline-block",
         position: "absolute",
         right: 145,
@@ -84,6 +85,9 @@ class ProgressCircle extends React.Component {
         />
         <Modal
           width={1080}
+          style={{
+            height:1200
+          }}
           visible={this.state.enableModal}
           title="progress"
           onOk={this.handleCloseModal}
@@ -97,6 +101,7 @@ class ProgressCircle extends React.Component {
           <ProgressModal
             percent={percent}
             losses={losses}
+            maxRound={maxRound}
           />
         </Modal>
       </div>
