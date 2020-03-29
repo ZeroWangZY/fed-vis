@@ -143,7 +143,7 @@ class BoxplotView extends React.Component {
         <text
           className="axis-text"
           transform={'translate('+(margin.left+chartWidth)+','+(margin.top+chartHeight+30)+')'}>
-          Iteration
+          Round
         </text>
         <Axis
           scale={yscale}
