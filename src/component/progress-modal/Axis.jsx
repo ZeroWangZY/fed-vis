@@ -15,6 +15,8 @@ export default class Axis extends React.PureComponent {
 
     if(orient === "Left") {
       axis.tickSize(-chartWidth).tickPadding(10);
+    } else {
+      axis.tickSize(0).tickPadding(10);
     }
     d3.select(this.node).call(axis);
   }

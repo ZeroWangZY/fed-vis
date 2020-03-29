@@ -44,7 +44,6 @@ export default class Boxplot extends React.PureComponent {
   render() {
     const { index, trans, xscale, yscale } = this.props;
     const { quantileData, whiskerData, boxplotWidth } = this.state;
-    console.log(index)
     return (
       // <Motion style={{opacity: spring(1)}} defaultStyle={{opacity: 0}}>
       //   {interpolatedStyle => (

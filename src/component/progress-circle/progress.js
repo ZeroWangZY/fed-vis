@@ -89,7 +89,7 @@ class ProgressCircle extends React.Component {
             height:1200
           }}
           visible={this.state.enableModal}
-          title="progress"
+          title="Training Progress"
           onOk={this.handleCloseModal}
           onCancel={this.handleCloseModal}
           footer={[
