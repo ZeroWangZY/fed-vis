@@ -10,8 +10,12 @@ export default class Axis extends React.PureComponent {
   }
 
   createAxis = () => {
-    let {scale, orient, ticks} = this.props;
+    let {scale, orient, ticks, chartWidth} = this.props;
     let axis = d3['axis' + orient](scale).ticks(ticks);
+
+    if(orient === "Left") {
+      axis.tickSize(-chartWidth);
+    }
     d3.select(this.node).call(axis);
   }
 
@@ -22,7 +26,6 @@ export default class Axis extends React.PureComponent {
           this.node = node;
         }}>
         </g>
-        {/* <text className="axis-text"></text> */}
       </g>
     )
   }

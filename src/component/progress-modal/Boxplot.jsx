@@ -1,4 +1,5 @@
 import React from 'react';
+// import { Motion, spring } from 'react-motion';
 import * as d3 from 'd3';
 
 export default class Boxplot extends React.PureComponent {
@@ -14,6 +15,10 @@ export default class Boxplot extends React.PureComponent {
   componentWillMount() {
     this.updateBoxplotData();
   }
+
+  // componentDidMount() {
+  //   this.node.style.opacity = 1;
+  // }
 
   updateBoxplotData = () => {
     const {data, xscale} = this.props;
@@ -37,50 +42,61 @@ export default class Boxplot extends React.PureComponent {
   }
 
   render() {
-    const {index, trans, xscale, yscale} = this.props;
-    const {quantileData, whiskerData, boxplotWidth} = this.state;
+    const { index, trans, xscale, yscale } = this.props;
+    const { quantileData, whiskerData, boxplotWidth } = this.state;
+    console.log(index)
     return (
-      <g
-        transform={trans}
-        ref="boxplot"
-        className="single-boxplot"
-        id={`boxplot-${index}`}>
-        <line
-          className="center"
-          x1={xscale(index) + xscale.bandwidth()/2}
-          y1={yscale(whiskerData[0])}
-          x2={xscale(index) + xscale.bandwidth()/2}
-          y2={yscale(whiskerData[1])}>
-        </line>
-        <rect
-          className="box-rect"
-          x={xscale(index) + xscale.bandwidth()/2 - boxplotWidth/2}
-          y={yscale(quantileData[2])}
-          width={boxplotWidth}
-          height={yscale(quantileData[0]) - yscale(quantileData[2])}>
-        </rect>
-        <line
-          className="median"
-          x1={xscale(index) + xscale.bandwidth()/2 - boxplotWidth/2}
-          y1={yscale(quantileData[1])}
-          x2={xscale(index) + xscale.bandwidth()/2 + boxplotWidth/2}
-          y2={yscale(quantileData[1])}>
-        </line>
-        <line
-          className="whisker"
-          x1={xscale(index) + xscale.bandwidth()/2 - boxplotWidth/2}
-          y1={yscale(whiskerData[0])}
-          x2={xscale(index) + xscale.bandwidth()/2 + boxplotWidth/2}
-          y2={yscale(whiskerData[0])}>
-        </line>
-        <line
-          className="whisker"
-          x1={xscale(index) + xscale.bandwidth()/2 - boxplotWidth/2}
-          y1={yscale(whiskerData[1])}
-          x2={xscale(index) + xscale.bandwidth()/2 + boxplotWidth/2}
-          y2={yscale(whiskerData[1])}>
-        </line>
-      </g>
+      // <Motion style={{opacity: spring(1)}} defaultStyle={{opacity: 0}}>
+      //   {interpolatedStyle => (
+          <g
+            transform={trans}
+            className="single-boxplot"
+            id={`boxplot-${index}`}
+            // ref={node => {
+            //   node.style.opacity = 0;
+            //   node.style.transition = "opacity 2s";
+            //   this.node = node;
+            // }}
+            // style={{opacity: interpolatedStyle.opacity }}
+            >
+            <line
+              className="center"
+              x1={xscale(index) + xscale.bandwidth()/2}
+              y1={yscale(whiskerData[0])}
+              x2={xscale(index) + xscale.bandwidth()/2}
+              y2={yscale(whiskerData[1])}>
+            </line>
+            <rect
+              className="box-rect"
+              x={xscale(index) + xscale.bandwidth()/2 - boxplotWidth/2}
+              y={yscale(quantileData[2])}
+              width={boxplotWidth}
+              height={yscale(quantileData[0]) - yscale(quantileData[2])}>
+            </rect>
+            <line
+              className="median"
+              x1={xscale(index) + xscale.bandwidth()/2 - boxplotWidth/2}
+              y1={yscale(quantileData[1])}
+              x2={xscale(index) + xscale.bandwidth()/2 + boxplotWidth/2}
+              y2={yscale(quantileData[1])}>
+            </line>
+            <line
+              className="whisker"
+              x1={xscale(index) + xscale.bandwidth()/2 - boxplotWidth/2}
+              y1={yscale(whiskerData[0])}
+              x2={xscale(index) + xscale.bandwidth()/2 + boxplotWidth/2}
+              y2={yscale(whiskerData[0])}>
+            </line>
+            <line
+              className="whisker"
+              x1={xscale(index) + xscale.bandwidth()/2 - boxplotWidth/2}
+              y1={yscale(whiskerData[1])}
+              x2={xscale(index) + xscale.bandwidth()/2 + boxplotWidth/2}
+              y2={yscale(whiskerData[1])}>
+            </line>
+          </g>
+      //   )}
+      // </Motion>
     )
   }
 }

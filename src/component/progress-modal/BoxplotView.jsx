@@ -12,14 +12,14 @@ class BoxplotView extends React.Component {
     this.state = {
       margin: {
         left: 50,
-        right: 50,
+        right: 30,
         top: 20,
-        bottom: 40
+        bottom: 20
       },
       yTicks: 5,
-      height: 200,
+      height: 300,
       width: 1030,
-      boxplotNum: 15,// 初始设定的展示个数，如果不能整除会上下浮动
+      boxplotNum: 25,// 初始设定的展示个数，如果不能整除会上下浮动
       dataForBoxplot: [],
       xTick: [],
       xscale: "",
@@ -28,37 +28,38 @@ class BoxplotView extends React.Component {
     }
   }
 
+  // 可能是load前就打开了 也可能是Load到一定进度才打开
   componentWillMount() {
     const { height, width, margin } = this.state;
 
     const chartHeight = height - margin.top - margin.bottom;
     const chartWidth = width - margin.left - margin.right;
-    let newXscale = d3.scaleBand()
+
+    const { losses } = this.props;
+    if (losses.length) {
+      this.updateView(this.props)
+    } else {// 还没有数据
+      let newXscale = d3.scaleBand()
       .domain([])
       .range([0, chartWidth]);
-    let newYscale = d3.scaleLinear()
-        .domain([])
-        .range([chartHeight, 0]);
-    this.setState({
-      xscale: newXscale,
-      yscale: newYscale,
-      curIter: 0,
-      dataForBoxplot: [],
-      xTick: []
-    })
+      let newYscale = d3.scaleLinear()
+          .domain([])
+          .range([chartHeight, 0]);
+      this.setState({
+        xscale: newXscale,
+        yscale: newYscale,
+        curIter: 0,
+        dataForBoxplot: [],
+        xTick: []
+      })
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     const { losses, maxRound } = nextProps;
-    const { boxplotNum, curIter, height, width, margin, dataForBoxplot } = this.state;
+    const { boxplotNum, curIter, dataForBoxplot } = this.state;
 
-    const chartHeight = height - margin.top - margin.bottom;
-    const chartWidth = width - margin.left - margin.right;
-
-    let newXscale = "", newYscale = "";
-    let newDataForBoxplot = JSON.parse(JSON.stringify(dataForBoxplot));
-    let xTick = [];
-    // console.log(losses, maxRound)
+    let newDataForBoxplot = dataForBoxplot//JSON.parse(JSON.stringify(dataForBoxplot));
 
     let interval = Math.floor(maxRound/boxplotNum);
     let finalNum = Math.ceil((maxRound - interval * boxplotNum) / interval) + boxplotNum;
@@ -79,31 +80,48 @@ class BoxplotView extends React.Component {
       });
       // console.log(newDataForBoxplot)
     } else if(losses.length) { // 如果刚开始更新
-      let curIterCount = losses[0].length;
-      for (let i = 1; i <= finalNum; i++) {
-        const index = (finalNum === i) ? maxRound : interval*i;
-        xTick.push(parseInt(index));
-        if(index > curIterCount) continue;
-        let dataSingleIter = losses.map(d=>d[index-1]);
-        newDataForBoxplot.push(dataSingleIter)
-      }
-
-      let lossStart = losses.map(d=>d[0]);
-      let yMax = Math.max(...lossStart);
-      newXscale = d3.scaleBand()
-        .domain(xTick)
-        .range([0, chartWidth]);
-      newYscale = d3.scaleLinear()
-        .domain([0, yMax])
-        .range([chartHeight, 0]);
-      this.setState({
-        xscale: newXscale,
-        yscale: newYscale,
-        curIter: curIterCount,
-        dataForBoxplot: dataForBoxplot,
-        xTick: xTick
-      })
+      this.updateView(nextProps)
     }
+  }
+
+  updateView = (props) => {
+    const { losses, maxRound } = props;
+    const { height, width, margin, dataForBoxplot, boxplotNum } = this.state;
+
+    const chartHeight = height - margin.top - margin.bottom;
+    const chartWidth = width - margin.left - margin.right;
+
+    let newXscale = "", newYscale = "";
+    let newDataForBoxplot = dataForBoxplot;//JSON.parse(JSON.stringify(dataForBoxplot)); 不用深拷贝 不然会判断数组不一样重新render
+    let xTick = [];
+
+    let interval = Math.floor(maxRound/boxplotNum);
+    let finalNum = Math.ceil((maxRound - interval * boxplotNum) / interval) + boxplotNum;
+
+    let curIterCount = losses[0].length;
+    for (let i = 1; i <= finalNum; i++) {
+      const index = (finalNum === i) ? maxRound : interval*i;
+      xTick.push(parseInt(index));
+      if(index > curIterCount) continue;
+      let dataSingleIter = losses.map(d=>d[index-1]);
+      newDataForBoxplot.push(dataSingleIter)
+    }
+
+    let lossStart = losses.map(d=>d[0]);
+    let yMax = Math.max(...lossStart);
+    newXscale = d3.scaleBand()
+      .domain(xTick)
+      .range([0, chartWidth]);
+    newYscale = d3.scaleLinear()
+      .domain([0, yMax])
+      .range([chartHeight, 0]);
+    this.setState({
+      xscale: newXscale,
+      yscale: newYscale,
+      curIter: curIterCount,
+      dataForBoxplot: dataForBoxplot,
+      xTick: xTick
+    })
   }
 
   render() {
@@ -118,7 +136,7 @@ class BoxplotView extends React.Component {
           orient="Bottom"
         />
         <text
-          className="axis-text-x"
+          className="axis-text"
           transform={'translate('+(margin.left+chartWidth)+','+(margin.top+chartHeight+40)+')'}>
           Iteration
         </text>
@@ -127,8 +145,9 @@ class BoxplotView extends React.Component {
           trans={'translate('+margin.left+','+margin.top+')'}
           orient="Left"
           ticks={yTicks}
+          chartWidth={chartWidth}
         />
-          <text
+        <text
           className="axis-text"
           transform={'translate('+margin.left+','+(margin.top - 10)+')'}>
           Loss
@@ -141,7 +160,8 @@ class BoxplotView extends React.Component {
             data={d}
             yscale={yscale}
             xscale={xscale}
-          />)}
+          />
+        )}
       </svg>
     );
   }

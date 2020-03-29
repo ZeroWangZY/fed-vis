@@ -74,7 +74,7 @@ class ProgressCircle extends React.Component {
         display: "inline-block",
         position: "absolute",
         right: 145,
-        top: -6
+        top: -4
       }} >
         <Progress
           type="circle"
