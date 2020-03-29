@@ -31,13 +31,13 @@ class WaterProgress extends React.Component {
     // 水波动画初始参数
     this.axisLength = 2 * this.r - 16 * this.lineWidth;  // Sin 图形长度
     this.unit = this.axisLength / 9; // 波浪宽
-    this.range = .4 // 浪幅
+    this.range = .6 // 浪幅
     this.nowrange = this.range;
     this.xoffset = 8 * this.lineWidth; // x 轴偏移量
     this.data = ~~(this.props.value) / 100;   // 数据量
     this.sp = 0; // 周期偏移量
     this.nowdata = 1;
-    this.waveupsp = 0.006; // 水波上涨速度
+    this.waveupsp = 0.06; // 水波上涨速度
     // 圆动画初始参数
     this.arcStack = [];  // 圆栈
     this.bR = this.r - 8 * this.lineWidth;
@@ -77,7 +77,7 @@ class WaterProgress extends React.Component {
     //   ctx.stroke();
     //   ctx.save()
     // }
-    
+
 
     //渲染canvas
 
@@ -136,66 +136,72 @@ class WaterProgress extends React.Component {
   }
 
   draw() {
-    this.ctx.clearRect(0, 0, this.oW, this.oH);
-    //最外面淡黄色圈
-    this.drawCircle();
-    //灰色圆圈  
-    // grayCircle();
-    //橘黄色进度圈
-    // orangeCircle();
-    //裁剪中间水圈  
-    this.clipCircle();
-    // 控制波幅
-    if (this.props.value >= 0.85) {
-      if (this.nowrange > this.range / 4) {
-        var t = this.range * 0.01;
-        this.nowrange -= t;
+    const self = this
+    function anim() {
+      self.ctx.clearRect(0, 0, self.oW, self.oH);
+      //最外面淡黄色圈
+      self.drawCircle();
+      //灰色圆圈  
+      // grayCircle();
+      //橘黄色进度圈
+      // orangeCircle();
+      //裁剪中间水圈  
+      self.clipCircle();
+      if (self.props.value >= 0.85) {
+        if (self.nowrange > self.range / 4) {
+          var t = self.range * 0.01;
+          self.nowrange -= t;
+        }
+      } else if (self.props.value <= 0.1) {
+        if (self.nowrange < self.range * 1.5) {
+          var t = self.range * 0.01;
+          self.nowrange += t;
+        }
+      } else {
+        if (self.nowrange <= self.range) {
+          var t = self.range * 0.01;
+          self.nowrange += t;
+        }
+        if (self.nowrange >= self.range) {
+          var t = self.range * 0.01;
+          self.nowrange -= t;
+        }
       }
-    } else if (this.props.value <= 0.1) {
-      if (this.nowrange < this.range * 1.5) {
-        var t = this.range * 0.01;
-        this.nowrange += t;
+      if ((self.props.value - self.nowdata) > 0) {
+        self.nowdata += self.waveupsp;
       }
-    } else {
-      if (this.nowrange <= this.range) {
-        var t = this.range * 0.01;
-        this.nowrange += t;
+      if ((self.props.value - self.nowdata) < 0) {
+        self.nowdata -= self.waveupsp
       }
-      if (this.nowrange >= this.range) {
-        var t = this.range * 0.01;
-        this.nowrange -= t;
-      }
-    }
-    if ((this.props.value - this.nowdata) > 0) {
-      this.nowdata += this.waveupsp;
-    }
-    if ((this.props.value - this.nowdata) < 0) {
-      this.nowdata -= this.waveupsp
-    }
-    this.sp += 0.07;
-    // 开始水波动画
-    this.drawSine();
-    // 写字
-    // this.drawText();
+      self.sp += 0.7;
+      // 开始水波动画
+      self.drawSine();
+      // 写字
+      // this.drawText();
 
 
-    if (Math.abs(this.props.value - this.nowdata) < 0.01) {
-      cancelAnimationFrame(this.frameId)
-    } else {
-      this.frameId = requestAnimationFrame(this.draw.bind(this))
+      // if (Math.abs(self.props.value - self.nowdata) < 0.01) {
+      //   cancelAnimationFrame(self.frameId)
+      // } else {
+      // self.frameId = requestAnimationFrame(anim)
+      // }
     }
+    setInterval(anim, 200)
+
   }
 
-  componentWillReceiveProps(nextProps){
-    this.draw(nextProps.value)
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   this.draw(nextProps.value)
+  // }
 
   render() {
     // const { percent, losses } = this.props;
     // const numClient = losses.length;
-    
-    return (
-      <canvas className="water_progress" style={{ width: 100, height: 100, margin: "20px 12px" }} ref={this.canvas}>当前浏览器不支持canvas 请升级！</canvas>
+
+    return (<div style={{ display: "inline-block" }}>
+      <canvas className="water_progress" style={{ width: 100, height: 100, margin: "0 12px" }} ref={this.canvas}>当前浏览器不支持canvas 请升级！</canvas>
+      <div>{this.props.name}</div>
+    </div >
     );
   }
 }
