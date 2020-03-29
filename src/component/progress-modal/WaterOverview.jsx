@@ -2,6 +2,7 @@ import React from 'react';
 import * as d3 from "d3";
 import { ReactComponent as ServerSVG } from '../../assets/img/server.svg';
 import WaterProgress from './WaterProgress'
+import LiquidGaugeLegend from './LiquidGaugeLegend';
 
 class WaterOverview extends React.Component {
   render() {
@@ -38,7 +39,7 @@ class WaterOverview extends React.Component {
 
           <ServerSVG width="60" height="60" x="486" />
         </svg>
-
+        <LiquidGaugeLegend />
         {waterLevels.map((waterLevel, index) =>
           <WaterProgress value={waterLevel} key={index} name={"client " + (index + 1)} />)}
 
