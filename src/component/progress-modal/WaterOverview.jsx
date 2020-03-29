@@ -11,15 +11,17 @@ class WaterOverview extends React.Component {
     let waterLevels = []
     if (losses !== null && losses !== undefined) {
       for (const loss of losses) {
-        if (loss[0] > max) max = loss[0]
+        if (loss[0] > max){
+          max = loss[0]
+        } 
         waterLevels.push(loss[loss.length - 1])
       }
     }
     if (max === 0) {
       waterLevels = [1, 1, 1, 1, 1, 1, 1, 1]
     } else {
-      for (let i in waterLevels) {
-        waterLevels[i] = waterLevels[1] / max
+      for (const i in waterLevels) {
+        waterLevels[i] = waterLevels[i] / max
       }
     }
     console.log(waterLevels)

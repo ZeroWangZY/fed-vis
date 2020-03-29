@@ -82,6 +82,7 @@ class ProgressCircle extends React.Component {
           showInfo={false}
           onClick={this.handleClickBtn}
           width={20}
+          strokeWidth={16}
         />
         <Modal
           width={1080}
