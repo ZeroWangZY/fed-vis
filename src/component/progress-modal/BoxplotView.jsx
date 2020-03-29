@@ -128,6 +128,11 @@ class BoxplotView extends React.Component {
     const { xscale, yscale, dataForBoxplot, height, width, margin, yTicks, xTick } = this.state;
     const chartHeight = height - margin.top - margin.bottom;
     const chartWidth = width - margin.left - margin.right;
+
+    let initialGridsY = [];
+    for(let i = 0; i < yTicks; i++) {
+      initialGridsY.push(chartHeight/yTicks * i);
+    }
     return (
       <svg className="progress-modal__boxplot">
         <Axis
@@ -153,6 +158,11 @@ class BoxplotView extends React.Component {
           transform={'translate('+margin.left+','+(margin.top - 10)+')'}>
           Loss
         </text>
+        {!dataForBoxplot.length &&
+          <g className="inital-grids" transform={'translate('+margin.left+',' + margin.top + ')'}>
+            {initialGridsY.map((d,i) => <line key={i} x1={0} x2={chartWidth} y1={d} y2={d}></line>)}
+          </g>
+        }
         {dataForBoxplot.map((d,i)=>
           <Boxplot
             key={i}
