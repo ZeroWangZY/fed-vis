@@ -146,6 +146,7 @@ class BoxplotView extends React.Component {
           orient="Left"
           ticks={yTicks}
           chartWidth={chartWidth}
+          chartHeight={chartHeight}
         />
         <text
           className="axis-text"
