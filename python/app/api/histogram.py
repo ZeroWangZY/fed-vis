@@ -8,8 +8,9 @@ from app.service.histogram_service import get_histogram, get_default_histogram, 
 from .response import gen_response, cors
 from .data import gen_id, add_res_data
 
-@cors
+
 @app.route('/api/histogram')
+@cors
 def get_histogram_api():
 
     params = request.args

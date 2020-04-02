@@ -9,8 +9,9 @@ from app.service.heatmap_service import get_default_heatmap, get_heatmap, get_he
 from .response import gen_response, cors
 from .data import gen_id, add_res_data
 
-@cors
+
 @app.route('/api/heatmap/all')
+@cors
 def get_heatmap_all_api():
     params = request.args
     type_ = params.get('type')

@@ -47,8 +47,9 @@ def set_progress(id, current_round, max_round, losses, done):
 def gen_id():
     return ''.join(random.sample(string.ascii_letters + string.digits, 8))
 
-@cors
+
 @app.route('/api/progress')
+@cors
 def get_progress():
     params = request.args
     id = params.get('id')
@@ -56,8 +57,9 @@ def get_progress():
         return gen_response(progress_info_map)
     return gen_response(progress_info_map.get(id))
 
-@cors
+
 @app.route('/api/data')
+@cors
 def get_data():
     global res_data_map
     global progress_info_map

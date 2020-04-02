@@ -7,7 +7,7 @@ from app.service.odmap_service import get_default_odmap, get_odmap
 from .response import gen_response, cors
 
 
-@app.route('/api/odmap/')
+@app.route('/api/odmap')
 @cors
 def get_odmap_api():
     params = request.args
