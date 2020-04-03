@@ -1,5 +1,5 @@
 import { put, takeLatest, select, call } from 'redux-saga/effects';
-import { RENEW_BARCHART, DELETE_BARCHART, ADD_BARCHART, SELECT_BARCHART } from 'actions/barchart';
+import { RENEW_BARCHART, DELETE_BARCHART, ADD_BARCHART, SELECT_BARCHART, SAVE_HISTOGRAM_DATA_ID, SAVE_HISTOGRAM_INDEX, TRIGGER_HISTOGRAM_POLL, GET_HISTOGRAM_BY_ID } from 'actions/barchart';
 import { DELETE_RECT_ON_MAP } from 'actions/heatmap';
 import { SET_BBOX } from "actions/base";
 import Apis from '../api/apis';
@@ -37,7 +37,7 @@ function* processDeleteBarchart(action) {
 }
 
 function* processAddBarchart(action) {
-  const barchartData = yield select(state => state.barchartData);
+  // const barchartData = yield select(state => state.barchartData);
   const startTime = yield select(state => state.startTime);
   const endTime = yield select(state => state.endTime);
   const dataType = yield select(state => state.dataType);
@@ -52,7 +52,7 @@ function* processAddBarchart(action) {
   const lngFrom = bounds._southWest.lng;
   const lngTo = bounds._northEast.lng;
 
-  let newBarchartData = [...barchartData];
+  // let newBarchartData = [...barchartData];
 
   let url = `${Apis.get_barchart}?type=${dataType}&start_time=${startTime}&end_time=${endTime}&lng_from=${lngFrom}&lng_to=${lngTo}&lat_from=${latFrom}&lat_to=${latTo}`;
 
@@ -64,9 +64,23 @@ function* processAddBarchart(action) {
     url,
   }));
   if (resp.data) {
-    newBarchartData.push({
-      id,
-      data: resp.data.data,
+    // newBarchartData.push({
+    //   id,
+    //   data: resp.data.data,
+    // });
+    yield put({
+      type: SAVE_HISTOGRAM_INDEX,
+      id: id,
+    });
+
+    yield put({
+      type: SAVE_HISTOGRAM_DATA_ID,
+      histogramDataId: resp.data.data.id
+    });
+
+    yield put({ 
+      type: TRIGGER_HISTOGRAM_POLL, 
+      shouldPoll: true 
     });
   }
 
@@ -80,14 +94,46 @@ function* processAddBarchart(action) {
     }
   });
 
-  yield put({
-    type: RENEW_BARCHART,
-    new: newBarchartData,
-  });
-  yield put({
-    type: SELECT_BARCHART,
-    id,
-  });
+  // yield put({
+  //   type: RENEW_BARCHART,
+  //   new: newBarchartData,
+  // });
+
+  // yield put({
+  //   type: SELECT_BARCHART,
+  //   id,
+  // });
+}
+
+function* getHistogramData(action) {
+  const barchartData = yield select(state => state.barchartData);
+  const histogramIndex = yield select(state => state.histogramIndex);
+
+  const { id } = action;
+  const url = `${Apis.get_data}?id=${id}`;
+
+  const resp = yield call(() => get({
+    url,
+  }));
+  console.log('resp', resp)
+  if (resp.data) {
+    const { data = {} } = resp.data;
+    let newBarchartData = [...barchartData];
+    newBarchartData.push({
+      id: histogramIndex,
+      data,
+    });
+
+    yield put({
+      type: RENEW_BARCHART,
+      new: newBarchartData,
+    });
+
+    yield put({
+      type: SELECT_BARCHART,
+      id: histogramIndex,
+    });
+  }
 }
 
 export function* watchDeleteBarchart() {
@@ -96,4 +142,8 @@ export function* watchDeleteBarchart() {
 
 export function* watchAddBarchart() {
   yield takeLatest(ADD_BARCHART, processAddBarchart);
+}
+
+export function* watchHistogramByID() {
+  yield takeLatest(GET_HISTOGRAM_BY_ID, getHistogramData);
 }

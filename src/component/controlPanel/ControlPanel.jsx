@@ -156,7 +156,18 @@ export default class ControlPanel extends React.PureComponent {
           </div>
 
           <div className="control-panel__data__item">
-            <div>{`Target area: (${latFrom}, ${lngFrom}) - (${latTo}, ${lngTo})`}</div>
+            <div>
+              <div>Target area:</div>
+              (
+              <span className="control-panel__data__item__bbox">{latFrom && parseFloat(latFrom).toFixed(3)}</span>
+              ,
+              <span className="control-panel__data__item__bbox">{lngFrom && parseFloat(lngFrom).toFixed(3)}</span>
+              ) - (
+              <span className="control-panel__data__item__bbox">{latTo && parseFloat(latTo).toFixed(3)}</span>
+              ,
+              <span className="control-panel__data__item__bbox">{lngTo && parseFloat(lngTo).toFixed(3)}</span>
+              )
+            </div>
           </div>
         </div>
 

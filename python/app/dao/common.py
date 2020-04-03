@@ -1,3 +1,3 @@
-size_param = 1000
+size_param = 500
 
 num_client = 8

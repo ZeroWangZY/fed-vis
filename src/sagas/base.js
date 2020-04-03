@@ -3,9 +3,9 @@ import { put, call, takeLatest } from 'redux-saga/effects';
 import Apis from '../api/apis';
 import { get } from '../api/tools';
 import { chartTypes } from "../util/const";
-import { SET_HEATMAP_PROGRESS } from '../actions/heatmap'
-import { CHECK_PROGRESS } from '../actions/base'
-// import { SET_HISTOGRAM_PROGRESS } from '../actions/histogram'
+import { SET_HEATMAP_PROGRESS } from '../actions/heatmap';
+import { CHECK_PROGRESS } from '../actions/base';
+import { SET_HISTOGRAM_PROGRESS } from '../actions/barchart';
 
 export function* processCheckProgress(action) {
   const { id, chartType } = action;
@@ -26,10 +26,11 @@ export function* processCheckProgress(action) {
         });
         break;
       case chartTypes.histogram:
-      // yield put({
-      //   type: SET_HISTOGRAM_PROGRESS,
-      //   progressInfo: data,
-      // });
+        yield put({
+          type: SET_HISTOGRAM_PROGRESS,
+          progressInfo: data,
+        });
+        break;
       case chartTypes.calendar:
       default:
         break;
