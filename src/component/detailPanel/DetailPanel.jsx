@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import './DetailPanel.less';
 import BarChart from '../barchart/Barchart';
 import { deleteBarchart, selectBarchart, setAggregateHour } from '../../actions/barchart';
+import HistogramProgress from "../progress-circle/histogram-progress";
 
 import { Select } from 'antd';
 import "antd/lib/select/style/index.css";
@@ -91,6 +92,7 @@ class DetailPanel extends React.PureComponent {
         <div className="detail-panel-heading">
           <div className="detail-panel-heading__title">Detail Comparison Panel</div>
           <div className="detail-panel-heading__filter">
+            <HistogramProgress />
             <div className="detail-panel-heading__filter__hint">Hours per bar</div>
             <Select defaultValue={aggregateHourOptions[0]} style={{ width: 80 }} onChange={handleSliderChange}>
               {

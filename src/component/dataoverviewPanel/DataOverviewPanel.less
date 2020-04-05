@@ -8,6 +8,17 @@
     padding-left: 30px;
     font-weight: 500;
     border-bottom: solid 1px #333;
+    position: relative;
+
+    .progress-btn {
+      position: relative;
+      top: -4px !important;
+      right: 35px !important;
+
+      .ant-progress-status-success .ant-progress-inner:not(.ant-progress-circle-gradient) .ant-progress-circle-path {
+        stroke: #108ee9 !important;
+      }
+    }
   }
 
   #dataoverview-content {
