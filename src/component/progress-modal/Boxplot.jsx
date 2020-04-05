@@ -17,7 +17,9 @@ export default class Boxplot extends React.PureComponent {
   }
 
   componentWillReceiveProps() {
-    this.node.style.opacity = 1;
+    if(this.node) {
+      this.node.style.opacity = 1;
+    }
   }
 
   updateBoxplotData = () => {
@@ -52,9 +54,11 @@ export default class Boxplot extends React.PureComponent {
             className="single-boxplot"
             id={`boxplot-${index}`}
             ref={node => {
-              node.style.opacity = 0;
-              node.style.transition = "opacity 0.7s";
-              this.node = node;
+              if(node) {
+                node.style.opacity = 0;
+                node.style.transition = "opacity 0.7s";
+                this.node = node;
+              }
             }}
             // style={{opacity: interpolatedStyle.opacity }}
             >
