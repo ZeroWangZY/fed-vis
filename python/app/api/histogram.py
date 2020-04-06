@@ -27,6 +27,10 @@ def get_histogram_api():
         end_time = datetime.datetime.strptime(end_time, '%Y/%m/%dZ%H:%M')
         id = gen_id()
         if mode == 'fitting':
+            round = params.get('round')
+            if round == None:
+                round = 150
+            round = int(round)
             try:
                 _thread.start_new_thread(lambda: add_res_data(id, 
                 get_histogram_with_fed_learning(start_time,
@@ -36,7 +40,8 @@ def get_histogram_api():
                                                 lat_from,
                                                 lat_to,
                                                 id=id,
-                                                type_=type_)), ())
+                                                type_=type_,
+                                                round=round)), ())
             except:
                 return "Error: unable to start thread"
                 

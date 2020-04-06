@@ -40,7 +40,8 @@ def get_histogram_on_memory(start_time, end_time, lng_from, lng_to, lat_from,
 
 
 def get_histogram_with_fed_learning(start_time, end_time, lng_from, lng_to,
-                                    lat_from, lat_to, type_, id='default_histogram_id'):
+                                    lat_from, lat_to, type_, id='default_histogram_id', round=150):
+    half_round = int(round / 2)
     reset_keras()
     x = gen_x(7, 24)
     y = get_5_histograms_on_memory(start_time, end_time, lng_from, lng_to,
@@ -73,7 +74,7 @@ def get_histogram_with_fed_learning(start_time, end_time, lng_from, lng_to,
               # optimizer=optimizers.Adam(lr=0.008),
               metrics=['mse'])
     fl_start_time1 = time.time()
-    train_model_fed(model1, x, y, round=150, epoch=1, batch=20, base_round=0, max_round=300, id=id)
+    train_model_fed(model1, x, y, round=half_round, epoch=1, batch=20, base_round=0, max_round=round, id=id)
     fl_end_time1 = time.time()
 
     model2 = get_model(24 * 7, layers=1)
@@ -83,7 +84,7 @@ def get_histogram_with_fed_learning(start_time, end_time, lng_from, lng_to,
               metrics=['mse'])
     model2.set_weights(model1.get_weights())
     fl_start_time2 = time.time()
-    train_model_fed(model2, x, y, round=150, epoch=1, batch=20, base_round=150, max_round=300, id=id)
+    train_model_fed(model2, x, y, round=half_round, epoch=1, batch=20, base_round=half_round, max_round=round, id=id)
     fl_end_time2 = time.time()
     print("fl training cost: {} s".format(fl_end_time1 - fl_start_time1 + fl_end_time2 - fl_start_time2))
 

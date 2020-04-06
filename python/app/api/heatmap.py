@@ -23,8 +23,12 @@ def get_heatmap_all_api():
         end_time = datetime.datetime.strptime(end_time, '%Y/%m/%dZ%H:%M')
         id = gen_id()
         if mode == 'fitting':
+            round = params.get('round')
+            if round == None:
+                round = 150
+            round = int(round)
             try:
-                _thread.start_new_thread(lambda: add_res_data(id, get_heatmap_with_fed_learning(start_time, end_time, type_, id)), ())
+                _thread.start_new_thread(lambda: add_res_data(id, get_heatmap_with_fed_learning(start_time, end_time, type_, id, round=round)), ())
             except:
                 return "Error: unable to start thread"
         else:
