@@ -3,17 +3,19 @@ import {
   SAVE_HEATMAP_DATA_ID, SAVE_HEATMAP_DATA, TRIGGER_HEATMAP_POLL
 } from 'actions/heatmap';
 import { SET_BASE_PARAM } from 'actions/base';
-import { put, takeLatest, call, all } from 'redux-saga/effects';
+import { put, takeLatest, call, all, select } from 'redux-saga/effects';
 import api from 'api';
 import Apis from '../api/apis';
 import { get } from '../api/tools';
 
 function* updateHeatmap(action) {
+  const precisionRound = yield select(state => state.precisionRound);
   const params = {
     dataType: action.dataType,
     dataMode: action.dataMode,
     startTime: action.startTime,
-    endTime: action.endTime
+    endTime: action.endTime,
+    round: precisionRound,
   };
   const { heatmapDataId } = yield all({
     heatmapDataId: call(api.getHeatmap, params)

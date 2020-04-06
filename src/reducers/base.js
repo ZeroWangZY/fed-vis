@@ -1,4 +1,4 @@
-import { SET_BASE_PARAM, SET_BBOX } from '../actions/base';
+import { SET_BASE_PARAM, SET_BBOX, SET_PRECISION_ROUND } from '../actions/base';
 
 export const dataType = (state = 'start', action) => {
   switch(action.type) {
@@ -40,6 +40,15 @@ export const bbox = (state = {}, action) => {
   switch(action.type) {
     case SET_BBOX:
       return action.bbox;
+    default:
+      return state;
+  }
+}
+
+export const precisionRound = (state = 150, action) => {
+  switch(action.type) {
+    case SET_PRECISION_ROUND:
+      return action.precisionRound;
     default:
       return state;
   }

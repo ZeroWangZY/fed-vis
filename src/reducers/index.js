@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import { heatmapData, deleteRectId, useError, shouldHeatmapPoll, heatmapProgress, heatmapDataId } from './heatmapData';
 import odmapData from './odmapData';
 import { calendarData, calendarProgress } from './calendarData';
-import { dataType, startTime, endTime, dataMode, bbox } from './base';
+import { dataType, startTime, endTime, dataMode, bbox, precisionRound } from './base';
 import { barchartData, highlightId, aggregateHour, shouldHistogramPoll, histogramProgress, histogramDataId, histogramIndex } from './barchartData';
 
 const rootReducer = combineReducers({
@@ -14,6 +14,7 @@ const rootReducer = combineReducers({
   dataType,
   dataMode,
   bbox,
+  precisionRound,
   startTime,
   endTime,
   barchartData,

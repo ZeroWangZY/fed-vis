@@ -6,6 +6,12 @@ import "antd/lib/switch/style/index.css";
 import "antd/lib/select/style/index.css";
 const { Option } = Select;
 
+const precisionRoundMap = {
+  low: 50,
+  medium: 150,
+  high: 300,
+};
+
 export default class ControlPanel extends React.PureComponent {
   constructor () {
     super();
@@ -72,6 +78,7 @@ export default class ControlPanel extends React.PureComponent {
     });
 
     // TODO: add api call
+    this.props.onChangePrecision(precisionRoundMap[e.target.value]);
   }
 
   updateStartDate (e) {
@@ -187,7 +194,7 @@ export default class ControlPanel extends React.PureComponent {
             </div>
           </div>
           <div id="datatype-select">
-            <form action="" method="get">
+            <form action="" method="get" className="datatype-select__first">
               Select data type:
               <label><input name="dataType" type="radio" value="start" defaultChecked onChange={this.updateDatatype}/>start</label> 
               <label><input name="dataType" type="radio" value="end" onChange={this.updateDatatype}/>end</label> 
@@ -211,34 +218,20 @@ export default class ControlPanel extends React.PureComponent {
           <div id="acc-select">
             <p>Select result precision:</p>
             <div className="acc-select__slider">
-              <label>
-                <input 
-                  name="precision" 
-                  type="radio" 
-                  value="low" 
-                  onChange={this.updatePrecision}
-                />
-                low
-              </label> 
-              <label>
-                <input 
-                  name="precision" 
-                  type="radio" 
-                  value="medium" 
-                  onChange={this.updatePrecision}
-                />
-                medium
-              </label>
-              <label>
-                <input 
-                  name="precision" 
-                  type="radio" 
-                  value="high"
-                  defaultChecked 
-                  onChange={this.updatePrecision}
-                />
-                high
-              </label>
+              {
+                Object.keys(precisionRoundMap).map(precisionType => (
+                  <label key={precisionType} className="acc-select__slider__item">
+                    <input 
+                      name="precision" 
+                      type="radio"
+                      defaultChecked={precisionType === 'high'} 
+                      value={precisionType}
+                      onChange={this.updatePrecision}
+                    />
+                    {precisionType}
+                  </label>
+                ))
+              }
             </div>
           </div>
         </div>

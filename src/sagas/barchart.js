@@ -42,6 +42,7 @@ function* processAddBarchart(action) {
   const endTime = yield select(state => state.endTime);
   const dataType = yield select(state => state.dataType);
   const dataMode = yield select(state => state.dataMode);
+  const precisionRound = yield select(state => state.precisionRound);
 
   const {
     id,
@@ -54,7 +55,7 @@ function* processAddBarchart(action) {
 
   // let newBarchartData = [...barchartData];
 
-  let url = `${Apis.get_barchart}?type=${dataType}&start_time=${startTime}&end_time=${endTime}&lng_from=${lngFrom}&lng_to=${lngTo}&lat_from=${latFrom}&lat_to=${latTo}`;
+  let url = `${Apis.get_barchart}?type=${dataType}&start_time=${startTime}&end_time=${endTime}&lng_from=${lngFrom}&lng_to=${lngTo}&lat_from=${latFrom}&lat_to=${latTo}&round=${precisionRound}`;
 
   if (dataMode !== "normal") {
     url += `&mode=${dataMode}`;

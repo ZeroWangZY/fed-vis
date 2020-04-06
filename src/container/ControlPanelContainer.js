@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import ControlPanel from 'components/controlPanel/ControlPanel';
 import {getHeatmapByTimeRange, changeHeatmapType} from 'actions/heatmap'
+import {setPrecisionRound} from 'actions/base';
 
 const mapStateToProps = (state) => {
   return {
@@ -16,6 +17,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     onChangeHeatmapType: (useError) => {
       dispatch(changeHeatmapType(useError));
+    },
+    onChangePrecision: (precisionRound) => {
+      dispatch(setPrecisionRound(precisionRound));
     }
   };
 };
