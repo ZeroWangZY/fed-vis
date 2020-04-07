@@ -45,7 +45,7 @@ export const bbox = (state = {}, action) => {
   }
 }
 
-export const precisionRound = (state = 150, action) => {
+export const precisionRound = (state = 300, action) => {
   switch(action.type) {
     case SET_PRECISION_ROUND:
       return action.precisionRound;
