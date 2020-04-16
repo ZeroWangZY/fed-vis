@@ -32,6 +32,8 @@ class Lollipop extends React.Component {
     const { chartSize } = this;
     const data = this.mockData();
 
+    console.log(`lollipop cnt: ${data.length}`);
+
     const gChart = d3.select(this.node);
     gChart.selectAll('*').remove();
 

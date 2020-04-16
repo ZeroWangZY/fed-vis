@@ -34,6 +34,8 @@ class Violin extends React.Component {
     const { chartSize, binNum } = this;
     const data = this.mockData();
 
+    console.log(`violin cnt: ${data.length}`);
+
     const gChart = d3.select(this.node);
     gChart.selectAll('*').remove();
 

@@ -5196,7 +5196,7 @@ class Area extends React.Component {
       x: i,
       y: d.value,
     }));
-
+    console.log(`area cnt: ${ret.length}`);
     return ret;
   }
 

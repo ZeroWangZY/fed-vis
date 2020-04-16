@@ -546,6 +546,8 @@ class Sankey extends React.Component {
     } = this;
     const data = this.mockData();
 
+    console.log(`sankey cnt: ${data.links.length}`);
+
     const {nodes, links} = sankey()
       .nodeId(d => d.name)
       // .nodeAlign(d3[`sankey${align[0].toUpperCase()}${align.slice(1)}`])

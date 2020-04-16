@@ -18,6 +18,8 @@ export const galleryWithData = url => WrappedComponent => (
         this.setState({
           data: resp.data
         })
+      }).catch(err => {
+        
       });
     }
 

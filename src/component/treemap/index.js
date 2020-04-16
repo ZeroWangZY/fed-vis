@@ -423,7 +423,20 @@ class Treemap extends React.Component {
       groupStyles,
     } = this;
 
-    const data = this.props.data.data || this.mockData();
+    // const data = this.props.data.data || this.mockData();
+    const data = this.mockData();
+    let cnt = 0;
+    function count(root) {
+      if (root.children && root.children.length) {
+        root.children.forEach(node => count(node));
+      } else {
+        cnt += 1;
+      }
+    }
+    count(data);
+    console.log(`treemap num: ${cnt}`);
+
+
 
     const treemap = d3.treemap()
       .size(chartSize)(

@@ -35,6 +35,8 @@ class Ridgeline extends React.Component {
     const { chartSize, overlap } = this;
     const data = this.mockData();
 
+    console.log(`ridgeline cnt: ${data.dates.length}`);
+
     const gChart = d3.select(this.node);
     gChart.selectAll('*').remove();
 
