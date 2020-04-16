@@ -32,7 +32,7 @@ def get_heatmap_all_api():
             except:
                 return "Error: unable to start thread"
         else:
-            add_res_data(id, get_default_heatmap())
+            add_res_data(id, get_heatmap(start_time, end_time, type_))
     else:
         add_res_data(id, get_default_heatmap())
     return gen_response({"id": id})
