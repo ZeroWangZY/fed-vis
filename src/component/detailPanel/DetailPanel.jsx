@@ -7,6 +7,7 @@ import HistogramProgress from "../progress-circle/histogram-progress";
 
 import { Select } from 'antd';
 import "antd/lib/select/style/index.css";
+import { transform } from '@babel/core';
 const { Option } = Select;
 
 function mapStateToProps(state) {
@@ -42,6 +43,14 @@ class DetailPanel extends React.PureComponent {
       "1",
     ];
 
+    this.colorClass = [
+      '#F06466',
+      '#fdae61',
+      '#95C0DA',//'#ffffbf',
+      '#abd9e9',
+      '#2c7bb6',
+    ];
+
     this.state = {
       aggregateHour: 24,
     };
@@ -72,6 +81,22 @@ class DetailPanel extends React.PureComponent {
     deleteBarchartById(uuid);
   }
 
+  genLegend() {
+    const { aggregateHour } = this.props;
+    const { colorClass } = this;
+    const num = 24 / aggregateHour;
+    const legend = [];
+    const legendText = [];
+
+    for (let i = 0; i < num; i += 1) {
+      legend.push(colorClass[(i + colorClass.length) % colorClass.length]);
+      legendText.push(i);
+    }
+    legendText.push(num);
+    // console.log(num, aggregateHour, legend);
+    return [legend, legendText];
+  }
+
   render() {
     const {
       dataKeys,
@@ -79,6 +104,7 @@ class DetailPanel extends React.PureComponent {
       handleSliderChange,
       handleSelectBarChart,
       handleDeleteBarChart,
+      colorClass,
     } = this;
 
     const {
@@ -86,6 +112,9 @@ class DetailPanel extends React.PureComponent {
       aggregateHour,
       highlightId,
     } = this.props;
+
+    const [legend, legendText] = this.genLegend();
+    const legendUnitHeight = 140 / legend.length;
 
     return (
       <div id="detail-panel">
@@ -108,6 +137,27 @@ class DetailPanel extends React.PureComponent {
         </div>
         <div id="detail-content">
           <div className='detail-content__info'>
+            <svg className="detail-content__legend">
+              {dataset.length ? legend.reverse().map((d, i) => (
+                <rect key={i}
+                  fill={d}
+                  height={legendUnitHeight}
+                  width={21}
+                  x={30}
+                  y={i * legendUnitHeight + 58}
+                />
+              )) : null}
+              {
+                dataset.length ? legendText.map(d => (
+                  <text key={d}
+                    x={30 - 5}
+                    y={d * legendUnitHeight + 58}
+                    textAnchor="end"
+                    dominantBaseline="central"
+                  >{24 - d * aggregateHour}</text>
+                )) : null
+              }
+            </svg>
             {
               dataset.map(data =>
                 <BarChart
@@ -117,6 +167,7 @@ class DetailPanel extends React.PureComponent {
                   dataKeys={dataKeys}
                   aggregateHour={aggregateHour}
                   highlightId={highlightId}
+                  colorClass={colorClass}
                   onSelect={handleSelectBarChart}
                   onDelete={handleDeleteBarChart}
                 />

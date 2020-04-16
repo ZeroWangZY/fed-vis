@@ -28,13 +28,13 @@ export default class BarChart extends Component {
       left: 50,
     };
     this.iconSize = 10;
-    this.colorClass = [
-      '#F06466',
-      '#fdae61',
-      '#95C0DA',//'#ffffbf',
-      '#abd9e9',
-      '#2c7bb6',
-    ];
+    // this.colorClass = [
+    //   '#F06466',
+    //   '#fdae61',
+    //   '#95C0DA',//'#ffffbf',
+    //   '#abd9e9',
+    //   '#2c7bb6',
+    // ];
 
     this.renderByD3 = this.renderByD3.bind(this);
     this.handleDeleteSvg = this.handleDeleteSvg.bind(this);
@@ -55,7 +55,7 @@ export default class BarChart extends Component {
     const {
       svgWidth,
       svgHeight,
-      colorClass,
+      // colorClass,
       groupDataByAggregateHour,
       getHourRange,
       padding,
@@ -66,6 +66,7 @@ export default class BarChart extends Component {
       uuid,
       dataKeys,
       aggregateHour,
+      colorClass,
     } = this.props;
     const width = svgWidth - 2 * padding.left;
     const height = svgHeight - 2 * padding.top;

@@ -132,15 +132,15 @@ export default class ControlPanel extends React.PureComponent {
         <div className="panel-title">Control Panel</div>
         <div className="control-panel__data">
           <div className="control-panel__data__item">
-            <div>Dataset: Orders</div>
+            <div>Dataset: Urban-Mobility dataset</div>
           </div>
 
           <div className="control-panel__data__item">
-            <div># Record: 8279059</div>
+            <div># Records: 8279059</div>
           </div>
 
           <div className="control-panel__data__item control-panel__data__client">
-            <div className="control-panel__data__client__title"># Client:</div>
+            <div className="control-panel__data__client__title"># Clients:</div>
             <Select 
               defaultValue={clientOptions[clientOptions.length - 1]} 
               style={{ width: 80 }} 
@@ -159,7 +159,7 @@ export default class ControlPanel extends React.PureComponent {
           </div>
 
           <div className="control-panel__data__item">
-            <div>Time: May - Oct</div>
+            <div>Time: 2017/05 - 2017/10</div>
           </div>
 
           <div className="control-panel__data__item">
@@ -181,7 +181,7 @@ export default class ControlPanel extends React.PureComponent {
         <div id="control-panel-content">
           <div className="control-panel-content__split"></div>
           <div id="timerange-select">
-            <p>Select a time range:</p>
+            <p>Time range:</p>
             <div className="line">
               <p>Start time:</p>
               <input type="date" defaultValue="2017-05-01" onChange={this.updateStartDate}></input>
@@ -195,12 +195,12 @@ export default class ControlPanel extends React.PureComponent {
           </div>
           <div id="datatype-select">
             <form action="" method="get" className="datatype-select__first">
-              Select data type:
+              Data type:
               <label><input name="dataType" type="radio" value="start" defaultChecked onChange={this.updateDatatype}/>start</label> 
               <label><input name="dataType" type="radio" value="end" onChange={this.updateDatatype}/>end</label> 
             </form>
             <form action="" method="get" className="datatype-select__second">
-              Select representation mode:<br />
+              Representation mode:<br />
               <label><input name="dataType" type="radio" value="normal" defaultChecked onChange={this.updateDatamode}/>query-based</label> 
               <label><input name="dataType" type="radio" value="fitting" onChange={this.updateDatamode}/>prediction-based</label> 
             </form>
@@ -216,7 +216,7 @@ export default class ControlPanel extends React.PureComponent {
             />
           </div>
           <div id="acc-select">
-            <p>Select result precision:</p>
+            <p>Expected precision:</p>
             <div className="acc-select__slider">
               {
                 Object.keys(precisionRoundMap).map(precisionType => (
@@ -235,7 +235,7 @@ export default class ControlPanel extends React.PureComponent {
             </div>
           </div>
         </div>
-        <button className="load-btn" onClick={this.handleLoadClick}>Load data</button>
+        <button className="load-btn" onClick={this.handleLoadClick}>Generate Visualization</button>
       </div>
     );
   }

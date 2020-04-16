@@ -25,7 +25,7 @@ export default class CalendarChart extends React.PureComponent {
           y={0}
           textAnchor="middle"
           dominantBaseline="baseline"
-        >The Flow Volumn Encoding</text>
+        >Flow Volume</text>
         <text
           x={baseTranslateX - legendSpacingX}
           y={legendSpacingY + cellSize / 2}

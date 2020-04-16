@@ -154,9 +154,9 @@ class Gallery extends React.Component {
                 />
               </div>
               <div className="gallery__content__info">
-                <div># Client: 8</div>
-                <div># Partition: {page.partition}</div>
-                <div>Dataset size: 8000000</div>
+                <div># Clients: 8</div>
+                <div># Partitions: {page.partition}</div>
+                <div># Records: 8000000</div>
               </div>
             </div>
           ))

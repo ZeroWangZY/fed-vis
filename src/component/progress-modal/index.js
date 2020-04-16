@@ -12,7 +12,7 @@ class ProgressModal extends React.Component {
 
   render() {
     const { percent, losses, maxRound } = this.props;
-
+    console.log(maxRound);
     return (
       <div className="progress-modal">
         <div className="progress-modal__overview">
