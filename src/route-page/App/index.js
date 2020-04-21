@@ -15,7 +15,7 @@ import ControlPanelContainer from '../../container/ControlPanelContainer';
 import MapPanelContainer from '../../container/MapPanelContainer';
 import DetailPanelContainer from '../../container/DetailPanelContainer';
 import DataOverviewPanel from '../../component/dataoverviewPanel/DataOverviewPanel';
-// import DetailPanel from './component/detailPanel/DetailPanel'
+import ModelView from '../../component/modelView/ModelView';
 
 class App extends React.Component {
     constructor(props) {
@@ -75,6 +75,7 @@ class App extends React.Component {
         // );
         return (
             <div className="App">
+                <ModelView />
                 <div id="left-panel">
                     <ControlPanelContainer />
                     <DataOverviewPanel />
