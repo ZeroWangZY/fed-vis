@@ -17,12 +17,39 @@ function customYAxis(yAxis) {
   }
 }
 
+function calcTextAnchor(d) {
+  const epsilon = Math.PI * 2 / 48;
+
+  if (Math.abs(d.startAngle - 0) < epsilon || Math.abs(d.startAngle - Math.PI) < epsilon) {
+    return "middle";
+  } else if (d.startAngle - Math.PI > epsilon) {
+    return "end";
+  } else {
+    return "start";
+  }
+}
+
+function calcDominantBaseline(d) {
+  const epsilon = Math.PI * 2 / 48;
+
+  if (Math.abs(d.startAngle - 0) < epsilon) {
+    return "baseline";
+  } else if (Math.abs(d.startAngle - Math.PI) < epsilon) {
+    return "hanging";
+  } else {
+    return "middle";
+  }
+}
+
+const svgWidth = 320;
+const svgHeight = 230;
+
 export default class BarChart extends Component {
   constructor(props) {
     super(props);
 
-    this.svgWidth = 320;
-    this.svgHeight = 230;
+    this.svgWidth = svgWidth;
+    this.svgHeight = svgHeight;
     this.padding = {
       top: 45,
       left: 50,
@@ -71,17 +98,12 @@ export default class BarChart extends Component {
     const width = svgWidth - 2 * padding.left;
     const height = svgHeight - 2 * padding.top;
 
+    const donutWidth = Math.min(width, height) / 7 / 1.5;
+
     // 注意这两句的先后顺序
-    groupDataByAggregateHour(data, dataKeys, aggregateHour);
+    const colorRange = groupDataByAggregateHour(data, dataKeys, aggregateHour);
     const formattedData = this.formattedData;
 
-    let stackKeys = [];
-    if (formattedData.length > 0) {
-      stackKeys = Object.keys(formattedData[0]).filter(key => 
-        key !== 'type' 
-        && key !== 'total'
-      );
-    }
     const gChart = d3.select(this.node).select('.barchart__group');
     // 先清空一遍svg下的所有元素
     gChart.selectAll('*').remove();
@@ -95,76 +117,69 @@ export default class BarChart extends Component {
         return `
           <div class="barchart-tooltip">
           <div class="barchart-tooltip__row">Hour range: ${getHourRange(data.index)}</div>
-          <div class="barchart-tooltip__row">Data num: ${data.d[1] - data.d[0]}</div>
+          <div class="barchart-tooltip__row">Data num: ${data.d.data.count}</div>
           </div>
         `;
       });
 
     gChart.call(tip);
 
-    const xScale = d3.scaleBand()
-      .domain(dataKeys)
-      .rangeRound([0, width])
-      .paddingInner(0.3)
-      .paddingOuter(0.2);
+    const colorScale = d3.scaleSequential(d3.interpolateViridis)
+      .domain(colorRange);
 
-    const yScale = d3.scaleLinear()
-      .domain([0, d3.max(formattedData, d => d.total)])
-      .rangeRound([height, 0]);
+    const pie = d3.pie()
+      .padAngle(0.01)
+      .value(d => d.ratio)
+      .sort(null);
 
-    const colorScale = d3.scaleOrdinal()
-      .domain(stackKeys)
-      .range(colorClass);
+    for (let i = 0, len = formattedData.length; i < len; i += 1) {
+      const pieData = pie(formattedData[i]);
 
-    gChart.append("g")
-      .selectAll("g")
-      .data(d3.stack().keys(stackKeys)(formattedData))
-      .enter()
-      .append("g")
-      .attr("fill", d => colorScale(d.key))
-      .attr("class", (_, i) => `barchart-rects-${i}`)
-      .selectAll("rect")
-      .data(d => d)
-      .enter()
-      .append("rect")
-      .attr("x", d => xScale(d.data["type"]))
-      .attr("y", d => yScale(d[1]))
-      .attr("height", d => yScale(d[0]) - yScale(d[1]))
-      .attr("width", xScale.bandwidth())
-      .on("mouseover", function(d) {
-        const tgtEle = d3.select(this).node();
-        const index = parseInt(d3.select(tgtEle.parentNode).attr("class").split("-")[2], 10);
-        tip.show({
-          d,
-          index
-        }, tgtEle);
-      })
-      .on("mouseout", tip.hide);
+      const arc = d3.arc()
+        .innerRadius(i * donutWidth)
+        .outerRadius((i + 1) * donutWidth - 5);
 
-    gChart.append("g")
-      .attr("class", "x-axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(customXAxis(
-        d3.axisBottom()
-          .scale(xScale)
-          .tickSize(0)
-      ));
+      const pathGroup = gChart.append("g")
+        .attr("transform", `translate(${width / 2}, ${height / 2})`)
+        .attr("class", `pie-${i}`);
 
-    gChart.append("g")
-      .attr("class", "y-axis")
-      .call(customYAxis(
-        d3.axisLeft()
-          .scale(yScale)
-          .tickSize(0)
-      ))
-      .append("text")
-      .attr("x", 10)
-      .attr("y", -15)
-      .attr("dy", "0.32em")
-      .attr("fill", "#000")
-      .attr("font-weight", "bold")
-      .attr("text-anchor", "start")
-      .text("Flow Volume");
+      pathGroup.selectAll("path")
+        .data(pieData)
+        .enter()
+        .append("path")
+        .attr("d", arc)
+        .attr("fill", d => colorScale(d.data.count))
+        .on("mouseover", function(d, i) {
+          const tgtEle = d3.select(this).node();
+          tip.show({
+            d,
+            index: i
+          }, tgtEle);
+        })
+        .on("mouseout", tip.hide);;
+
+      if (i === len - 1) {
+        const labelArc = d3.arc()
+          .outerRadius((i + 1) * donutWidth + 2)
+          .innerRadius((i + 1) * donutWidth + 2);
+
+        labelArc.startPoint = function() {
+          var r = (+labelArc.innerRadius()(arguments[0]) + +labelArc.outerRadius()(arguments[0])) / 2,
+              a = (+labelArc.startAngle()(arguments[0])) - Math.PI / 2;
+          return [Math.cos(a) * r, Math.sin(a) * r];
+        };
+        
+
+        pathGroup.selectAll("text")
+          .data(pieData)
+          .enter()
+          .append("text")
+          .attr("transform", d => `translate(${labelArc.startPoint(d)})`)
+          .attr("dominant-baseline", d => calcDominantBaseline(d))
+          .attr("text-anchor", d => calcTextAnchor(d))
+          .text(d => d.data.hour);
+      }
+    }
   }
 
   groupDataByAggregateHour(data, dataKeys, aggregateHour) {
@@ -172,20 +187,30 @@ export default class BarChart extends Component {
     let numSegment = 24 / aggregateHour;
 
     const sumReducer = (accumulator, currentValue) => accumulator + currentValue;
-
+    let max = 0;
+    let min = Number.POSITIVE_INFINITY
     for (let i = 0, len = dataKeys.length; i < len; i += 1) {
-      let dataEle = {};
+      let dataEle = [];
       const dataByDay = data[i];
       for (let j = 0; j < numSegment; j += 1) {
-        dataEle[`${j}`] = dataByDay.slice(j * aggregateHour, (j + 1) * aggregateHour).reduce(sumReducer);
+        let val = dataByDay.slice(j * aggregateHour, (j + 1) * aggregateHour).reduce(sumReducer);
+        max = Math.max(val, max);
+        min = Math.min(val, min);
+        dataEle.push({
+          count: val,
+          ratio: numSegment,
+          hour: j * aggregateHour
+        });
       }
-      dataEle["type"] = dataKeys[i];
-      dataEle["total"] = data[i].reduce(sumReducer);
+      // dataEle["type"] = dataKeys[i];
+      // dataEle["total"] = data[i].reduce(sumReducer);
 
       formattedData.push(dataEle);
     }
-
+    // debugger;
     this.formattedData = formattedData;
+
+    return [min, max];
   }
 
   getHourRange(index) {
@@ -253,8 +278,8 @@ export default class BarChart extends Component {
         />
         <text
           className="barchart__hint"
-          transform={`translate(${svgWidth / 2}, ${svgHeight - 10})`}
-          textAnchor="middle"
+          transform={`translate(${svgWidth - 10}, ${svgHeight - 10})`}
+          textAnchor="end"
           dominantBaseline="baseline"
         >{`Region ${uuid}`}</text>
       </svg>
