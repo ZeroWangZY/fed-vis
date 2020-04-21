@@ -22,6 +22,18 @@ import clsx from 'clsx';
 // import { rankIcon } from '../icons/RankIcon';
 import * as d3 from 'd3'
 
+const gradient = {
+  '0.1': '#89BDE0', '0.2': '#96E3E6', '0.4': '#82CEB6',
+  '0.6': '#FAF3A5', '0.8': '#F5D98B', '1.0': '#DE9A96'
+};
+
+const colorStops = Object.keys(gradient).map(d => {
+  const stop = parseFloat(d) * 100;
+  return `${gradient[d]} ${stop}%`;
+}).join(",");
+
+const linearGradient = `linear-gradient(to top, ${colorStops})`;
+
 let colorRange = [
     d3.rgb(255, 255, 212),
     d3.rgb(254, 217, 142),
@@ -390,6 +402,8 @@ class MapPanel extends Component {
             odmapDataForDesSpace
         } = this.state;
         let heatmapRects = null;
+        let maxCnt = null;
+        let maxHeat = null;
         // heatmap
         if (heatmapData.heatmapData.length !== 0) {
             const maxValue = Math.log(heatmapData.heatmapMaxCount + 1);
@@ -410,11 +424,13 @@ class MapPanel extends Component {
             //     .range([0, 1]);
             let data = this.reshapeHeatmap(heatmapData.heatmapData);
             data.sort((a, b) => a[2] - b[2]);
-            let maxHeat = data[Math.ceil(data.length / 11 * 10)][2];
+            maxHeat = data[Math.ceil(data.length / 11 * 10)][2];
+            maxCnt = data[data.length - 1][2];
             if (this.props.useError) {
                 let nonErrorData = this.reshapeHeatmap(heatmapData.heatmapNonError);
                 nonErrorData.sort((a, b) => a[2] - b[2]);
                 maxHeat = nonErrorData[Math.ceil(data.length / 11 * 10)][2];
+                maxCnt = nonErrorData[nonErrorData.length - 1][2];
             }
             // heatmapRects = data.map((column, column_index) => {
             //     return column.map((singleRect, rect_index) => {
@@ -447,7 +463,7 @@ class MapPanel extends Component {
                     // blur={10}
                     longitudeExtractor={d => d[1]}
                     latitudeExtractor={d => d[0]}
-                    intensityExtractor={d => d[2]}
+                    intensityExtractor={d => d[2] * (this.props.useError ? 1 : 1)}
                 />
             );
         }
@@ -507,6 +523,28 @@ class MapPanel extends Component {
                 })
             });
         }
+        console.log(`maxCnt: ${maxCnt}`);
+        let legendText = null;
+        if (maxCnt) {
+          legendText = Object.keys(gradient).map(d => {
+            const stop = parseFloat(d);
+            return {
+              stop,
+              val: Math.floor(maxHeat * stop)
+            };
+          });
+          legendText = [
+            {
+              stop: 1,
+              val: maxCnt,
+            },
+            ...legendText.slice(1, legendText.length - 1), 
+            {
+              stop: 0,
+              val: 0,
+            }
+          ];
+        }
         return (
             <div id="map-content">
                 <div className="panel-title">
@@ -520,6 +558,28 @@ class MapPanel extends Component {
 
                     <HeatmapProgress />
                 </div>
+                {(currentDisplayType && maxCnt) ? (
+                  <div className="heatmap-legend">
+                    <div className="heatmap-legend__info"
+                      style={{
+                        background: linearGradient,
+                      }}
+                    ></div>
+                    <svg className="heatmap-legend__text">
+                      {
+                        legendText.map((d, i) => (
+                          <text key={i}
+                            y={160 - 160 * d.stop + 20}
+                            x={35}
+                            dominantBaseline="central"
+                            textAnchor="start"
+                          >
+                            {d.val}
+                          </text>
+                        ))
+                      }
+                    </svg>
+                  </div>) : null}
                 {/* {!currentDisplayType && <div id='odmap-label'>Current space type of outer grid: {currentSpaceTypeOuter}</div>} */}
                 <Map
                     center={basicConfig.center}
