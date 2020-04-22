@@ -39,7 +39,7 @@ export default class Boxplot extends React.PureComponent {
     this.setState({
       quantileData: [q1, q2, q3],
       whiskerData: [dataSort[whiskerIndices[0]], dataSort[whiskerIndices[1]]],
-      boxplotWidth: parseFloat(bandWidth) * 0.5
+      boxplotWidth: parseFloat(bandWidth) * 0.7
     })      
   }
 

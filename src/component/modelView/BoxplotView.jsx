@@ -12,7 +12,7 @@ class BoxplotView extends React.Component {
 
     this.state = {
       margin: {
-        left: 30,
+        left: 55,
         right: 30,
         top: 20,
         bottom: 20
@@ -20,16 +20,18 @@ class BoxplotView extends React.Component {
       yTicks: 5,
       height: 200,
       width: 350,
-      boxplotNum: 25,// 初始设定的展示个数，如果不能整除会上下浮动
+      boxplotNum: 10,// 视野里的个数
+      sliderWindowNum: 20,
+      windowRange: [-1,-1],//当前滑动窗口的range
       dataForBoxplot: [],
       xTick: [],
       xscale: "",
       yscale: "",
+      yMax: -1,
       curIter: 0,
     }
   }
 
-  // 可能是load前就打开了 也可能是Load到一定进度才打开
   componentWillMount() {
     const { height, width, margin } = this.state;
 
@@ -37,9 +39,9 @@ class BoxplotView extends React.Component {
     const chartWidth = width - margin.left - margin.right;
 
     const { losses } = this.props;
-    if (losses.length) {
-      this.updateView(this.props)
-    } else {// 还没有数据
+    // if (losses.length) {
+    //   this.updateView(this.props)
+    // } else {// 还没有数据
       let newXscale = d3.scaleBand()
       .domain([])
       .range([0, chartWidth]);
@@ -53,23 +55,65 @@ class BoxplotView extends React.Component {
         dataForBoxplot: [],
         xTick: []
       })
-    }
+    // }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { losses, maxRound } = nextProps;
-    const { boxplotNum, curIter, dataForBoxplot } = this.state;
+    const { losses } = nextProps;
+    // const { boxplotNum, curIter, dataForBoxplot } = this.state;
 
-    let newDataForBoxplot = dataForBoxplot//JSON.parse(JSON.stringify(dataForBoxplot));
+    // let newDataForBoxplot = dataForBoxplot//JSON.parse(JSON.stringify(dataForBoxplot));
 
-    let interval = Math.floor(maxRound/boxplotNum);
-    let finalNum = Math.ceil((maxRound - interval * boxplotNum) / interval) + boxplotNum;
-    if (curIter) {// 如果已在更新中
-      let curIterCount = losses[0].length;
-      let startPos = dataForBoxplot.length + 1;
+    // let interval = Math.floor(maxRound/boxplotNum);
+    // let finalNum = Math.ceil((maxRound - interval * boxplotNum) / interval) + boxplotNum;
+    // if (curIter) {// 如果已在更新中
+      // let curIterCount = losses[0].length;
+      // let startPos = dataForBoxplot.length + 1;
       
-      for (let i = startPos; i <= finalNum; i++) {
-        const index = (finalNum === i) ? maxRound : interval*i;
+      // for (let i = startPos; i <= finalNum; i++) {
+      //   const index = (finalNum === i) ? maxRound : interval*i;
+      //   if(index > curIterCount) continue;
+      //   let dataSingleIter = losses.map(d=>d[index-1]);
+      //   newDataForBoxplot.push(dataSingleIter)
+      // }
+
+      // this.setState({
+      //   curIter: curIterCount,
+      //   dataForBoxplot: newDataForBoxplot
+      // });
+    if(losses.length) {
+      this.updateView(nextProps)
+    }
+  }
+
+  updateView = (props) => {
+    const { losses, maxRound } = props;
+    const { height, width, margin, dataForBoxplot, boxplotNum, sliderWindowNum, curIter, windowRange, yMax } = this.state;
+
+    let newDataForBoxplot = dataForBoxplot;//JSON.parse(JSON.stringify(dataForBoxplot)); 不用深拷贝 不然会判断数组不一样重新render
+    
+    let interval = Math.floor(sliderWindowNum/boxplotNum);
+    let startPos = dataForBoxplot.length * interval;
+    // console.log(startPos)
+    let newWindowRange = [1, 1];
+    if (maxRound !== 1) {
+      let pos = Math.floor(curIter / sliderWindowNum) * sliderWindowNum;
+      if (pos >= maxRound) {
+        newWindowRange = [maxRound - sliderWindowNum + 1, maxRound]
+      } else {
+        newWindowRange = [pos + 1, pos+sliderWindowNum > maxRound ? maxRound : pos+sliderWindowNum];
+      }
+    }
+
+    // console.log(newWindowRange)
+    if(newWindowRange[0] === windowRange[0] && newWindowRange[1] === windowRange[1]) {
+      // console.log("in range")
+      let curIterCount = losses[0].length;
+      // console.log(curIterCount)
+      for (let i = 1; i <= boxplotNum; i++) {
+        // const index = (finalNum === i) ? maxRound : interval*i;
+        const index = startPos + interval*i;
+        // console.log(index)
         if(index > curIterCount) continue;
         let dataSingleIter = losses.map(d=>d[index-1]);
         newDataForBoxplot.push(dataSingleIter)
@@ -79,68 +123,81 @@ class BoxplotView extends React.Component {
         curIter: curIterCount,
         dataForBoxplot: newDataForBoxplot
       });
-      // console.log(newDataForBoxplot)
-    } else if(losses.length) { // 如果刚开始更新
-      this.updateView(nextProps)
+
+    } else {
+      // console.log("update range")
+
+      const chartHeight = height - margin.top - margin.bottom;
+      const chartWidth = width - margin.left - margin.right;
+
+      let newXscale = "", newYscale = "";
+      
+      let xTick = [];
+
+      let finalNum = Math.ceil((maxRound - interval * boxplotNum) / interval) + boxplotNum;
+  
+      let curIterCount = losses[0].length;
+  
+      for (let i = 0; i < boxplotNum; i++) {
+        const tick = newWindowRange[0] + interval*i + 1;
+        xTick.push(parseInt(tick));
+      }
+
+      for (let i = 1; i <= boxplotNum; i++) {
+        const index = startPos + interval*i;
+
+        if(index > curIterCount) continue;
+        let dataSingleIter = losses.map(d=>d[index-1]);
+        newDataForBoxplot.push(dataSingleIter)
+      }
+  
+      let lossStart = losses.map(d=>d[0]);
+      let newYMax = yMax;
+      if (yMax === -1) {
+        newYMax = Math.max(...lossStart);
+      }
+      newXscale = d3.scaleBand()
+        .domain(xTick)
+        .range([0, chartWidth]);
+      newYscale = d3.scaleLinear()
+        .domain([0, newYMax])
+        .range([chartHeight, 0]);
+      this.setState({
+        xscale: newXscale,
+        yscale: newYscale,
+        curIter: curIterCount,
+        dataForBoxplot: dataForBoxplot,
+        xTick: xTick,
+        windowRange: newWindowRange,
+        yMax: newYMax
+      })
     }
-  }
 
-  updateView = (props) => {
-    const { losses, maxRound } = props;
-    const { height, width, margin, dataForBoxplot, boxplotNum } = this.state;
-
-    const chartHeight = height - margin.top - margin.bottom;
-    const chartWidth = width - margin.left - margin.right;
-
-    let newXscale = "", newYscale = "";
-    let newDataForBoxplot = dataForBoxplot;//JSON.parse(JSON.stringify(dataForBoxplot)); 不用深拷贝 不然会判断数组不一样重新render
-    let xTick = [];
-
-    let interval = Math.floor(maxRound/boxplotNum);
-    let finalNum = Math.ceil((maxRound - interval * boxplotNum) / interval) + boxplotNum;
-
-    let curIterCount = losses[0].length;
-    for (let i = 1; i <= finalNum; i++) {
-      const index = (finalNum === i) ? maxRound : interval*i;
-      xTick.push(parseInt(index));
-      if(index > curIterCount) continue;
-      let dataSingleIter = losses.map(d=>d[index-1]);
-      newDataForBoxplot.push(dataSingleIter)
-    }
-
-    let lossStart = losses.map(d=>d[0]);
-    let yMax = Math.max(...lossStart);
-    newXscale = d3.scaleBand()
-      .domain(xTick)
-      .range([0, chartWidth]);
-    newYscale = d3.scaleLinear()
-      .domain([0, yMax])
-      .range([chartHeight, 0]);
-    this.setState({
-      xscale: newXscale,
-      yscale: newYscale,
-      curIter: curIterCount,
-      dataForBoxplot: dataForBoxplot,
-      xTick: xTick
-    })
+    
   }
 
   render() {
-    const { xscale, yscale, dataForBoxplot, height, width, margin, yTicks, xTick } = this.state;
+    const { xscale, yscale, dataForBoxplot, height, width, margin, yTicks, xTick, windowRange, sliderWindowNum, boxplotNum } = this.state;
     const chartHeight = height - margin.top - margin.bottom;
     const chartWidth = width - margin.left - margin.right;
 
     const {maxRound} = this.props;
+
+    let interval = Math.floor(sliderWindowNum/boxplotNum);
 
     let initialGridsY = [];
     for(let i = 0; i < yTicks; i++) {
       initialGridsY.push(chartHeight/yTicks * i);
     }
 
-    const marks = {
-      0: 1,
-      100: maxRound
-    }
+    let marks = {
+      0: 1
+    };
+    marks[maxRound] = maxRound;
+
+    let startPos = Math.floor((windowRange[0]-1)/interval);
+    let data = dataForBoxplot.slice(startPos, startPos + boxplotNum);
+    // console.log(dataForBoxplot)
 
     return (
       <div>
@@ -173,9 +230,9 @@ class BoxplotView extends React.Component {
               {initialGridsY.map((d,i) => <line key={i} x1={0} x2={chartWidth} y1={d} y2={d}></line>)}
             </g>
           }
-          {dataForBoxplot.map((d,i)=>
+          {data.map((d,i)=>
             <Boxplot
-              key={i}
+              key={i + windowRange[0]}
               trans={'translate('+margin.left+','+margin.top+')'}
               index={xTick[i]}
               data={d}
@@ -184,8 +241,8 @@ class BoxplotView extends React.Component {
             />
           )}
         </svg>
-        <Slider range defaultValue={[20, 50]} marks={marks} style={{
-          margin: "0 30px"
+        <Slider range value={windowRange} max={maxRound} min={0} marks={marks} style={{
+          margin: "0 30px 0 60px"
         }}/>
       </div>
     );
