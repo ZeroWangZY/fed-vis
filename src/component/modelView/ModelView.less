@@ -1,5 +1,7 @@
 #model-view {
-  border: solid 1px #333;
+  border-top: solid 1px #333;
+  border-left: solid 1px #333;
+  border-bottom: solid 1px #333;
   height: 1080px;
   #model-view-content {
     display: grid;
@@ -39,7 +41,26 @@
         text-align: left;
         font-size: 14px;
         color: #333;
-        margin: 5px 0;
+        margin: 8px 0;
+      }
+      .ant-checkbox-checked .ant-checkbox-inner {
+        background-color: #3084c7;
+        border-color: #8cb1cf;
+      }
+      
+      .ant-checkbox + span {
+        padding-right: 8px;
+        padding-left: 8px;
+        font-size: 12px;
+      }
+      #checkbox-all {
+        text-align: right;
+        position: relative;
+        top: -28px;
+        right: 30px;
+        .ant-checkbox + span {
+          font-size: 14px;
+        }
       }
     }
   }
@@ -75,8 +96,8 @@
   }
 
   .monitor_boxplot {
-    // width: 100%;
-    height: 220px;
+    width: 100%;
+    height: 210px;
     // margin-top: 50px;
     .box-rect {
       fill: #8cb1cf;

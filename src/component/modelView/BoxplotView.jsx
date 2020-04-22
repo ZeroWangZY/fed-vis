@@ -1,5 +1,6 @@
 import React from 'react';
 import * as d3 from "d3";
+import { Slider } from "antd";
 import Axis from "./Axis";
 import Boxplot from "./Boxplot";
 
@@ -12,13 +13,13 @@ class BoxplotView extends React.Component {
     this.state = {
       margin: {
         left: 30,
-        right: 10,
+        right: 30,
         top: 20,
         bottom: 20
       },
       yTicks: 5,
       height: 200,
-      width: 300,
+      width: 350,
       boxplotNum: 25,// 初始设定的展示个数，如果不能整除会上下浮动
       dataForBoxplot: [],
       xTick: [],
@@ -129,51 +130,64 @@ class BoxplotView extends React.Component {
     const chartHeight = height - margin.top - margin.bottom;
     const chartWidth = width - margin.left - margin.right;
 
+    const {maxRound} = this.props;
+
     let initialGridsY = [];
     for(let i = 0; i < yTicks; i++) {
       initialGridsY.push(chartHeight/yTicks * i);
     }
+
+    const marks = {
+      0: 1,
+      100: maxRound
+    }
+
     return (
-      <svg className="monitor_boxplot">
-        <Axis
-          scale={xscale}
-          trans={'translate('+this.state.margin.left+','+(this.state.margin.top+chartHeight)+')'}
-          orient="Bottom"
-        />
-        <text
-          className="axis-text"
-          transform={'translate('+(margin.left+chartWidth)+','+(margin.top+chartHeight+30)+')'}>
-          Round
-        </text>
-        <Axis
-          scale={yscale}
-          trans={'translate('+margin.left+','+margin.top+')'}
-          orient="Left"
-          ticks={yTicks}
-          chartWidth={chartWidth}
-          chartHeight={chartHeight}
-        />
-        <text
-          className="axis-text"
-          transform={'translate('+margin.left+','+(margin.top - 10)+')'}>
-          Loss
-        </text>
-        {!dataForBoxplot.length &&
-          <g className="inital-grids" transform={'translate('+margin.left+',' + margin.top + ')'}>
-            {initialGridsY.map((d,i) => <line key={i} x1={0} x2={chartWidth} y1={d} y2={d}></line>)}
-          </g>
-        }
-        {dataForBoxplot.map((d,i)=>
-          <Boxplot
-            key={i}
-            trans={'translate('+margin.left+','+margin.top+')'}
-            index={xTick[i]}
-            data={d}
-            yscale={yscale}
-            xscale={xscale}
+      <div>
+        <svg className="monitor_boxplot">
+          <Axis
+            scale={xscale}
+            trans={'translate('+this.state.margin.left+','+(this.state.margin.top+chartHeight)+')'}
+            orient="Bottom"
           />
-        )}
-      </svg>
+          <text
+            className="axis-text"
+            transform={'translate('+(margin.left+chartWidth)+','+(margin.top+chartHeight+30)+')'}>
+            Round
+          </text>
+          <Axis
+            scale={yscale}
+            trans={'translate('+margin.left+','+margin.top+')'}
+            orient="Left"
+            ticks={yTicks}
+            chartWidth={chartWidth}
+            chartHeight={chartHeight}
+          />
+          <text
+            className="axis-text"
+            transform={'translate('+margin.left+','+(margin.top - 10)+')'}>
+            Loss
+          </text>
+          {!dataForBoxplot.length &&
+            <g className="inital-grids" transform={'translate('+margin.left+',' + margin.top + ')'}>
+              {initialGridsY.map((d,i) => <line key={i} x1={0} x2={chartWidth} y1={d} y2={d}></line>)}
+            </g>
+          }
+          {dataForBoxplot.map((d,i)=>
+            <Boxplot
+              key={i}
+              trans={'translate('+margin.left+','+margin.top+')'}
+              index={xTick[i]}
+              data={d}
+              yscale={yscale}
+              xscale={xscale}
+            />
+          )}
+        </svg>
+        <Slider range defaultValue={[20, 50]} marks={marks} style={{
+          margin: "0 30px"
+        }}/>
+      </div>
     );
   }
 }

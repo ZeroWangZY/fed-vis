@@ -1,7 +1,6 @@
 import React from 'react';
-import * as d3 from "d3";
 
-class WaterProgress extends React.Component {
+class LiquidGaugeLegend extends React.Component {
   constructor(props) {
     super(props);
     this.canvas = React.createRef();
@@ -34,7 +33,7 @@ class WaterProgress extends React.Component {
     this.xoffset = 8 * this.lineWidth; // x 轴偏移量
     this.data = ~~(this.props.value) / 100;   // 数据量
     this.sp = 0; // 周期偏移量
-    this.nowdata = 1;
+    this.nowdata = 0.5;
     this.waveupsp = 0.009; // 水波上涨速度
     // 圆动画初始参数
     this.arcStack = [];  // 圆栈
@@ -121,56 +120,28 @@ class WaterProgress extends React.Component {
   draw() {
     const self = this
     let { ctx, range, waveupsp } = self
-    let firstDraw = true
-    function anim() {
-      if (Math.abs(self.props.value - self.nowdata) < 0.009 && !firstDraw) {
-        // console.log("return " + self.props.name)
-        return
-      }
-      firstDraw = false
 
-      ctx.clearRect(0, 0, self.oW, self.oH);
-      //最外面淡黄色圈
-      self.drawCircle();
+    ctx.clearRect(0, 0, self.oW, self.oH);
+    //最外面淡黄色圈
+    self.drawCircle();
 
-      //裁剪中间水圈  
-      self.clipCircle();
+    //裁剪中间水圈  
+    self.clipCircle();
 
-      if (self.props.value >= 0.85) {
-        if (self.nowrange > range / 4) {
-          var t = range * 0.01;
-          self.nowrange -= t;
-        }
-      } else if (self.props.value <= 0.1) {
-        if (self.nowrange < range * 1.5) {
-          var t = range * 0.01;
-          self.nowrange += t;
-        }
-      } else {
-        if (self.nowrange <= range) {
-          var t = range * 0.01;
-          self.nowrange += t;
-        }
-        if (self.nowrange >= range) {
-          var t = range * 0.01;
-          self.nowrange -= t;
-        }
-      }
-      if ((self.props.value - self.nowdata) > 0) {
-        self.nowdata += waveupsp;
-      }
-      if ((self.props.value - self.nowdata) < 0) {
-        self.nowdata -= waveupsp
-      }
-      // self.sp += 0.7;
-      // 开始水波动画
-
-      self.drawSine();
-
-      // 写字
-      // this.drawText();
+    if ((self.props.value - self.nowdata) > 0) {
+      self.nowdata += waveupsp;
     }
-    setInterval(anim, 30)
+    if ((self.props.value - self.nowdata) < 0) {
+      self.nowdata -= waveupsp
+    }
+    // self.sp += 0.7;
+    // 开始水波动画
+
+    self.drawSine();
+
+    // 写字
+    // this.drawText();
+
 
   }
 
@@ -182,12 +153,19 @@ class WaterProgress extends React.Component {
     // const { percent, losses } = this.props;
     // const numClient = losses.length;
 
-    return (<div style={{ display: "inline-block" }}>
-      <canvas className="water_progress" style={{ width: 60, height: 60, margin: "0 10px" }} ref={this.canvas}>当前浏览器不支持canvas 请升级！</canvas>
-      <div>{this.props.name}</div>
+    return (<div style={{
+      position: "relative",
+      top: -42,
+      left: 75
+    }}>
+      <canvas style={{ width: 30, height: 30, position: "absolute" }} ref={this.canvas}>当前浏览器不支持canvas 请升级！</canvas>
+      <svg style={{ position: "absolute", top: -20 }}>
+        <polyline points="15,42 30,25 45,25" fill="none" stroke="rgb(33,33,33)" />
+        <text dominantBaseline="text-before-edge" textAnchor="middle" fontSize="12" x="60" y="15">loss</text>
+      </svg>
     </div >
     );
   }
 }
 
-export default WaterProgress;
+export default LiquidGaugeLegend;
