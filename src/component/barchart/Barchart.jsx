@@ -130,7 +130,7 @@ export default class BarChart extends Component {
 
       const arc = d3.arc()
         .innerRadius(i * donutWidth)
-        .outerRadius((i + 1) * donutWidth - 5);
+        .outerRadius((i + 1) * donutWidth);
 
       const pathGroup = gChart.append("g")
         .attr("transform", `translate(${width / 2}, ${height / 2})`)
@@ -142,6 +142,7 @@ export default class BarChart extends Component {
         .append("path")
         .attr("d", arc)
         .attr("fill", d => colorScale(d.data.count))
+        .attr("stroke", "#fff")
         .on("mouseover", function(d, i) {
           const tgtEle = d3.select(this).node();
           tip.show({

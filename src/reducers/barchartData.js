@@ -26,7 +26,7 @@ export const highlightId = (state = -1, action) => {
   }
 };
 
-export const aggregateHour = (state = 24, action) => {
+export const aggregateHour = (state = 4, action) => {
   switch(action.type) {
     case SET_AGGREGATE_HOUR:
       return action.hour;
