@@ -8,29 +8,29 @@ import LiquidGaugeLegend from "./LiquidGaugeLegend";
 
 const clientInfo = [
   {
-    recordsNum: 13,
-    partitionsNum: 1989
+    recordsNum: 1035900,
+    partitionsNum: 15960
   },{
-    recordsNum: 13,
-    partitionsNum: 1989
+    recordsNum: 1034262,
+    partitionsNum: 15960
   },{
-    recordsNum: 13,
-    partitionsNum: 1989
+    recordsNum: 1034933,
+    partitionsNum: 15960
   },{
-    recordsNum: 13,
-    partitionsNum: 1989
+    recordsNum: 1035315,
+    partitionsNum: 15960
   },{
-    recordsNum: 13,
-    partitionsNum: 1989
+    recordsNum: 1035072,
+    partitionsNum: 15960
   },{
-    recordsNum: 13,
-    partitionsNum: 1989
+    recordsNum: 1034958,
+    partitionsNum: 15960
   },{
-    recordsNum: 13,
-    partitionsNum: 1989
+    recordsNum: 1035170,
+    partitionsNum: 15960
   },{
-    recordsNum: 13,
-    partitionsNum: 1989
+    recordsNum: 1033449,
+    partitionsNum: 15960
   }
 ];
 
@@ -93,11 +93,11 @@ class ModelView extends React.PureComponent {
           <div id="model-view-content-server">
             <div className="secondary-panel-title">Server</div>
             <div id="model-view-content-server-body">
-              <p>Model: to modify</p>
-              <p>Learning rate: to modify</p>
-              <p>Batch size: to modify</p>
-              <p>Training round: to modify</p>
-              <p>Training epoch: to modify</p>
+              <p>Model: Fully connected network with embedding</p>
+              <p>Learning rate: 0.055 & 0.003</p>
+              <p>Batch size: 128000</p>
+              <p>Training round: 150</p>
+              <p>Training epoch: 1</p>
               <p>Client selection:</p>
               <div id="checkbox-all">
                 <Checkbox
