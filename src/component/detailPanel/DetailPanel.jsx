@@ -43,13 +43,14 @@ class DetailPanel extends React.PureComponent {
       "1",
     ];
 
-    this.colorClass = [
-      '#F06466',
-      '#fdae61',
-      '#95C0DA',//'#ffffbf',
-      '#abd9e9',
-      '#2c7bb6',
-    ];
+    // this.colorClass = [
+    //   '#F06466',
+    //   '#fdae61',
+    //   '#95C0DA',//'#ffffbf',
+    //   '#abd9e9',
+    //   '#2c7bb6',
+    // ];
+    this.colorClass = ['#fbf9db', '#B3D8DF', '#95C0DA', '#215ea5', '#273a90'];
 
     this.state = {
       aggregateHour: 24,
@@ -113,8 +114,9 @@ class DetailPanel extends React.PureComponent {
       highlightId,
     } = this.props;
 
-    const [legend, legendText] = this.genLegend();
-    const legendUnitHeight = 140 / legend.length;
+    const legend = [...colorClass];
+    const legendHeight = 140;
+    const legendUnitHeight = legendHeight / legend.length;
 
     return (
       <div id="detail-panel">
@@ -148,13 +150,13 @@ class DetailPanel extends React.PureComponent {
                 />
               )) : null}
               {
-                dataset.length ? legendText.map(d => (
+                dataset.length ? ["High", "Low"].map((d, i) => (
                   <text key={d}
-                    x={30 - 5}
-                    y={d * legendUnitHeight + 58}
-                    textAnchor="end"
-                    dominantBaseline="central"
-                  >{24 - d * aggregateHour}</text>
+                    x={30 + 21 / 2}
+                    y={i * legendHeight + 58 + (i > 0 ? 5 : -5)}
+                    textAnchor="middle"
+                    dominantBaseline={i > 0 ? "hanging" : "baseline"}
+                  >{d}</text>
                 )) : null
               }
             </svg>
