@@ -19,7 +19,13 @@ class Pie extends React.Component {
       transform: `translate(${innerPadding.left + this.chartSize[0] / 2}px, ${innerPadding.top + this.chartSize[1] / 2}px)`,
     };
 
-    this.colorMap = d3.scaleOrdinal(d3.schemeCategory10);
+    // this.colorMap = d3.scaleOrdinal(d3.schemeCategory10);
+    this.colorMap = d3.scaleOrdinal(["#173f5f", "#20639b", 
+    "#3d6098",
+     "#3CAEA3",
+     "#8c9dae", "#e7e7e7", "#fa9e0a",
+     "#f6d55c", "#f78888", "#ed553b"
+    ]);
 
     this.radius = Math.min(this.chartSize[0], this.chartSize[1]) / 2 * 0.9;
 

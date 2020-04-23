@@ -94,7 +94,7 @@ class Violin extends React.Component {
       .append("path")
       .datum(d => d.value)     // So now we are working bin per bin
       .style("stroke", "none")
-      .style("fill", "#69b3a2")
+      .style("fill", "#3CAEA3")
       .attr("d", d3.area()
         .x0(d => xNum(-d.length))
         .x1(d => xNum(d.length))

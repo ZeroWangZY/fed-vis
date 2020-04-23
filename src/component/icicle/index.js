@@ -24,7 +24,20 @@ class Icicle extends React.Component {
   }
 
   genColorMap = (data) => {
-    return d3.scaleOrdinal(d3.quantize(d3.interpolateRainbow, data.children.length + 1));
+    // return d3.scaleOrdinal(d3.quantize(d3.interpolateRainbow, data.children.length + 1));
+    // return d3.scaleOrdinal(["#173f5f", "#20639b", 
+    // // "#3d6098",
+    //  "#3CAEA3", 
+    // //  "#8c9dae", 
+    //  "#f6d55c", "#ed553b", 
+    // //  "#fa9e0a"
+    // ]);
+    return d3.scaleOrdinal(["#173f5f", "#20639b", 
+    "#3d6098",
+     "#3CAEA3",
+     "#8c9dae", "#e7e7e7", "#fa9e0a",
+     "#f6d55c", "#f78888", "#ed553b"
+    ]);
   }
 
   getNodeColor = (d, colorMap) => {

@@ -20,7 +20,8 @@ class Radar extends React.Component {
       transform: `translate(${innerPadding.left}px, ${innerPadding.top}px)`,
     };
 
-    this.colorMap = d3.scaleOrdinal(d3.schemeCategory10);
+    // this.colorMap = d3.scaleOrdinal(d3.schemeCategory10);
+    this.colorMap = d3.scaleOrdinal(["#20639b", "#ed553b"]);
   }
 
   componentDidMount = () => {

@@ -58,7 +58,7 @@ class Area extends React.Component {
 
     gChart.append("path")
       .datum(data)
-      .attr("fill", "steelblue")
+      .attr("fill", "#20639b")
       .attr("d", area);
 
     gChart.append("g")

@@ -11,6 +11,15 @@ class Treemap extends React.Component {
     super(props);
 
     this.colorMap = d3.scaleOrdinal(d3.schemeCategory10);
+    this.colorMap = d3.scaleOrdinal(["#173f5f", "#20639b", 
+    // "#3d6098",
+     "#3CAEA3", 
+    //  "#8c9dae", 
+     "#f6d55c", "#ed553b", 
+    //  "#fa9e0a"
+    ]);
+    // this.colorMap = d3.scaleOrdinal(
+    // ["#3c5088", "#576687", "#8c9dae", "#fa9e0a"]);
 
     this.chartSize = [svgWidth - innerPadding.left - innerPadding.right, svgHeight - innerPadding.top - innerPadding.bottom];
 

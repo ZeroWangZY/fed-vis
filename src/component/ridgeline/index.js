@@ -86,7 +86,7 @@ class Ridgeline extends React.Component {
 
     group.append("path")
       .attr("fill", "none")
-      .attr("stroke", "black")
+      .attr("stroke", "#333")
       .attr("d", d => line(d.values));
   }
 

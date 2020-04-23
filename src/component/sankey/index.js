@@ -27,7 +27,14 @@ class Sankey extends React.Component {
       transform: `translate(${innerPadding.left}px, ${innerPadding.top}px)`
     };
 
-    this.colorMap = d3.scaleOrdinal(d3.schemeCategory10);
+    // this.colorMap = d3.scaleOrdinal(d3.schemeCategory10);
+    this.colorMap = d3.scaleOrdinal(["#173f5f", "#20639b", 
+    // "#3d6098",
+     "#3CAEA3", 
+    //  "#8c9dae", 
+     "#f6d55c", "#ed553b", 
+    //  "#fa9e0a"
+    ]);
 
     this.edgeColorType = EdgeColorEnum.GRADIENT;
   }

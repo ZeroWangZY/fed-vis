@@ -64,12 +64,6 @@ const pages = [
     threshold: 9,
   },
   {
-    url: "/area",
-    name: "Area chart",
-    partition: 1280,
-    threshold: 10,
-  },
-  {
     url: "/pie",
     name: "Pie chart",
     partition: 10,
@@ -80,6 +74,12 @@ const pages = [
     name: "Circle packing",
     partition: 220,
     threshold: 12,
+  },
+  {
+    url: "/area",
+    name: "Area chart",
+    partition: 1280,
+    threshold: 10,
   },
   {
     url: "/sunburst",

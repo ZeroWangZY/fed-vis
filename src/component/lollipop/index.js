@@ -60,8 +60,8 @@ class Lollipop extends React.Component {
       .attr("x2", d => xScale(d.name) + xScale.bandwidth() / 2)
       .attr("y1", d => yScale(d.value))
       .attr("y2", yScale(0))
-      .attr("stroke", "#a4c969")
-      .attr("stroke-width", "3")
+      .attr("stroke", "#333")
+      .attr("stroke-width", "2")
 
     gChart.selectAll("mycircle")
       .data(data)
@@ -69,9 +69,9 @@ class Lollipop extends React.Component {
       .append("circle")
       .attr("cx", d => xScale(d.name) + xScale.bandwidth() / 2)
       .attr("cy", d => yScale(d.value))
-      .attr("r", "6")
-      .style("fill", "#a4c969")
-      // .attr("stroke", "black");
+      .attr("r", "8")
+      .style("fill", "#3CAEA3")
+      .attr("stroke", "#333");
 
     gChart.append("g")
       .call(xAxis);

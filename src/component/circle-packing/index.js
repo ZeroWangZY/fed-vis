@@ -19,7 +19,7 @@ class CirclePacking extends React.Component {
       transform: `translate(${innerPadding.left}px, ${innerPadding.top}px)`,
     };
 
-    this.colorMap = d3.scaleSequential([8, 0], d3.interpolateMagma);
+    this.colorMap = d3.scaleSequential([8, 0], d3.interpolate("#173f5f", "#e7e7e7"));
   }
 
   mockData = () => {

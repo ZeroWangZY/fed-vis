@@ -26,7 +26,7 @@
 .gallery__content__wrapper {
   width: 400px;
   height: 420px;
-  margin-right: 56px;
+  margin-right: 24px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   display: inline-block;
 }
@@ -35,7 +35,7 @@
   width: 100%;
   height: 40px;
   box-sizing: border-box;
-  border: 1px solid black;
+  border: 1px solid #ddd;
   border-bottom: none;
   font-size: 20px;
   display: flex;
@@ -43,7 +43,7 @@
   justify-content: space-between;
   padding-left: 30px;
   padding-right: 37px;
-  color: black;
+  color: #333;
 
   .ant-progress-status-success .ant-progress-inner:not(.ant-progress-circle-gradient) .ant-progress-circle-path {
     stroke: #108ee9 !important;
@@ -58,7 +58,7 @@
   // margin-right: 56px;
   overflow: hidden;
   // border: 1px solid #ddd;
-  border: 1px solid black;
+  border: 1px solid #ddd;
   border-radius: 2px;
   // box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   position: relative;
@@ -100,13 +100,17 @@
 .gallery__content__info {
   width: 100%;
   height: 80px;
-  border: 1px solid black;
+  border: 1px solid #ddd;
   border-top: none;
   box-sizing: border-box;
   padding-left: 30px;
+  line-height: 16px;
 
+  div:first-child {
+    padding-top: 4px;
+  }
   div {
-    line-height: 26px;
-    color: black;
+    line-height: 24px;
+    color: #333;
   }
 }

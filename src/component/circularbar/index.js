@@ -164,7 +164,7 @@ class CircularBar extends React.Component {
         {
           data.map((d, i) => (
             <path key={i}
-              fill="steelblue"
+              fill="#20639b"
               d={arc(d)}
             />
           ))

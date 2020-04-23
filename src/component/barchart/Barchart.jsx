@@ -141,7 +141,8 @@ export default class BarChart extends Component {
         .enter()
         .append("path")
         .attr("d", arc)
-        .attr("fill", d => colorScale(d.data.count))
+        .attr("fill", "#20639b")
+        // .attr("fill", d => colorScale(d.data.count))
         .attr("stroke", "#fff")
         .on("mouseover", function(d, i) {
           const tgtEle = d3.select(this).node();
