@@ -139,7 +139,7 @@ export default class ControlPanel extends React.PureComponent {
             <div># Records: 8279059</div>
           </div>
 
-          <div className="control-panel__data__item control-panel__data__client">
+          {/* <div className="control-panel__data__item control-panel__data__client">
             <div className="control-panel__data__client__title"># Clients:</div>
             <Select 
               defaultValue={clientOptions[clientOptions.length - 1]} 
@@ -156,7 +156,7 @@ export default class ControlPanel extends React.PureComponent {
                 )
               }
             </Select>
-          </div>
+          </div> */}
 
           <div className="control-panel__data__item">
             <div>Time: 2017/05 - 2017/10</div>

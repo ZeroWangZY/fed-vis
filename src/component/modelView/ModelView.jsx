@@ -144,6 +144,7 @@ class ModelView extends React.PureComponent {
                 </Row>
               </CheckboxGroup>
             </div>
+            <div className="split-line"></div>
           </div>
           <div id="model-view-content-client">
             <div className="secondary-panel-title">Client</div>
@@ -156,6 +157,7 @@ class ModelView extends React.PureComponent {
               </div>
             ))}
             </div>
+            <div className="split-line"></div>
           </div>
           <div id="model-view-content-monitor">
             <div className="secondary-panel-title">Monitor</div>

@@ -145,20 +145,26 @@ class DetailPanel extends React.PureComponent {
                   fill={d}
                   height={legendUnitHeight}
                   width={21}
-                  x={30}
+                  x={35}
                   y={i * legendUnitHeight + 58}
                 />
               )) : null}
               {
                 dataset.length ? ["High", "Low"].map((d, i) => (
                   <text key={d}
-                    x={30 + 21 / 2}
+                    x={35 + 21 / 2}
                     y={i * legendHeight + 58 + (i > 0 ? 5 : -5)}
                     textAnchor="middle"
                     dominantBaseline={i > 0 ? "hanging" : "baseline"}
                   >{d}</text>
                 )) : null
               }
+              {dataset.length && <text
+                className="vertical-legend-text"
+                y={legend.length * legendUnitHeight / 2 + 50}
+                >
+                  Flow Volome
+              </text>}
             </svg>
             {
               dataset.map(data =>
