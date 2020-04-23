@@ -21,7 +21,7 @@ class BoxplotView extends React.Component {
       height: 200,
       width: 350,
       boxplotNum: 10,// 视野里的个数
-      sliderWindowNum: 20,
+      sliderWindowNum: 10,
       windowRange: [-1,-1],//当前滑动窗口的range
       dataForBoxplot: [],
       xTick: [],
@@ -139,7 +139,7 @@ class BoxplotView extends React.Component {
       let curIterCount = losses[0].length;
   
       for (let i = 0; i < boxplotNum; i++) {
-        const tick = newWindowRange[0] + interval*i + 1;
+        const tick = newWindowRange[0] + interval*i;
         xTick.push(parseInt(tick));
       }
 
@@ -197,7 +197,7 @@ class BoxplotView extends React.Component {
 
     let startPos = Math.floor((windowRange[0]-1)/interval);
     let data = dataForBoxplot.slice(startPos, startPos + boxplotNum);
-    // console.log(dataForBoxplot)
+    // console.log(windowRange, data)
 
     return (
       <div>
