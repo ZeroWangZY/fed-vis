@@ -75,7 +75,6 @@ class App extends React.Component {
         // );
         return (
             <div className="App">
-                <ModelView />
                 <div id="left-panel">
                     <ControlPanelContainer />
                     <DataOverviewPanel />
@@ -87,6 +86,7 @@ class App extends React.Component {
                     />
                     <DetailPanelContainer />
                 </div>
+                <ModelView />
                 {/* <div
                     className={clsx(classes.content, {
                         [classes.contentShift]: isDrawerOpen
