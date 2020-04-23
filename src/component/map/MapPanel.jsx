@@ -22,10 +22,18 @@ import clsx from 'clsx';
 // import { rankIcon } from '../icons/RankIcon';
 import * as d3 from 'd3'
 
+// const gradient = {
+//   '0.1': '#89BDE0', '0.2': '#96E3E6', '0.4': '#82CEB6',
+//   '0.6': '#FAF3A5', '0.8': '#F5D98B', '1.0': '#DE9A96'
+// };
+
 const gradient = {
-  '0.1': '#89BDE0', '0.2': '#96E3E6', '0.4': '#82CEB6',
-  '0.6': '#FAF3A5', '0.8': '#F5D98B', '1.0': '#DE9A96'
-};
+  '0.4': 'blue',
+  '0.6': 'cyan',
+  '0.7': 'lime',
+  '0.8': 'yellow',
+  '1.0': 'red'
+}
 
 const colorStops = Object.keys(gradient).map(d => {
   const stop = parseFloat(d) * 100;
@@ -461,6 +469,7 @@ class MapPanel extends Component {
                     radius={20}
                     max={maxHeat}
                     // blur={10}
+                    gradient={gradient}
                     longitudeExtractor={d => d[1]}
                     latitudeExtractor={d => d[0]}
                     intensityExtractor={d => d[2] * (this.props.useError ? 1 : 1)}
