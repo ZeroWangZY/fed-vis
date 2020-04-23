@@ -3,7 +3,6 @@ import * as d3 from "d3";
 import { svgHeight, svgWidth, innerPadding } from "../../util/const";
 
 import "./index.less";
-import { isExtraneousPopstateEvent } from 'history/DOMUtils';
 
 class Icicle extends React.Component {
   constructor(props) {
@@ -467,7 +466,7 @@ class Icicle extends React.Component {
               <rect
                 width={d.y1 - d.y0}
                 height={d.x1 - d.x0}
-                fillOpacity={0.6}
+                // fillOpacity={0.6}
                 fill={this.getNodeColor(d, colorMap)}
               />
               {

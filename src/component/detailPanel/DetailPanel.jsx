@@ -7,7 +7,6 @@ import HistogramProgress from "../progress-circle/histogram-progress";
 
 import { Select } from 'antd';
 import "antd/lib/select/style/index.css";
-import { transform } from '@babel/core';
 const { Option } = Select;
 
 function mapStateToProps(state) {

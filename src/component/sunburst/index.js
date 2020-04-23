@@ -462,7 +462,7 @@ class Sunburst extends React.Component {
           pathData.map((d, i) => (
             <path key={i}
               fill={this.getNodeColor(d, colorMap)}
-              fillOpacity={0.6}
+              // fillOpacity={0.6}
               d={arc(d)}
             >
               <title>
