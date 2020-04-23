@@ -278,7 +278,7 @@ export default class BarChart extends Component {
           transform={`translate(${svgWidth - 10}, ${svgHeight - 10})`}
           textAnchor="end"
           dominantBaseline="baseline"
-        >{`Region ${uuid}`}</text>
+        >{`Region ${uuid + 1}`}</text>
       </svg>
     );
   }
