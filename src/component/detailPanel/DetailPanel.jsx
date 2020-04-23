@@ -163,7 +163,7 @@ class DetailPanel extends React.PureComponent {
                 className="vertical-legend-text"
                 y={legend.length * legendUnitHeight / 2 + 50}
                 >
-                  Flow Volome
+                  Flow Volume
               </text>}
             </svg>
             {

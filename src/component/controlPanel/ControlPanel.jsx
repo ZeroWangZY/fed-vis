@@ -162,7 +162,7 @@ export default class ControlPanel extends React.PureComponent {
             <div>Time: 2017/05 - 2017/10</div>
           </div>
 
-          <div className="control-panel__data__item">
+          <div className="control-panel__data__item" style={{marginTop: 10}}>
             <div>
               <div>Target area:</div>
               (
