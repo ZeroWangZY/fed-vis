@@ -19,13 +19,20 @@ class ProgressCircle extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const { shouldPoll, id, progressInfo } = this.props;
+    // console.log(`log ${shouldPoll} - ${nextProps.shouldPoll} | ${progressInfo.done} - ${nextProps.progressInfo.done}`);
     if (shouldPoll !== nextProps.shouldPoll && nextProps.shouldPoll) {
       this.startPoll(id);
     }
 
-    if (nextProps.progressInfo
+    // 当初progress接口兼容2种模式就是恶心，后端的问题，我用恶心的前端判断先避免一下。别打我
+    if ((nextProps.progressInfo
       && nextProps.progressInfo.done !== progressInfo.done
-      && nextProps.progressInfo.done) {
+      && nextProps.progressInfo.done) || (
+        shouldPoll === nextProps.shouldPoll && nextProps.shouldPoll &&
+        nextProps.progressInfo.done && progressInfo.done
+      )
+    ) {
+      console.log("stop poll");
       this.stopPoll(id);
     }
   }
@@ -33,6 +40,7 @@ class ProgressCircle extends React.Component {
   startPoll = (id) => {
     const { interval } = this;
     // 设置定时器
+    window.clearInterval(this.timeout);
     this.timeout = window.setInterval(() => {
       this.props.onCheckProgress(id);
     }, interval)
