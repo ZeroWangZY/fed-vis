@@ -157,7 +157,7 @@ class LiquidGaugeLegend extends React.Component {
       <div className="liquid-gauge__legend"
         style={{
           position: "absolute",
-          top: 20,
+          top: 45,
           right: 105
         }}
       >
