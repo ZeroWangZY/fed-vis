@@ -17,9 +17,9 @@ export default class Boxplot extends React.PureComponent {
   }
 
   componentWillReceiveProps() {
-    if(this.node) {
-      this.node.style.opacity = 1;
-    }
+    // if(this.node) {
+    //   this.node.style.opacity = 1;
+    // }
   }
 
   updateBoxplotData = () => {
@@ -53,13 +53,13 @@ export default class Boxplot extends React.PureComponent {
             transform={trans}
             className="single-boxplot"
             id={`boxplot-${index}`}
-            ref={node => {
-              if(node) {
-                node.style.opacity = 0;
-                node.style.transition = "opacity 0.7s";
-                this.node = node;
-              }
-            }}
+            // ref={node => {
+            //   if(node) {
+            //     node.style.opacity = 0;
+            //     node.style.transition = "opacity 0.4s";
+            //     this.node = node;
+            //   }
+            // }}
             // style={{opacity: interpolatedStyle.opacity }}
             >
             <line
