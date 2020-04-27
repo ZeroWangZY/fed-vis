@@ -124,7 +124,7 @@ class DetailPanel extends React.PureComponent {
           <div className="detail-panel-heading__filter">
             <HistogramProgress />
             <div className="detail-panel-heading__filter__hint">Hours per arc</div>
-            <Select defaultValue={aggregateHourOptions[4]} style={{ width: 80 }} onChange={handleSliderChange}>
+            <Select defaultValue={aggregateHourOptions[3]} style={{ width: 80 }} onChange={handleSliderChange}>
               {
                 aggregateHourOptions.map((option, optionIndex) =>
                   <Option
