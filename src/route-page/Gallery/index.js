@@ -125,7 +125,7 @@ class Gallery extends React.Component {
     const { pages, interval } = this;
     return (
       <div className="gallery">
-        <header className="gallery__title">Gallery</header>
+        <header className="gallery__title">Federated Visualization of Charts</header>
         <main className="gallery__content">
         {
           pages.map((page) => (

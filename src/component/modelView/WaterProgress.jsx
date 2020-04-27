@@ -184,7 +184,7 @@ class WaterProgress extends React.Component {
 
     return (<div style={{ display: "inline-block" }}>
       <canvas className="water_progress" style={{ width: 60, height: 60, margin: "0 10px" }} ref={this.canvas}>当前浏览器不支持canvas 请升级！</canvas>
-      <div>{this.props.name}</div>
+      <div style={{marginTop: -5}}>{this.props.name}</div>
     </div >
     );
   }

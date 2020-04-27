@@ -96,8 +96,8 @@ class ModelView extends React.PureComponent {
               <p>Model: Fully connected network with embedding</p>
               <p>Learning rate: 0.055 & 0.003</p>
               <p>Batch size: 128000</p>
-              <p>Training round: 150</p>
-              <p>Training epoch: 1</p>
+              <p>Training round: 150&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Training epoch: 1</p>
+              {/* <p>Training epoch: 1</p> */}
               <p>Client selection:</p>
               <div id="checkbox-all">
                 <Checkbox
@@ -147,27 +147,38 @@ class ModelView extends React.PureComponent {
             <div className="split-line"></div>
           </div>
           <div id="model-view-content-client">
-            <div className="secondary-panel-title">Client</div>
-            <div id="model-view-content-client-body" className="scroll-box">
-            {clientInfo.map((info, index) => (
-              <div key={index}>
-                <div className="third-panel-title" style={{paddingLeft: 0}}>Client {index+1}</div>
-                <p># Records: {info.recordsNum}</p>
-                <p># Partitions: {info.partitionsNum}</p>
+            <div className="secondary-panel-title">Clients</div>
+            <div id="model-view-content-client-body">
+              <div>
+                {clientInfo.slice(0, 4).map((info, index) => (
+                  <div key={index}>
+                    <div className="third-panel-title" style={{paddingLeft: 0}}>Client {index+1}</div>
+                    <p># Records: {info.recordsNum}</p>
+                    <p># Partitions: {info.partitionsNum}</p>
+                  </div>
+                ))}
               </div>
-            ))}
+              <div>
+                {clientInfo.slice(4).map((info, index) => (
+                  <div key={index}>
+                    <div className="third-panel-title" style={{paddingLeft: 0}}>Client {index+5}</div>
+                    <p># Records: {info.recordsNum}</p>
+                    <p># Partitions: {info.partitionsNum}</p>
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="split-line"></div>
           </div>
           <div id="model-view-content-monitor">
             <div className="secondary-panel-title">Monitor</div>
-            <div className="third-panel-title" style={{marginBottom: 15}}>Individual Loss</div>
+            <div className="third-panel-title" style={{marginBottom: 5}}>Individual Loss</div>
             {/* <LiquidGaugeLegend /> */}
             <LiquidGaugeLegend />
             {waterLevels.map((waterLevel, index) =>
               <WaterProgress value={waterLevel} key={index} name={"client " + (index + 1)} />)
             }
-            <div className="third-panel-title" style={{ marginTop: 10}}>Global Loss</div>
+            <div className="third-panel-title" style={{ marginTop: 5}}>Global Loss</div>
             <BoxplotView losses={losses} maxRound={maxRound}/>
           </div>
         </div>

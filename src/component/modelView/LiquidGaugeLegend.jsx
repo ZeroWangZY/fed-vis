@@ -161,9 +161,9 @@ class LiquidGaugeLegend extends React.Component {
           right: 105
         }}
       >
-        <canvas style={{ width: 30, height: 30, position: "absolute" }} ref={this.canvas}>当前浏览器不支持canvas 请升级！</canvas>
+        <canvas style={{ width: 25, height: 25, position: "absolute" }} ref={this.canvas}>当前浏览器不支持canvas 请升级！</canvas>
         <svg style={{ position: "absolute", top: -20 }}>
-          <polyline points="15,42 30,25 45,25" fill="none" stroke="rgb(33,33,33)" />
+          <polyline points="15,35 30,25 45,25" fill="none" stroke="rgb(33,33,33)" />
           <text dominantBaseline="text-before-edge" textAnchor="middle" fontSize="12" x="60" y="15">loss</text>
         </svg>
       </div >
