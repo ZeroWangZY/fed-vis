@@ -21,7 +21,7 @@ class BoxplotView extends React.Component {
       height: 200,
       width: 350,
       boxplotNum: 10,// 视野里的个数
-      sliderWindowNum: 50,
+      sliderWindowNum: 10,
       windowRange: [-1,-1],//当前滑动窗口的range
       dataForBoxplot: [],
       xTick: [],
@@ -197,8 +197,9 @@ class BoxplotView extends React.Component {
     marks[maxRound] = maxRound;
 
     let startPos = Math.floor((windowRange[0]-1)/interval);
-    let data = dataForBoxplot.slice(startPos, startPos + boxplotNum);
-    console.log(windowRange, dataForBoxplot, data)
+    // let data = dataForBoxplot.slice(startPos, startPos + boxplotNum);
+    let data = dataForBoxplot.slice(0, 10);
+    // console.log(windowRange, dataForBoxplot, data, xTick)
 
     return (
       <div>
@@ -242,7 +243,7 @@ class BoxplotView extends React.Component {
             />
           )}
         </svg>
-        <Slider range value={windowRange} max={maxRound} min={0} marks={marks} style={{
+        <Slider range value={[1, 10]} max={maxRound} min={0} marks={marks} style={{
           margin: "0 30px 0 60px"
         }}/>
       </div>

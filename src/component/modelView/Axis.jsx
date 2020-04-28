@@ -1,5 +1,6 @@
 import React from 'react';
 import * as d3 from 'd3';
+import { text } from 'd3';
 
 export default class Axis extends React.PureComponent {
   componentDidUpdate () {
@@ -19,6 +20,12 @@ export default class Axis extends React.PureComponent {
       axis.tickSize(0).tickPadding(10);
     }
     d3.select(this.node).call(axis);
+    
+    if(orient === "Bottom") {
+      d3.select(this.node)
+        .selectAll("text")
+        .text((d, i) => (i+1))
+    }
   }
 
   render() {
