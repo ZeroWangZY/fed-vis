@@ -76,9 +76,14 @@ class ModelView extends React.PureComponent {
         if (loss[0] > max){
           max = loss[0]
         } 
-        waterLevels.push(loss[loss.length - 1])
+        if(loss.length > 10){
+          waterLevels.push(loss[9])
+        } else {
+          waterLevels.push(loss[loss.length - 1])
+        }
       }
     }
+    let ls = Array.from(waterLevels)
     if (max === 0) {
       waterLevels = [1, 1, 1, 1, 1, 1, 1, 1]
     } else {
@@ -176,7 +181,7 @@ class ModelView extends React.PureComponent {
             {/* <LiquidGaugeLegend /> */}
             <LiquidGaugeLegend />
             {waterLevels.map((waterLevel, index) =>
-              <WaterProgress value={waterLevel} key={index} name={"client " + (index + 1)} max={max} />)
+              <WaterProgress value={waterLevel} key={index} loss={ls[index]} name={"client " + (index + 1)} max={max} />)
             }
             <div className="third-panel-title" style={{ marginTop: 5}}>Global Loss</div>
             <BoxplotView losses={losses} maxRound={maxRound}/>
