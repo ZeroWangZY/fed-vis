@@ -176,7 +176,7 @@ class ModelView extends React.PureComponent {
             {/* <LiquidGaugeLegend /> */}
             <LiquidGaugeLegend />
             {waterLevels.map((waterLevel, index) =>
-              <WaterProgress value={waterLevel} key={index} name={"client " + (index + 1)} />)
+              <WaterProgress value={waterLevel} key={index} name={"client " + (index + 1)} max={max} />)
             }
             <div className="third-panel-title" style={{ marginTop: 5}}>Global Loss</div>
             <BoxplotView losses={losses} maxRound={maxRound}/>

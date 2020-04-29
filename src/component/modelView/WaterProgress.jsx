@@ -93,11 +93,12 @@ class WaterProgress extends React.Component {
   drawText() {
     this.ctx.globalCompositeOperation = 'source-over';
     var size = 0.4 * this.cR;
-    this.ctx.font = 'bold ' + size + 'px Microsoft Yahei';
-    let txt = (this.nowdata.toFixed(2) * 100).toFixed(0) + '%';
+    this.ctx.font = size + 'px Microsoft Yahei';
+    let nowvalue = (this.nowdata.toFixed(2) * this.props.max).toFixed(0)
+    let txt = (nowvalue === '0' ? '' : nowvalue) + '';
     var fonty = this.r + size / 2;
     var fontx = this.r - size * 0.8;
-    this.ctx.fillStyle = "#f6b71e";
+    this.ctx.fillStyle = "#333";
     this.ctx.textAlign = 'center';
     this.ctx.fillText(txt, this.r + 5, this.r + 20)
   }
@@ -168,7 +169,7 @@ class WaterProgress extends React.Component {
       self.drawSine();
 
       // 写字
-      // this.drawText();
+      self.drawText();
     }
     setInterval(anim, 30)
 
