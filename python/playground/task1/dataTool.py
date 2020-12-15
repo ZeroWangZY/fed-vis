@@ -38,13 +38,13 @@ def rawDataToJson(index):
 def rawDataToDb(index):
     startingPosData = np.zeros((LNG_SIZE, LAT_SIZE))
     desPosData = np.zeros((LNG_SIZE, LAT_SIZE))
-    with open('data/raw/dwv_order_make_haikou_' + str(index) + '.txt',
+    with open('D:/data/海口数据/order_haikou_0628/dwv_order_make_haikou_' + str(index) + '.txt',
               newline='') as csvfile:
         haikouData = csv.reader(csvfile, delimiter='\t', quotechar='|')
         next(haikouData)
 
         import pymongo
-        myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+        myclient = pymongo.MongoClient("mongodb://localhost:27018/")
         haikou_database = myclient["haikou"]
         orders_info_collection = haikou_database['orders']
 
@@ -82,6 +82,7 @@ def rawDataToPostgres(index):
     import psycopg2
     import datetime
     conn = psycopg2.connect(host='localhost',
+                            port=5433,
                             database='haikou',
                             user='postgres',
                             password='ni99woba')
@@ -154,5 +155,5 @@ def writeTo(results, dir, file):
 
 
 if __name__ == '__main__':
-    for i in range(6, 9):
-        rawDataToDb(i)
+    for i in range(1, 9):
+        rawDataToPostgres(i)

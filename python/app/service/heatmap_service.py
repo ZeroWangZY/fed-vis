@@ -6,7 +6,7 @@ from keras import optimizers
 from app.dao.heatmap_cache import (fetch_heatmap_from_cache,
                                    save_heatmap_to_cache)
 from app.dao.order import (get_order_data_on_memory, is_order_data_on_memory,
-                           query_count, query_count_pg_version,
+                           query_count,
                            query_default_heatmap)
 from .model_service import get_model, train_model_fed, gen_x, predict, reset_keras
 

@@ -3,6 +3,7 @@ import string
 from app import app
 from flask import request
 from .response import gen_response, cors
+from app.service.dp import laplace_mech
 
 res_data_map = {}
 progress_info_map = {}
@@ -70,4 +71,4 @@ def get_data():
     data = res_data_map[id]
     del res_data_map[id]
     del progress_info_map[id]
-    return gen_response(data)
+    return gen_response(laplace_mech(data,epsilon=1))

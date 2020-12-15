@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import numpy as np
 
 from app.dao.odmap_cache import fetch_odmap_from_cache, save_odmap_to_cache
-from app.dao.order import query_od_count, query_od_count_pg_version, get_order_data_on_memory, is_order_data_on_memory
+from app.dao.order import query_od_count, get_order_data_on_memory, is_order_data_on_memory
 
 MIN_LNG = 110.14
 MAX_LNG = 110.520
@@ -54,7 +54,7 @@ def get_odmap_from_db(start_time, end_time, horizon_size, vertical_size,
         for start_index_vertical in range(vertical_size):
             for des_index_horizon in range(horizon_size):
                 for des_index_vertical in range(vertical_size):
-                    count = query_od_count_pg_version(
+                    count = query_od_count(
                         start_time, end_time,
                         MIN_LNG + start_index_horizon * horizon_step,
                         MIN_LNG + (start_index_horizon + 1) * horizon_step,
