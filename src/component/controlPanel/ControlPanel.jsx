@@ -1,10 +1,34 @@
-import React from 'react';
-import './ControlPanel.less';
-import { Switch } from 'antd';
-import { Select } from 'antd';
+import React from "react";
+import "./ControlPanel.less";
+import { Slider } from "antd";
+import { Select, Radio } from "antd";
+import { Divider } from "antd";
+import { Checkbox, Row, Col } from "antd";
+import { DatePicker } from "antd";
 import "antd/lib/switch/style/index.css";
 import "antd/lib/select/style/index.css";
+import heatmap from "../../assets/img/heatmap.svg";
+import barchart from "../../assets/img/barchart.svg";
+import treemap from "../../assets/img/treemap.svg";
+import sankey from "../../assets/img/sankey.svg";
+import violin from "../../assets/img/violin.svg";
+import pie from "../../assets/img/pie.svg";
+import rada from "../../assets/img/rada.svg";
+import linechart from "../../assets/img/linechart.svg";
+import bubble from "../../assets/img/bubble.svg";
 const { Option } = Select;
+const { RangePicker } = DatePicker;
+const CheckboxGroup = Checkbox.Group;
+const allValues = [
+  "client1",
+  "client2",
+  "client3",
+  "client4",
+  "client5",
+  "client6",
+  "client7",
+  "client8",
+];
 
 const precisionRoundMap = {
   low: 50,
@@ -13,29 +37,23 @@ const precisionRoundMap = {
 };
 
 export default class ControlPanel extends React.PureComponent {
-  constructor () {
+  constructor() {
     super();
-    this.state = { 
+    this.state = {
       // 默认
-      dataType: 'start',
-      dataMode: 'normal',
-      precision: 'high',
+      scheme: "query-based",
+      dataType: "start",
+      dataMode: "normal",
+      precision: "high",
       enableError: false,
       checkedError: false,
-      startDate: '2017-05-01',
-      endDate: '2017-10-31',
-      startHour: '00:00',
-      endHour: '23:00'
+      startDate: "2017-05-01",
+      endDate: "2017-10-31",
+      startHour: "00:00",
+      endHour: "23:00",
     };
 
-    this.clientOptions = [
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8"
-    ];
+    this.clientOptions = ["3", "4", "5", "6", "7", "8"];
 
     this.handleLoadClick = this.handleLoadClick.bind(this);
     this.updateDatatype = this.updateDatatype.bind(this);
@@ -45,11 +63,14 @@ export default class ControlPanel extends React.PureComponent {
     this.updateEndDate = this.updateEndDate.bind(this);
     this.updateStartHour = this.updateStartHour.bind(this);
     this.updateEndHour = this.updateEndHour.bind(this);
+    // this.updateScheme = this.updateScheme.bind(this);
   }
-  handleLoadClick () {
+  handleLoadClick() {
     // 按api格式拼接日期
-    let startTime = this.state.startDate.replace(/-/g, '/') + 'Z' + this.state.startHour;
-    let endTime = this.state.endDate.replace(/-/g, '/') + 'Z' + this.state.endHour;
+    let startTime =
+      this.state.startDate.replace(/-/g, "/") + "Z" + this.state.startHour;
+    let endTime =
+      this.state.endDate.replace(/-/g, "/") + "Z" + this.state.endHour;
     // load data
     this.props.onSelect(
       this.state.dataType,
@@ -58,17 +79,17 @@ export default class ControlPanel extends React.PureComponent {
       endTime
     );
   }
-  updateDatatype (e) {
+  updateDatatype(e) {
     this.setState({
-      dataType: e.target.value
-    })
+      dataType: e.target.value,
+    });
   }
-  updateDatamode (e) {
+  updateDatamode(e) {
     this.setState({
       dataMode: e.target.value,
       enableError: e.target.value === "fitting",
       checkedError: false,
-    })
+    });
     this.props.onChangeHeatmapType(false);
   }
 
@@ -81,41 +102,53 @@ export default class ControlPanel extends React.PureComponent {
     this.props.onChangePrecision(precisionRoundMap[e.target.value]);
   }
 
-  updateStartDate (e) {
+  updateStartDate(e) {
     this.setState({
-      startDate: e.target.value
-    })
+      startDate: e.target.value,
+    });
   }
-  updateEndDate (e) {
+  updateEndDate(e) {
     this.setState({
-      endDate: e.target.value
-    })
+      endDate: e.target.value,
+    });
   }
-  updateStartHour (e) {
+  updateStartHour(e) {
     this.setState({
-      startHour: e.target.value
-    })
+      startHour: e.target.value,
+    });
   }
-  updateEndHour (e) {
+  updateEndHour(e) {
     this.setState({
-      endHour: e.target.value
-    })
+      endHour: e.target.value,
+    });
   }
 
   isErrorEnabled = () => {
-    return this.state.dataMode === "fitting"
-  }
+    return this.state.dataMode === "fitting";
+  };
 
   onToggle = (checked) => {
     // error matrix
     this.setState({
-      checkedError: checked
-    })
+      checkedError: checked,
+    });
     this.props.onChangeHeatmapType(checked);
+  };
+
+  handleClientChange = () => {};
+
+  updateScheme = (e) => {
+    // this.setState(e.target.value);
+    console.log(e.target.value);
+  };
+
+  onChange(value, dateString) {
+    console.log("Selected Time: ", value);
+    console.log("Formatted Selected Time: ", dateString);
   }
 
-  handleClientChange = () => {
-
+  onOk(value) {
+    console.log("onOk: ", value);
   }
 
   render() {
@@ -129,113 +162,195 @@ export default class ControlPanel extends React.PureComponent {
 
     return (
       <div id="control-panel">
-        <div className="panel-title">Control Panel</div>
+        <div className="panel-title">Configuration View</div>
+
         <div className="control-panel__data">
           <div className="control-panel__data__item">
-            <div>Dataset: Urban-Mobility dataset</div>
-          </div>
-
-          <div className="control-panel__data__item">
-            <div># Records: 8279059</div>
-          </div>
-
-          {/* <div className="control-panel__data__item control-panel__data__client">
-            <div className="control-panel__data__client__title"># Clients:</div>
-            <Select 
-              defaultValue={clientOptions[clientOptions.length - 1]} 
-              style={{ width: 80 }} 
-              onChange={this.handleClientChange}
-              size="small"
+            <div>Dataset selection: </div>
+            <Select
+              defaultValue="Select a dataset"
+              style={{
+                width: "360px",
+                paddingLeft: "10px",
+              }}
+              // onChange={handleChange}
             >
-              {
-                clientOptions.map((option, optionIndex) =>
-                  <Option
-                    key={optionIndex}
-                    value={option}
-                  >{option}</Option>
-                )
-              }
+              <Option value="Urban-Mobility dataset">
+                Urban-Mobility dataset
+              </Option>
+              <Option value="Electronic Health Record Data">
+                Electronic Health Record Data
+              </Option>
             </Select>
-          </div> */}
+          </div>
+          <Divider
+            style={{ fontSize: "18px", fontWeight: "bold", margin: "10px 0" }}
+          >
+            Model configuration
+          </Divider>
+          <div className="control-panel__data__item_twoline">
+            <div>Client selection:</div>
+            <div id="checkbox-all">
+              <Checkbox
+                // indeterminate={true}
+                onChange={null}
+                checked={true}
+              >
+                Check all
+              </Checkbox>
+            </div>
+            <CheckboxGroup
+              // options={plainOptions}
+              value={allValues} // 这里的value需要使用state来获取更新
+              onChange={null}
+              style={{ marginTop: "-15px" }}
+            >
+              <Row className="notLast">
+                <Col span={6}>
+                  <Checkbox value="client1">Client 1</Checkbox>
+                </Col>
+                <Col span={6}>
+                  <Checkbox value="client2">Client 2</Checkbox>
+                </Col>
+                <Col span={6}>
+                  <Checkbox value="client3">Client 3</Checkbox>
+                </Col>
+                <Col span={6}>
+                  <Checkbox value="client4">Client 4</Checkbox>
+                </Col>
+                <Col span={6}>
+                  <Checkbox value="client5">Client 5</Checkbox>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={6}>
+                  <Checkbox value="client6">Client 6</Checkbox>
+                </Col>
+                <Col span={6}>
+                  <Checkbox value="client7">Client 7</Checkbox>
+                </Col>
+                <Col span={6}>
+                  <Checkbox value="client8">Client 8</Checkbox>
+                </Col>
+              </Row>
+            </CheckboxGroup>
+          </div>
+          <div className="control-panel__data__item_twoline">
+            <div>Representation mode:</div>
+            <Radio.Group value="query-based" onChange={this.updateScheme}>
+              {/* TODO：此处的value需要使用state进行控制 */}
+              <Radio.Button value="query-based">query-based</Radio.Button>
+              <Radio.Button value="prediction-based">
+                prediction-based
+              </Radio.Button>
+              <Radio.Button value="centralized">centralized</Radio.Button>
+              <Radio.Button value="decentralized">decentralized</Radio.Button>
+            </Radio.Group>
+          </div>
+          <div className="control-panel__data__item">
+            <div>Partition granularity:</div>
+            <Radio.Group value="coarse" onChange={this.updateScheme}>
+              {/* TODO：此处的value需要使用state进行控制 */}
+              <Radio.Button value="coarse">coarse</Radio.Button>
+              <Radio.Button value="medium">medium</Radio.Button>
+              <Radio.Button value="fine">fine</Radio.Button>
+            </Radio.Group>
+          </div>
 
           <div className="control-panel__data__item">
-            <div>Time: 2017/05 - 2017/10</div>
+            <div>Expected precision:</div>
+            <Radio.Group value="low" onChange={this.updateScheme}>
+              {/* TODO：此处的value需要使用state进行控制 */}
+              <Radio.Button value="low">low</Radio.Button>
+              <Radio.Button value="medium">medium</Radio.Button>
+              <Radio.Button value="high">high</Radio.Button>
+            </Radio.Group>
           </div>
 
-          <div className="control-panel__data__item" style={{marginTop: 10}}>
-            <div>
-              <div>Target area:</div>
-              (
-              <span className="control-panel__data__item__bbox">{latFrom && parseFloat(latFrom).toFixed(3)}</span>
-              ,
-              <span className="control-panel__data__item__bbox">{lngFrom && parseFloat(lngFrom).toFixed(3)}</span>
-              ) - (
-              <span className="control-panel__data__item__bbox">{latTo && parseFloat(latTo).toFixed(3)}</span>
-              ,
-              <span className="control-panel__data__item__bbox">{lngTo && parseFloat(lngTo).toFixed(3)}</span>
-              )
-            </div>
+          <div className="control-panel__data__item_twoline">
+            <div>Training parameter:</div>
+            <span className="trainingParam">learning rate: 0.055</span>
+            <span className="trainingParam">batch size: 12800</span>
+            <span className="trainingParam">training round: 50</span>
+            <span className="trainingParam">training epoch: 1</span>
           </div>
-        </div>
 
-        <div id="control-panel-content">
-          <div className="control-panel-content__split"></div>
-          <div id="timerange-select">
-            <p>Time range:</p>
-            <div className="line">
-              <p>Start time:</p>
-              <input type="date" defaultValue="2017-05-01" onChange={this.updateStartDate}></input>
-              <input type="time" defaultValue="00:00" onChange={this.updateStartHour}></input>
+          <Divider
+            style={{ fontSize: "18px", fontWeight: "bold", margin: "10px 0" }}
+          >
+            Query configuration
+          </Divider>
+
+          <div className="control-panel__data__item_twoline">
+            <div>Dimension selection:</div>
+            <span className="dimensions dimensions_notchecked">orderID</span>
+            <span className="dimensions">time</span>
+            <span className="dimensions">latitude</span>
+            <span className="dimensions">longitude</span>
+          </div>
+
+          <div className="control-panel__data__item_twoline">
+            <div>Filters:</div>
+            <div className="control-panel__data__item">
+              <div>time:</div>
+              {/* <Space direction="vertical" size={12}> */}
+              <RangePicker
+                showTime={{ format: "HH:mm" }}
+                format="YYYY-MM-DD HH:mm"
+                onChange={this.onChange}
+                onOk={this.onOk}
+              />
+              {/* </Space> */}
             </div>
-            <div className="line">
-              <p>End time:</p>
-              <input type="date" style={{marginLeft: 15}} defaultValue="2017-10-31" onChange={this.updateEndDate}></input>
-              <input type="time" defaultValue="23:00" onChange={this.updateEndHour}></input>
+            <div className="control-panel__data__item">
+              <div>latitude:</div>
+              {/* //TODO */}
+              <span className="area_range">[20.011, 20.015]</span>
+              <Slider range defaultValue={[20, 50]} />
+            </div>
+            <div className="control-panel__data__item">
+              <div>longitude:</div>
+              {/* //TODO */}
+              <span className="area_range">[110.287,110.291]</span>
+              <Slider range defaultValue={[20, 50]} />
             </div>
           </div>
-          <div id="datatype-select">
-            <form action="" method="get" className="datatype-select__first">
-              Data type:
-              <label><input name="dataType" type="radio" value="start" defaultChecked onChange={this.updateDatatype}/>start</label> 
-              <label><input name="dataType" type="radio" value="end" onChange={this.updateDatatype}/>end</label> 
-            </form>
-            <form action="" method="get" className="datatype-select__second">
-              Representation mode:<br />
-              <label><input name="dataType" type="radio" value="normal" defaultChecked onChange={this.updateDatamode}/>query-based</label> 
-              <label><input name="dataType" type="radio" value="fitting" onChange={this.updateDatamode}/>prediction-based</label> 
-            </form>
+          <div className="control-panel__data__item_twoline">
+            <div>Visual forms:</div>
+            <button className="visualForm">
+              <img src={heatmap} alt="heatmap" />
+            </button>
+            <button className="visualForm">
+              <img src={barchart} alt="barchart" />
+            </button>
+            <button className="visualForm">
+              <img src={linechart} alt="linechart" />
+            </button>
+            <button className="visualForm">
+              <img src={rada} alt="rada" />
+            </button>
+            <button className="visualForm">
+              <img src={sankey} alt="sankey" />
+            </button>
+            <button className="visualForm">
+              <img src={pie} alt="pie" />
+            </button>
+            <button className="visualForm">
+              <img src={treemap} alt="treemap" />
+            </button>
+            <button className="visualForm">
+              <img src={bubble} alt="bubble" />
+            </button>
+            <button className="visualForm">
+              <img src={violin} alt="violin" />
+            </button>
           </div>
-          <div className="err-switch">
-            <span className="err-switch__text">Enable error matrix:</span>
-            <Switch
-              defaultChecked
-              checked={this.state.checkedError}
-              size="small"
-              disabled={!this.state.enableError}
-              onClick={this.onToggle}
-            />
-          </div>
-          <div id="acc-select">
-            <p>Expected precision:</p>
-            <div className="acc-select__slider">
-              {
-                Object.keys(precisionRoundMap).map(precisionType => (
-                  <label key={precisionType} className="acc-select__slider__item">
-                    <input 
-                      name="precision" 
-                      type="radio"
-                      defaultChecked={precisionType === 'high'} 
-                      value={precisionType}
-                      onChange={this.updatePrecision}
-                    />
-                    {precisionType}
-                  </label>
-                ))
-              }
-            </div>
+          <div className="control-panel__data__item">
+            <button className="load-btn" onClick={this.handleLoadClick}>
+              Generate Visualization
+            </button>
           </div>
         </div>
-        <button className="load-btn" onClick={this.handleLoadClick}>Generate Visualization</button>
       </div>
     );
   }

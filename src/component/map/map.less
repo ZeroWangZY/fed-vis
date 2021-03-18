@@ -1,62 +1,62 @@
 #map-content {
+  position: relative;
+  .linkline {
+    cursor: pointer;
+  }
+  .panel-title {
+    color: #333;
+    line-height: 40px;
+    text-align: left;
+    font-size: 24px;
+    padding-left: 30px;
     position: relative;
-    .linkline {
-        cursor: pointer;
+    background-color: #ddd;
+    span {
+      color: #333;
+      line-height: 50px;
+      font-size: 16px;
     }
-    .panel-title {
-        color: #333;
-        line-height: 50px;
-        text-align: left;
-        font-size: 22px;
-        padding-left: 30px;
-        font-weight: 500;
-        border: solid 1px #333;
-        border-left: none;
-        border-right: none;
-        position: relative;
-        span {
-            color: #333;
-            line-height: 50px;
-            font-size: 16px;
-        }
-        button {
-            background-color: #fff;
-            position: absolute;
-            top: 15px;
-            right: 30px;
-            line-height: 20px;
-            height: 20px;
-            border: solid #333 1px;
-            color: #333;
-            text-align: center;
-            font-size: 16px;
-            cursor: pointer;
-            width: 50px;
-            border-radius: 5px;
-            display: inline-flex;
-            align-items: center;
-        }
+    button {
+      background-color: #fff;
+      position: absolute;
+      top: 15px;
+      right: 30px;
+      line-height: 20px;
+      height: 20px;
+      border: solid #333 1px;
+      color: #333;
+      text-align: center;
+      font-size: 16px;
+      cursor: pointer;
+      width: 50px;
+      border-radius: 5px;
+      display: inline-flex;
+      align-items: center;
+    }
 
-        .progress-btn .ant-progress-status-normal .ant-progress-inner:not(.ant-progress-circle-gradient) .ant-progress-circle-path {
-          stroke: #215ea5 !important;
-        }
+    .progress-btn
+      .ant-progress-status-normal
+      .ant-progress-inner:not(.ant-progress-circle-gradient)
+      .ant-progress-circle-path {
+      stroke: #215ea5 !important;
     }
-    #odmap-label {
-        position: absolute;
-        z-index: 9999;
-        left: 1640px;
-        color: #0078a8;
-        font-size: 16px;
-    }
-    .map-container {
-        // width: 100%;
-        // position: absolute;
-        // top: 52px;
-        // bottom: 0;
-        height: 93%;
-        position: relative;
-    }
-    border-right: solid 1px #333;
+  }
+  #odmap-label {
+    position: absolute;
+    z-index: 9999;
+    left: 1640px;
+    color: #0078a8;
+    font-size: 16px;
+  }
+  .map-container {
+    // width: 100%;
+    // position: absolute;
+    // top: 52px;
+    // bottom: 0;
+    // @var: 40px;
+    height: 95.5%;
+    position: relative;
+  }
 }
 
 .heatmap-legend {
@@ -66,8 +66,8 @@
   height: 200px;
   width: 100px;
   z-index: 1000;
-  background: rgba(0,0,0,0.1);
-  
+  background: rgba(0, 0, 0, 0.1);
+
   .heatmap-legend__text {
     position: absolute;
     top: 0;
@@ -84,27 +84,27 @@
 }
 
 .leaflet-control-layers {
-    transform: scale(0.75);
-    margin-left: 5px!important;
+  transform: scale(0.75);
+  margin-left: 5px !important;
 }
 .leaflet-control-layers-list {
-    text-align: left;
+  text-align: left;
 }
 
-.leaflet-left{
-    transition: margin cubic-bezier(0.4, 0, 0.6, 1) 225ms
+.leaflet-left {
+  transition: margin cubic-bezier(0.4, 0, 0.6, 1) 225ms;
 }
 
 .leaflet-custome-icon {
-    background: #fff;
-    border-radius: 50%;
-    position: relative;
-    opacity: 0.8;
-    transition:all ease-in-out 200ms
+  background: #fff;
+  border-radius: 50%;
+  position: relative;
+  opacity: 0.8;
+  transition: all ease-in-out 200ms;
 }
 
 .leaflet-custome-icon:hover {
-    z-index: 404!important;
+  z-index: 404 !important;
 }
 
 .leaflet-control-attribution.leaflet-control {

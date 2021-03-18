@@ -1,5 +1,6 @@
 body {
   overflow: auto;
+  font-family: Helvetica, Arial, sans-serif !important;
 }
 
 .ant-modal {
@@ -12,14 +13,31 @@ body {
   width: 1920px;
   height: 1080px;
   display: grid;
-  grid-template-columns: 2fr 7fr 2fr;
+  grid-template-columns: 3fr 4fr 3fr;
   color: #333;
   overflow: hidden;
-  #left-panel {
+  background-color: #e3e7ef;
+  #config-panel {
     display: grid;
-    grid-template-rows: 8fr 9fr;
-    border: solid 1px #333;
-    height: 1080px;
+    // grid-template-rows: 8fr 9fr;
+    border: solid 1px #cccccc;
+    // height: 1080px;
+    grid-column: 1;
+    background-color: #fff;
+    margin-right: 5px;
+  }
+  #server-panel {
+    display: grid;
+    grid-template-rows: 2.5fr 1fr;
+    border: solid 1px #cccccc;
+    background-color: #fff;
+  }
+  #client-panel {
+    display: grid;
+    // grid-template-rows: 3fr 1fr;
+    border: solid 1px #cccccc;
+    background-color: #fff;
+    margin-left: 5px;
   }
 }
 
@@ -51,11 +69,6 @@ body {
   to {
     transform: rotate(360deg);
   }
-}
-
-#map-panel {
-  display: grid;
-  grid-template-rows: 2.5fr 1fr;
 }
 
 .ant-select-dropdown-menu-item {

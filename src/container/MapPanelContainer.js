@@ -1,6 +1,6 @@
-import { connect } from 'react-redux';
-import MapPanel from 'components/map/MapPanel';
-import {addBarchart, deleteBarchart} from 'actions/barchart'
+import { connect } from "react-redux";
+import MapPanel from "components/map/MapPanel";
+import { addBarchart, deleteBarchart } from "actions/barchart";
 
 const mapStateToProps = (state) => {
   return {
@@ -8,7 +8,7 @@ const mapStateToProps = (state) => {
     odmapData: state.odmapData,
     selectRect: state.highlightId,
     deleteRect: state.deleteRectId,
-    useError: state.useError
+    useError: state.useError,
   };
 };
 
@@ -18,9 +18,9 @@ const mapDispatchToProps = (dispatch) => {
       // to add 框选
       dispatch(addBarchart(index, bounds));
     },
-    onDeleteRect: (index) =>{
+    onDeleteRect: (index) => {
       dispatch(deleteBarchart(index));
-    }
+    },
   };
 };
 

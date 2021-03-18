@@ -1,51 +1,66 @@
-import React from 'react';
-import { connect } from 'react-redux'
-import { Checkbox, Row, Col } from 'antd';
-import './ModelView.less';
-import WaterProgress from './WaterProgress';
-import BoxplotView from './BoxplotView';
+import React from "react";
+import { connect } from "react-redux";
+import { Checkbox, Row, Col } from "antd";
+import { Divider } from "antd";
+import "./ModelView.less";
+import WaterProgress from "./WaterProgress";
+import BoxplotView from "./BoxplotView";
 import LiquidGaugeLegend from "./LiquidGaugeLegend";
 
 const clientInfo = [
   {
     recordsNum: 1035900,
-    partitionsNum: 15960
-  },{
+    partitionsNum: 15960,
+  },
+  {
     recordsNum: 1034262,
-    partitionsNum: 15960
-  },{
+    partitionsNum: 15960,
+  },
+  {
     recordsNum: 1034933,
-    partitionsNum: 15960
-  },{
+    partitionsNum: 15960,
+  },
+  {
     recordsNum: 1035315,
-    partitionsNum: 15960
-  },{
+    partitionsNum: 15960,
+  },
+  {
     recordsNum: 1035072,
-    partitionsNum: 15960
-  },{
+    partitionsNum: 15960,
+  },
+  {
     recordsNum: 1034958,
-    partitionsNum: 15960
-  },{
+    partitionsNum: 15960,
+  },
+  {
     recordsNum: 1035170,
-    partitionsNum: 15960
-  },{
+    partitionsNum: 15960,
+  },
+  {
     recordsNum: 1033449,
-    partitionsNum: 15960
-  }
+    partitionsNum: 15960,
+  },
 ];
 
 const CheckboxGroup = Checkbox.Group;
-const allValues = ["client1", "client2", "client3", "client4", "client5", "client6", "client7", "client8"]
+const allValues = [
+  "client1",
+  "client2",
+  "client3",
+  "client4",
+  "client5",
+  "client6",
+  "client7",
+  "client8",
+];
 
 class ModelView extends React.PureComponent {
-  constructor () {
+  constructor() {
     super();
-    this.state = { 
+    this.state = {
       // waterLevels: [0,0.5,0.7,0,0,0,0.2,0]
     };
-
   }
-
 
   // componentWillReceiveProps(nextProps) {
   //   const { shouldPoll, id, progressInfo } = this.props;
@@ -68,42 +83,47 @@ class ModelView extends React.PureComponent {
       max_round: maxRound = 1,
       losses = [],
     } = progressInfo;
-    const percent = currentRound / maxRound * 100;
+    const percent = (currentRound / maxRound) * 100;
     let max = 0;
     let waterLevels = [];
     if (losses !== null && losses !== undefined) {
       for (const loss of losses) {
-        if (loss[0] > max){
-          max = loss[0]
-        } 
-        if(loss.length > 10){
-          waterLevels.push(loss[9])
+        if (loss[0] > max) {
+          max = loss[0];
+        }
+        if (loss.length > 10) {
+          waterLevels.push(loss[9]);
         } else {
-          waterLevels.push(loss[loss.length - 1])
+          waterLevels.push(loss[loss.length - 1]);
         }
       }
     }
-    let ls = Array.from(waterLevels)
+    let ls = Array.from(waterLevels);
     if (max === 0) {
-      waterLevels = [1, 1, 1, 1, 1, 1, 1, 1]
+      waterLevels = [1, 1, 1, 1, 1, 1, 1, 1];
     } else {
       for (const i in waterLevels) {
-        waterLevels[i] = waterLevels[i] / max
+        waterLevels[i] = waterLevels[i] / max;
       }
     }
     return (
       <div id="model-view">
-        <div className="panel-title">Model View</div>
+        {/* <div className="panel-title">Server performance</div> */}
+        <Divider
+          style={{ fontSize: "18px", fontWeight: "bold", padding: "0 20px" }}
+        >
+          Server performance
+        </Divider>
         <div id="model-view-content">
-          <div id="model-view-content-server">
-            <div className="secondary-panel-title">Server</div>
+          {/* <div id="model-view-content-server"> */}
+          {/* <div className="secondary-panel-title">Server</div>
             <div id="model-view-content-server-body">
               <p>Model: Fully connected network with embedding</p>
               <p>Learning rate: 0.055 & 0.003</p>
               <p>Batch size: 128000</p>
-              <p>Training round: 150&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Training epoch: 1</p>
-              {/* <p>Training epoch: 1</p> */}
-              <p>Client selection:</p>
+              <p>Training round: 150&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Training epoch: 1</p> */}
+          {/* <p>Training epoch: 1</p> */}
+          {/* <p>Client selection:</p>
               <div id="checkbox-all">
                 <Checkbox
                   // indeterminate={true}
@@ -174,17 +194,27 @@ class ModelView extends React.PureComponent {
               </div>
             </div>
             <div className="split-line"></div>
-          </div>
+          </div> */}
           <div id="model-view-content-monitor">
-            <div className="secondary-panel-title">Monitor</div>
-            <div className="third-panel-title" style={{marginBottom: 5}}>Individual Loss</div>
+            {/* <div className="secondary-panel-title">Monitor</div> */}
+            {/* <div className="third-panel-title" style={{ marginBottom: 5 }}>
+              Individual Loss
+            </div> */}
             {/* <LiquidGaugeLegend /> */}
-            <LiquidGaugeLegend />
-            {waterLevels.map((waterLevel, index) =>
-              <WaterProgress value={waterLevel} key={index} loss={ls[index]} name={"client " + (index + 1)} max={max} />)
-            }
-            <div className="third-panel-title" style={{ marginTop: 5}}>Global Loss</div>
-            <BoxplotView losses={losses} maxRound={maxRound}/>
+            {/* <LiquidGaugeLegend />
+            {waterLevels.map((waterLevel, index) => (
+              <WaterProgress
+                value={waterLevel}
+                key={index}
+                loss={ls[index]}
+                name={"client " + (index + 1)}
+                max={max}
+              />
+            ))} */}
+            {/* <div className="third-panel-title" style={{ marginTop: 5 }}>
+              Global Loss
+            </div> */}
+            <BoxplotView losses={losses} maxRound={maxRound} />
           </div>
         </div>
       </div>

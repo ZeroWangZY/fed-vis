@@ -1,12 +1,11 @@
 #model-view {
-  border-top: solid 1px #333;
-  border-right: solid 1px #333;
-  border-bottom: solid 1px #333;
-  height: 1080px;
+  border-top: solid 1px #ccc;
+  position: relative;
+  // height: 1080px;
   #model-view-content {
     display: grid;
-    height: 1028px;
-    grid-template-rows: 215px 305px 1fr;
+    // height: 1028px;
+    // grid-template-rows: 215px 305px 1fr;
   }
   .split-line {
     height: 3px;
@@ -22,7 +21,7 @@
     font-size: 22px;
     padding-left: 30px;
     font-weight: 500;
-    border-bottom: solid 1px #333;
+    // border-bottom: solid 1px #333;
   }
   .secondary-panel-title {
     font-size: 20px;
@@ -54,7 +53,7 @@
         background-color: #8cb1cf;
         border-color: #8cb1cf;
       }
-      
+
       .ant-checkbox + span {
         padding-right: 8px;
         padding-left: 8px;
@@ -90,17 +89,17 @@
       }
     }
 
-    .scroll-box::-webkit-scrollbar {  
-      width: 8px;  
-    }  
+    .scroll-box::-webkit-scrollbar {
+      width: 8px;
+    }
     .scroll-box::-webkit-scrollbar-track {
       border-radius: 10px;
-      background-color:#e4e4e4;
+      background-color: #e4e4e4;
     }
-    .scroll-box::-webkit-scrollbar-thumb {  
-      border-radius: 10px;  
-      background-color:#8cb1cf;
-    } 
+    .scroll-box::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background-color: #8cb1cf;
+    }
   }
 
   #model-view-content-monitor {
@@ -131,7 +130,8 @@
       stroke: #333;
       stroke-width: 1px;
     }
-    .median, .whisker {
+    .median,
+    .whisker {
       stroke: #333;
       stroke-width: 1px;
     }
@@ -169,7 +169,7 @@
       stroke: #bebebe;
       opacity: 0.7;
     }
-    .inital-grids line{
+    .inital-grids line {
       stroke: #bebebe;
       opacity: 0.7;
     }
