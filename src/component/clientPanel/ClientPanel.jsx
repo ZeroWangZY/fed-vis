@@ -25,20 +25,16 @@ class ClientPanel extends React.PureComponent {
   }
 
   render() {
+    const clientArray = ["1", "2", "3", "4", "5", "6", "7", "8"];
+
     return (
       <div id="client-content">
         <div className="panel-title">Client view</div>
-        <ClientCard />
-        {/* 参考写法：生成多个client card */}
-        {/* {waterLevels.map((waterLevel, index) => (
-          <WaterProgress
-            value={waterLevel}
-            key={index}
-            loss={ls[index]}
-            name={"client " + (index + 1)}
-            max={max}
-          />
-        ))} */}
+        <div className="panel-body">
+          {clientArray.map((no) => (
+            <ClientCard key={no} clientNo={no} />
+          ))}
+        </div>
       </div>
     );
   }

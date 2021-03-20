@@ -1,4 +1,7 @@
 #client-content {
+  display: grid;
+  grid-template-rows: 40px auto;
+  height: 1080px;
   .panel-title {
     color: #333;
     line-height: 40px;
@@ -7,5 +10,9 @@
     padding-left: 30px;
     position: relative;
     background-color: #ddd;
+  }
+  .panel-body {
+    // height: 500px;
+    overflow-y: scroll;
   }
 }

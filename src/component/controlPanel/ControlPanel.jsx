@@ -7,28 +7,12 @@ import { Checkbox, Row, Col } from "antd";
 import { DatePicker } from "antd";
 import "antd/lib/switch/style/index.css";
 import "antd/lib/select/style/index.css";
-import heatmap from "../../assets/img/heatmap.svg";
-import barchart from "../../assets/img/barchart.svg";
-import treemap from "../../assets/img/treemap.svg";
-import sankey from "../../assets/img/sankey.svg";
-import violin from "../../assets/img/violin.svg";
-import pie from "../../assets/img/pie.svg";
-import rada from "../../assets/img/rada.svg";
-import linechart from "../../assets/img/linechart.svg";
-import bubble from "../../assets/img/bubble.svg";
+import VisualForms from "./mod/VisualForms";
+import { dimension_taxi } from "../../util/const";
+import moment from "moment";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const CheckboxGroup = Checkbox.Group;
-const allValues = [
-  "client1",
-  "client2",
-  "client3",
-  "client4",
-  "client5",
-  "client6",
-  "client7",
-  "client8",
-];
 
 const precisionRoundMap = {
   low: 50,
@@ -36,14 +20,50 @@ const precisionRoundMap = {
   high: 300,
 };
 
+const clientList = [
+  {
+    clientName: "client1",
+    clientLabel: "Client 1",
+  },
+  {
+    clientName: "client2",
+    clientLabel: "Client 2",
+  },
+  {
+    clientName: "client3",
+    clientLabel: "Client 3",
+  },
+  {
+    clientName: "client4",
+    clientLabel: "Client 4",
+  },
+  {
+    clientName: "client5",
+    clientLabel: "Client 5",
+  },
+  {
+    clientName: "client6",
+    clientLabel: "Client 6",
+  },
+  {
+    clientName: "client7",
+    clientLabel: "Client 7",
+  },
+  {
+    clientName: "client8",
+    clientLabel: "Client 8",
+  },
+];
+
 export default class ControlPanel extends React.PureComponent {
   constructor() {
     super();
     this.state = {
       // 默认
+      dataset: "",
       scheme: "query-based",
       dataType: "start",
-      dataMode: "normal",
+      dataMode: "fitting",
       precision: "high",
       enableError: false,
       checkedError: false,
@@ -51,6 +71,9 @@ export default class ControlPanel extends React.PureComponent {
       endDate: "2017-10-31",
       startHour: "00:00",
       endHour: "23:00",
+      dimensionState: [],
+      partition: "coarse",
+      currentClient: [],
     };
 
     this.clientOptions = ["3", "4", "5", "6", "7", "8"];
@@ -63,6 +86,10 @@ export default class ControlPanel extends React.PureComponent {
     this.updateEndDate = this.updateEndDate.bind(this);
     this.updateStartHour = this.updateStartHour.bind(this);
     this.updateEndHour = this.updateEndHour.bind(this);
+    this.handleDatasetChange = this.handleDatasetChange.bind(this);
+    this.updateDimensionState = this.updateDimensionState.bind(this);
+    this.updateOrderState = this.updateOrderState.bind(this);
+    this.updataTimeRange = this.updataTimeRange.bind(this);
     // this.updateScheme = this.updateScheme.bind(this);
   }
   handleLoadClick() {
@@ -72,12 +99,12 @@ export default class ControlPanel extends React.PureComponent {
     let endTime =
       this.state.endDate.replace(/-/g, "/") + "Z" + this.state.endHour;
     // load data
-    this.props.onSelect(
-      this.state.dataType,
-      this.state.dataMode,
-      startTime,
-      endTime
-    );
+    this.props.onSelect({
+      dataType: this.state.dataType,
+      dataMode: this.state.dataMode,
+      startTime: startTime,
+      endTime: endTime,
+    });
   }
   updateDatatype(e) {
     this.setState({
@@ -135,6 +162,44 @@ export default class ControlPanel extends React.PureComponent {
     this.props.onChangeHeatmapType(checked);
   };
 
+  handleDatasetChange = (value) => {
+    console.log(value);
+    let { dimensionState } = this.state;
+    // console.log(dimensionState);
+
+    switch (value) {
+      case "Urban-Mobility dataset":
+        dimension_taxi.forEach((x, i) => {
+          dimensionState[i] = 0;
+        });
+      // console.log(dimensionState);
+      case "Electronic Health Record Data":
+      // TODO:数据集的维度常量需要先定义并引入
+    }
+    this.setState({
+      dataset: value,
+      dimensionState: dimensionState,
+    });
+  };
+
+  updateDimensionState = (index) => {
+    let { dimensionState } = this.state;
+    this.setState({
+      dimensionState: [
+        ...dimensionState.slice(0, index),
+        dimensionState[index] === 0 ? 1 : 0,
+        ...dimensionState.slice(index + 1),
+      ],
+    });
+  };
+
+  updateCurrentClient = (checkedList) => {
+    // const { clientList } = this.state;
+    this.setState({
+      currentClient: checkedList,
+    });
+  };
+
   handleClientChange = () => {};
 
   updateScheme = (e) => {
@@ -142,9 +207,37 @@ export default class ControlPanel extends React.PureComponent {
     console.log(e.target.value);
   };
 
-  onChange(value, dateString) {
-    console.log("Selected Time: ", value);
-    console.log("Formatted Selected Time: ", dateString);
+  updateOrderState = (e) => {
+    this.setState({ dataType: e.target.value });
+  };
+
+  updatePartition = (e) => {
+    this.setState({ partition: e.target.value });
+  };
+
+  toggleCheckAllClient = () => {
+    const nextCheckedAll =
+      this.state.currentClient.length !== clientList.length;
+    this.setState({
+      currentClient: nextCheckedAll
+        ? clientList.map(({ clientName }) => clientName)
+        : [],
+    });
+  };
+
+  updataTimeRange(value, dateString) {
+    // console.log("Selected Time: ", value);
+    // console.log(
+    //   "Formatted Selected Time: ",
+    //   dateString[0].split(" "),
+    //   dateString[1]
+    // );
+    this.setState({
+      startDate: dateString[0].split(" ")[0],
+      endDate: dateString[1].split(" ")[0],
+      startHour: dateString[0].split(" ")[1],
+      endHour: dateString[1].split(" ")[1],
+    });
   }
 
   onOk(value) {
@@ -154,12 +247,30 @@ export default class ControlPanel extends React.PureComponent {
   render() {
     const { clientOptions } = this;
     const {
-      lngFrom = null,
-      lngTo = null,
-      latFrom = null,
-      latTo = null,
+      lngFrom = "",
+      lngTo = "",
+      latFrom = "",
+      latTo = "",
     } = this.props.bbox;
 
+    const {
+      dataset,
+      dimensionState,
+      dataType,
+      partition,
+      precision,
+      dataMode,
+      currentClient,
+    } = this.state;
+
+    // let currentClient = clientList.reduce((result, d, i) => {
+    //   const noneZeroKeys = Object.entries(d)
+    //     .filter(([, value]) => value !== 0)
+    //     .map(([key]) => key);
+    //   return result.concat(noneZeroKeys);
+    // }, []);
+
+    console.log(currentClient);
     return (
       <div id="control-panel">
         <div className="panel-title">Configuration View</div>
@@ -173,7 +284,7 @@ export default class ControlPanel extends React.PureComponent {
                 width: "360px",
                 paddingLeft: "10px",
               }}
-              // onChange={handleChange}
+              onChange={this.handleDatasetChange}
             >
               <Option value="Urban-Mobility dataset">
                 Urban-Mobility dataset
@@ -189,67 +300,44 @@ export default class ControlPanel extends React.PureComponent {
             Model configuration
           </Divider>
           <div className="control-panel__data__item_twoline">
-            <div>Client selection:</div>
-            <div id="checkbox-all">
-              <Checkbox
-                // indeterminate={true}
-                onChange={null}
-                checked={true}
-              >
-                Check all
-              </Checkbox>
+            <div className="checkbox-all-line">
+              <span>Client selection:</span>
+              <div>
+                <Checkbox
+                  onChange={this.toggleCheckAllClient}
+                  checked={currentClient.length === clientList.length}
+                >
+                  Check all
+                </Checkbox>
+              </div>
             </div>
+
             <CheckboxGroup
-              // options={plainOptions}
-              value={allValues} // 这里的value需要使用state来获取更新
-              onChange={null}
-              style={{ marginTop: "-15px" }}
+              value={currentClient} // 这里的value需要使用state来获取更新
+              onChange={this.updateCurrentClient}
             >
-              <Row className="notLast">
-                <Col span={6}>
-                  <Checkbox value="client1">Client 1</Checkbox>
-                </Col>
-                <Col span={6}>
-                  <Checkbox value="client2">Client 2</Checkbox>
-                </Col>
-                <Col span={6}>
-                  <Checkbox value="client3">Client 3</Checkbox>
-                </Col>
-                <Col span={6}>
-                  <Checkbox value="client4">Client 4</Checkbox>
-                </Col>
-                <Col span={6}>
-                  <Checkbox value="client5">Client 5</Checkbox>
-                </Col>
-              </Row>
-              <Row>
-                <Col span={6}>
-                  <Checkbox value="client6">Client 6</Checkbox>
-                </Col>
-                <Col span={6}>
-                  <Checkbox value="client7">Client 7</Checkbox>
-                </Col>
-                <Col span={6}>
-                  <Checkbox value="client8">Client 8</Checkbox>
-                </Col>
-              </Row>
+              <div style={{ overflow: "hidden" }}>
+                {clientList.map(({ clientName, clientLabel }) => (
+                  <div key={clientName} style={{ float: "left", width: "20%" }}>
+                    <Checkbox value={clientName}>{clientLabel}</Checkbox>
+                  </div>
+                ))}
+              </div>
             </CheckboxGroup>
           </div>
           <div className="control-panel__data__item_twoline">
             <div>Representation mode:</div>
-            <Radio.Group value="query-based" onChange={this.updateScheme}>
+            <Radio.Group value={dataMode} onChange={this.updateDatamode}>
               {/* TODO：此处的value需要使用state进行控制 */}
-              <Radio.Button value="query-based">query-based</Radio.Button>
-              <Radio.Button value="prediction-based">
-                prediction-based
-              </Radio.Button>
+              <Radio.Button value="normal">query-based</Radio.Button>
+              <Radio.Button value="fitting">prediction-based</Radio.Button>
               <Radio.Button value="centralized">centralized</Radio.Button>
               <Radio.Button value="decentralized">decentralized</Radio.Button>
             </Radio.Group>
           </div>
           <div className="control-panel__data__item">
             <div>Partition granularity:</div>
-            <Radio.Group value="coarse" onChange={this.updateScheme}>
+            <Radio.Group value={partition} onChange={this.updatePartition}>
               {/* TODO：此处的value需要使用state进行控制 */}
               <Radio.Button value="coarse">coarse</Radio.Button>
               <Radio.Button value="medium">medium</Radio.Button>
@@ -259,7 +347,7 @@ export default class ControlPanel extends React.PureComponent {
 
           <div className="control-panel__data__item">
             <div>Expected precision:</div>
-            <Radio.Group value="low" onChange={this.updateScheme}>
+            <Radio.Group value={precision} onChange={this.updatePrecision}>
               {/* TODO：此处的value需要使用state进行控制 */}
               <Radio.Button value="low">low</Radio.Button>
               <Radio.Button value="medium">medium</Radio.Button>
@@ -283,67 +371,92 @@ export default class ControlPanel extends React.PureComponent {
 
           <div className="control-panel__data__item_twoline">
             <div>Dimension selection:</div>
-            <span className="dimensions dimensions_notchecked">orderID</span>
-            <span className="dimensions">time</span>
-            <span className="dimensions">latitude</span>
-            <span className="dimensions">longitude</span>
+            {dataset === "Urban-Mobility dataset"
+              ? dimension_taxi.map((d, i) => (
+                  <span
+                    key={i}
+                    className={
+                      dimensionState[i] === 0
+                        ? "dimensions"
+                        : "dimensions dimensions_checked"
+                    }
+                    onClick={() => {
+                      this.updateDimensionState(i);
+                    }}
+                  >
+                    {d}
+                  </span>
+                ))
+              : null}
           </div>
 
           <div className="control-panel__data__item_twoline">
             <div>Filters:</div>
-            <div className="control-panel__data__item">
-              <div>time:</div>
-              {/* <Space direction="vertical" size={12}> */}
-              <RangePicker
-                showTime={{ format: "HH:mm" }}
-                format="YYYY-MM-DD HH:mm"
-                onChange={this.onChange}
-                onOk={this.onOk}
-              />
-              {/* </Space> */}
-            </div>
-            <div className="control-panel__data__item">
-              <div>latitude:</div>
-              {/* //TODO */}
-              <span className="area_range">[20.011, 20.015]</span>
-              <Slider range defaultValue={[20, 50]} />
-            </div>
-            <div className="control-panel__data__item">
-              <div>longitude:</div>
-              {/* //TODO */}
-              <span className="area_range">[110.287,110.291]</span>
-              <Slider range defaultValue={[20, 50]} />
-            </div>
+            {dimensionState[
+              dimension_taxi.findIndex((item) => item === "time")
+            ] === 1 ? (
+              <div className="control-panel__data__item">
+                <div>time:</div>
+                <RangePicker
+                  showTime={{ format: "HH:mm" }}
+                  format="YYYY-MM-DD HH:mm"
+                  defaultValue={[
+                    moment("2017-05-01 00:00", "YYYY-MM-DD HH:mm"),
+                    moment("2017-10-31 23:00", "YYYY-MM-DD HH:mm"),
+                  ]}
+                  onChange={this.updataTimeRange}
+                  onOk={this.onOk}
+                />
+              </div>
+            ) : null}
+
+            {dimensionState[
+              dimension_taxi.findIndex((item) => item === "latitude")
+            ] === 1 ? (
+              <div className="control-panel__data__item">
+                <div>latitude:</div>
+                <span className="area_range">
+                  {`[` +
+                    (latFrom && parseFloat(latFrom).toFixed(3)) +
+                    `,` +
+                    (latTo && parseFloat(latTo).toFixed(3)) +
+                    `]`}
+                </span>
+                <Slider range defaultValue={[0, 100]} />
+              </div>
+            ) : null}
+
+            {dimensionState[
+              dimension_taxi.findIndex((item) => item === "longitude")
+            ] === 1 ? (
+              <div className="control-panel__data__item">
+                <div>longitude:</div>
+                <span className="area_range">
+                  {`[` +
+                    (lngFrom && parseFloat(lngFrom).toFixed(3)) +
+                    `,` +
+                    (lngTo && parseFloat(lngTo).toFixed(3)) +
+                    `]`}
+                </span>
+                <Slider range defaultValue={[0, 100]} />
+              </div>
+            ) : null}
+
+            {dimensionState[
+              dimension_taxi.findIndex((item) => item === "orderState")
+            ] === 1 ? (
+              <div className="control-panel__data__item">
+                <div>orderState:</div>
+                <Radio.Group value={dataType} onChange={this.updateOrderState}>
+                  {/* TODO：此处的value需要使用state进行控制 */}
+                  <Radio.Button value="start">start</Radio.Button>
+                  <Radio.Button value="end">end</Radio.Button>
+                </Radio.Group>
+              </div>
+            ) : null}
           </div>
           <div className="control-panel__data__item_twoline">
-            <div>Visual forms:</div>
-            <button className="visualForm">
-              <img src={heatmap} alt="heatmap" />
-            </button>
-            <button className="visualForm">
-              <img src={barchart} alt="barchart" />
-            </button>
-            <button className="visualForm">
-              <img src={linechart} alt="linechart" />
-            </button>
-            <button className="visualForm">
-              <img src={rada} alt="rada" />
-            </button>
-            <button className="visualForm">
-              <img src={sankey} alt="sankey" />
-            </button>
-            <button className="visualForm">
-              <img src={pie} alt="pie" />
-            </button>
-            <button className="visualForm">
-              <img src={treemap} alt="treemap" />
-            </button>
-            <button className="visualForm">
-              <img src={bubble} alt="bubble" />
-            </button>
-            <button className="visualForm">
-              <img src={violin} alt="violin" />
-            </button>
+            <VisualForms />
           </div>
           <div className="control-panel__data__item">
             <button className="load-btn" onClick={this.handleLoadClick}>

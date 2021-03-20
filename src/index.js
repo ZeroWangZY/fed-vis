@@ -1,6 +1,6 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+import React from "react";
+import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
 import {
   BrowserRouter as Router,
   Switch,
@@ -8,8 +8,8 @@ import {
   Redirect,
 } from "react-router-dom";
 import history from "./history";
-import './index.css';
-import App from './route-page/App';
+import "./index.css";
+import App from "./route-page/App";
 import Gallery from "./route-page/Gallery";
 import Treemap from "./component/treemap";
 import LineChart from "./component/linechart";
@@ -27,8 +27,8 @@ import Sunburst from "./component/sunburst";
 import Icicle from "./component/icicle";
 import PaperLineChart from "./paper-charts/linechart";
 import PaperGroupBar from "./paper-charts/group-bar";
-import configureStore from 'store';
-
+import configureStore from "store";
+import { innerPadding } from "./util/const";
 
 const store = configureStore();
 
@@ -46,7 +46,7 @@ ReactDOM.render(
           <Treemap />
         </Route>
         <Route exact path="/linechart">
-          <LineChart />
+          <LineChart width={1200} height={900} margin={innerPadding} />
         </Route>
         <Route exact path="/sankey">
           <Sankey />
@@ -94,7 +94,7 @@ ReactDOM.render(
       </Switch>
     </Router>
   </Provider>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 // fetch('/api/heatmap/all?type=start&start_time=2017/05/19Z10:00&end_time=2017/05/19Z12:00')
 // If you want your app to work offline and load faster, you can change

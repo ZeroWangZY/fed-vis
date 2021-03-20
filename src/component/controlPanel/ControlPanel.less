@@ -1,5 +1,5 @@
 #control-panel {
-  border-bottom: solid 1px #333;
+  // border-bottom: solid 1px #333;
   .panel-title {
     color: #333;
     line-height: 40px;
@@ -42,11 +42,10 @@
       font-size: 16px;
     }
 
-    #checkbox-all {
-      text-align: right;
-      position: relative;
-      top: -23px;
-      right: 30px;
+    .checkbox-all-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       .ant-checkbox + span {
         font-size: 16px;
       }
@@ -69,13 +68,15 @@
     }
 
     .dimensions {
-      background-color: #1890ff;
+      cursor: pointer;
+      background-color: #ffffff;
+      color: #333;
       padding: 6px 6px;
       margin-right: 10px;
     }
-    .dimensions_notchecked {
-      color: #333;
-      background-color: #ffffff;
+    .dimensions_checked {
+      color: #ffffff;
+      background-color: #1890ff;
     }
   }
   .ant-calendar-picker {
@@ -83,7 +84,7 @@
   }
 
   .area_range {
-    padding-left: 10px;
+    padding: 0 10px;
   }
   .ant-slider {
     width: 300px;
@@ -91,6 +92,7 @@
   }
 
   .visualForm {
+    cursor: pointer;
     background-color: #fff;
     padding: 0;
     border: none;

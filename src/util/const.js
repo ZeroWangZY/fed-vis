@@ -13,4 +13,12 @@ export const chartTypes = {
   heatmap: "heatmap",
   histogram: "histogram",
   calendar: "calendar",
-}
+};
+
+export const dimension_taxi = [
+  "orderID",
+  "time",
+  "latitude",
+  "longitude",
+  "orderState",
+];

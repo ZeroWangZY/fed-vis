@@ -1,7 +1,7 @@
-import { connect } from 'react-redux';
-import ControlPanel from 'components/controlPanel/ControlPanel';
-import {getHeatmapByTimeRange, changeHeatmapType} from 'actions/heatmap'
-import {setPrecisionRound} from 'actions/base';
+import { connect } from "react-redux";
+import ControlPanel from "components/controlPanel/ControlPanel";
+import { getHeatmapByTimeRange, changeHeatmapType } from "actions/heatmap";
+import { setPrecisionRound } from "actions/base";
 
 const mapStateToProps = (state) => {
   return {
@@ -12,15 +12,15 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSelect: (dataType, dataMode, startTime, endTime) => {
-      dispatch(getHeatmapByTimeRange(dataType, dataMode, startTime, endTime));
+    onSelect: (filter) => {
+      dispatch(getHeatmapByTimeRange(filter));
     },
     onChangeHeatmapType: (useError) => {
       dispatch(changeHeatmapType(useError));
     },
     onChangePrecision: (precisionRound) => {
       dispatch(setPrecisionRound(precisionRound));
-    }
+    },
   };
 };
 
