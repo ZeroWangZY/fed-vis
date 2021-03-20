@@ -1,26 +1,26 @@
 import { connect } from "react-redux";
 import MapPanel from "components/map/MapPanel";
-import { addBarchart, deleteBarchart } from "actions/barchart";
 
 const mapStateToProps = (state) => {
   return {
-    heatmapNerror: state.heatmapData,
+    chartNerror: state.chartData,
     odmapData: state.odmapData,
-    selectRect: state.highlightId,
-    deleteRect: state.deleteRectId,
+    // deleteRect: state.deleteRectId,
     useError: state.useError,
+    visualForm: state.visualForm,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSelect: (index, bounds) => {
-      // to add 框选
-      dispatch(addBarchart(index, bounds));
-    },
-    onDeleteRect: (index) => {
-      dispatch(deleteBarchart(index));
-    },
+    // onSelect: (index, bounds) => {
+    //   dispatch(setBBox(bounds));
+    //   // to add 框选
+    //   // dispatch(addBarchart(index, bounds));
+    // },
+    // onDeleteRect: (index) => {
+    //   // dispatch(deleteBarchart(index));
+    // },
   };
 };
 

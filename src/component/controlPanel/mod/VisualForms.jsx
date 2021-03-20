@@ -10,7 +10,7 @@ import pie from "../../../assets/img/pie.svg";
 import rada from "../../../assets/img/rada.svg";
 import linechart from "../../../assets/img/linechart.svg";
 import bubble from "../../../assets/img/bubble.svg";
-import { selectBarchart } from "../../../actions/barchart";
+import clsx from "clsx";
 
 const formsList = [
   { type: "heatmap", svgSrc: heatmap, title: "Heatmap" },
@@ -24,39 +24,40 @@ const formsList = [
   { type: "bubble", svgSrc: bubble, title: "ODmap" },
 ];
 
-function FormBtn({ type, title, svgSrc, onClick }) {
+function FormBtn({ type, title, svgSrc, active, onClick }) {
   const handleClick = () => {
     onClick(type);
   };
   return (
-    <button className="visualForm" title={title} onClick={handleClick}>
+    <button
+      className={clsx("visual-form-item", {
+        "visual-form-item-active": active,
+      })}
+      title={title}
+      onClick={handleClick}
+    >
       <img src={svgSrc} alt={title} />
     </button>
   );
 }
 
-export class VisualForms extends Component {
-  render() {
-    const { onSelect } = this.props;
-    return (
-      <>
-        <div>Visual forms:</div>
-        {formsList.map((conf, index) => (
-          <FormBtn key={index} {...conf} onClick={onSelect} />
-        ))}
-      </>
-    );
-  }
+export default function VisualForms({ value, onChange }) {
+  return (
+    <>
+      <div>Visual forms:</div>
+      {formsList.map((conf, index) => (
+        <FormBtn
+          key={index}
+          {...conf}
+          active={value === conf.type}
+          onClick={onChange}
+        />
+      ))}
+    </>
+  );
 }
 
 VisualForms.propTypes = {
-  onSelect: PropTypes.func,
+  onChange: PropTypes.func,
+  value: PropTypes.oneOf(formsList.map(({ type }) => type)),
 };
-
-function mapDispatchToProps(dispatch) {
-  return {
-    onSelect: (type) => dispatch(selectBarchart(type)),
-  };
-}
-
-export default connect(() => ({}), mapDispatchToProps)(VisualForms);

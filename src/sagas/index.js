@@ -1,19 +1,23 @@
-import { all } from 'redux-saga/effects';
-import { watchHeatmapByTimeRange, watchHeatmapByID } from './heatmap';
-import { watchOdmapByTimeRange } from './odmap';
-import initCalendar from './calendar';
-import { watchDeleteBarchart, watchAddBarchart, watchHistogramByID } from './barchart';
-import { watchCheckProgress } from './base'
-export default function * rootSaga () {
+import { all } from "redux-saga/effects";
+import { watchChartByTimeRange, watchChartByID } from "./chart";
+import { watchOdmapByTimeRange } from "./odmap";
+import initCalendar from "./calendar";
+import {
+  watchDeleteBarchart,
+  watchAddBarchart,
+  watchHistogramByID,
+} from "./barchart";
+import { watchCheckProgress } from "./base";
+export default function* rootSaga() {
   yield all([
     initCalendar(),
-    watchHeatmapByTimeRange(),
+    watchChartByTimeRange(),
     watchOdmapByTimeRange(),
     watchDeleteBarchart(),
     watchAddBarchart(),
     watchCheckProgress(),
-    watchHeatmapByID(),
+    watchChartByID(),
     watchHistogramByID(),
     // watchSelectBarchart()
-  ])
+  ]);
 }

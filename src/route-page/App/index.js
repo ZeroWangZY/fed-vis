@@ -13,9 +13,9 @@ import "./index.less";
 // import MapPanel from './component/map/MapPanel';
 import ControlPanelContainer from "../../container/ControlPanelContainer";
 import MapPanelContainer from "../../container/MapPanelContainer";
-import DetailPanelContainer from "../../container/DetailPanelContainer";
+// import DetailPanelContainer from "../../container/DetailPanelContainer";
 import ClientPanelContainer from "../../container/ClientPanelContainer";
-import DataOverviewPanel from "../../component/dataoverviewPanel/DataOverviewPanel";
+// import DataOverviewPanel from "../../component/dataoverviewPanel/DataOverviewPanel";
 import ModelView from "../../component/modelView/ModelView";
 
 class App extends React.Component {

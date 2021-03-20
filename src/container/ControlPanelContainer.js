@@ -1,22 +1,23 @@
 import { connect } from "react-redux";
 import ControlPanel from "components/controlPanel/ControlPanel";
-import { getHeatmapByTimeRange, changeHeatmapType } from "actions/heatmap";
+import { generateVisualization, toggleChartError } from "actions/chart";
 import { setPrecisionRound } from "actions/base";
 
 const mapStateToProps = (state) => {
   return {
-    // heatmapData: state.heatmapData
+    // chartData: state.chartData
     bbox: state.bbox,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSelect: (filter) => {
-      dispatch(getHeatmapByTimeRange(filter));
+    // TODO: 除了 filter，还需要 visual form 和 model config
+    onGenerate: (query) => {
+      dispatch(generateVisualization(query));
     },
-    onChangeHeatmapType: (useError) => {
-      dispatch(changeHeatmapType(useError));
+    onToggleChartError: (useError) => {
+      dispatch(toggleChartError(useError));
     },
     onChangePrecision: (precisionRound) => {
       dispatch(setPrecisionRound(precisionRound));

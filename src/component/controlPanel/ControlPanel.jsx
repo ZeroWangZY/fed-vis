@@ -74,11 +74,12 @@ export default class ControlPanel extends React.PureComponent {
       dimensionState: [],
       partition: "coarse",
       currentClient: [],
+      visualForm: "heatmap",
     };
 
     this.clientOptions = ["3", "4", "5", "6", "7", "8"];
 
-    this.handleLoadClick = this.handleLoadClick.bind(this);
+    this.generateVisualization = this.generateVisualization.bind(this);
     this.updateDatatype = this.updateDatatype.bind(this);
     this.updateDatamode = this.updateDatamode.bind(this);
     this.updatePrecision = this.updatePrecision.bind(this);
@@ -92,20 +93,26 @@ export default class ControlPanel extends React.PureComponent {
     this.updataTimeRange = this.updataTimeRange.bind(this);
     // this.updateScheme = this.updateScheme.bind(this);
   }
-  handleLoadClick() {
+  generateVisualization() {
     // 按api格式拼接日期
     let startTime =
       this.state.startDate.replace(/-/g, "/") + "Z" + this.state.startHour;
     let endTime =
       this.state.endDate.replace(/-/g, "/") + "Z" + this.state.endHour;
     // load data
-    this.props.onSelect({
+    this.props.onGenerate({
       dataType: this.state.dataType,
       dataMode: this.state.dataMode,
       startTime: startTime,
       endTime: endTime,
+      visualForm: this.state.visualForm,
+      // TODO: 加上 modelConfig
     });
   }
+
+  updateVisualForm = (nextVisualForm) => {
+    this.setState({ visualForm: nextVisualForm });
+  };
   updateDatatype(e) {
     this.setState({
       dataType: e.target.value,
@@ -117,7 +124,7 @@ export default class ControlPanel extends React.PureComponent {
       enableError: e.target.value === "fitting",
       checkedError: false,
     });
-    this.props.onChangeHeatmapType(false);
+    this.props.onToggleChartError(false);
   }
 
   updatePrecision(e) {
@@ -159,7 +166,8 @@ export default class ControlPanel extends React.PureComponent {
     this.setState({
       checkedError: checked,
     });
-    this.props.onChangeHeatmapType(checked);
+    // TODO: 位置变到中间面板
+    this.props.onToggleChartError(checked);
   };
 
   handleDatasetChange = (value) => {
@@ -456,10 +464,13 @@ export default class ControlPanel extends React.PureComponent {
             ) : null}
           </div>
           <div className="control-panel__data__item_twoline">
-            <VisualForms />
+            <VisualForms
+              value={this.state.visualForm}
+              onChange={this.updateVisualForm}
+            />
           </div>
           <div className="control-panel__data__item">
-            <button className="load-btn" onClick={this.handleLoadClick}>
+            <button className="load-btn" onClick={this.generateVisualization}>
               Generate Visualization
             </button>
           </div>

@@ -1,7 +1,7 @@
-import * as heatmap from './heatmap';
-import * as odmap from './odmap';
+import * as chart from "./chart";
+import * as odmap from "./odmap";
 
-export default Object.assign(
-  heatmap,
-  odmap
-);
+export default {
+  ...chart,
+  ...odmap,
+};

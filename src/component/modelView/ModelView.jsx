@@ -224,10 +224,10 @@ class ModelView extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    shouldPoll: state.shouldHeatmapPoll,
-    id: state.heatmapDataId.id,
+    shouldPoll: state.shouldChartPoll,
+    id: state.chartDataId.id,
     // 具体进度信息
-    progressInfo: state.heatmapProgress,
+    progressInfo: state.chartProgress,
   };
 };
 
