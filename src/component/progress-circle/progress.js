@@ -1,6 +1,6 @@
-import React from 'react';
-import { Modal, Button, Progress } from 'antd';
-import ProgressModal from '../progress-modal'
+import React from "react";
+import { Modal, Button, Progress } from "antd";
+import ProgressModal from "../progress-modal";
 import "./index.less";
 import "antd/lib/progress/style/index.css";
 import "antd/dist/antd.css";
@@ -14,7 +14,7 @@ class ProgressCircle extends React.Component {
 
     this.state = {
       enableModal: false,
-    }
+    };
   }
 
   componentWillReceiveProps(nextProps) {
@@ -25,12 +25,14 @@ class ProgressCircle extends React.Component {
     }
 
     // 当初progress接口兼容2种模式就是恶心，后端的问题，我用恶心的前端判断先避免一下。别打我
-    if ((nextProps.progressInfo
-      && nextProps.progressInfo.done !== progressInfo.done
-      && nextProps.progressInfo.done) || (
-        shouldPoll === nextProps.shouldPoll && nextProps.shouldPoll &&
-        nextProps.progressInfo.done && progressInfo.done
-      )
+    if (
+      (nextProps.progressInfo &&
+        nextProps.progressInfo.done !== progressInfo.done &&
+        nextProps.progressInfo.done) ||
+      (shouldPoll === nextProps.shouldPoll &&
+        nextProps.shouldPoll &&
+        nextProps.progressInfo.done &&
+        progressInfo.done)
     ) {
       console.log("stop poll");
       this.stopPoll(id);
@@ -43,29 +45,29 @@ class ProgressCircle extends React.Component {
     window.clearInterval(this.timeout);
     this.timeout = window.setInterval(() => {
       this.props.onCheckProgress(id);
-    }, interval)
-  }
+    }, interval);
+  };
 
   stopPoll = (id) => {
     // 清空计时器
     window.clearInterval(this.timeout);
 
-    this.props.stopPoll()
+    this.props.stopPoll();
     // 根据id去拿数据
     this.props.onRetrieveData(id);
-  }
+  };
 
   handleClickBtn = () => {
     this.setState({
       enableModal: true,
     });
-  }
+  };
 
   handleCloseModal = () => {
     this.setState({
       enableModal: false,
     });
-  }
+  };
 
   render() {
     const { progressInfo } = this.props;
@@ -74,16 +76,10 @@ class ProgressCircle extends React.Component {
       max_round: maxRound = 1,
       losses = [],
     } = progressInfo;
-    const percent = currentRound / maxRound * 100;
+    const percent = (currentRound / maxRound) * 100;
 
     return (
-      <div className="progress-btn" style={{
-        cursor: "pointer",
-        display: "inline-block",
-        position: "absolute",
-        right: 145,
-        top: -4
-      }} >
+      <div className="progress-btn">
         <Progress
           type="circle"
           percent={percent}
@@ -95,7 +91,7 @@ class ProgressCircle extends React.Component {
         <Modal
           width={1080}
           style={{
-            height:1200
+            height: 1200,
           }}
           visible={this.state.enableModal}
           title="Training Progress"
@@ -116,6 +112,6 @@ class ProgressCircle extends React.Component {
       </div>
     );
   }
-};
+}
 
 export default ProgressCircle;

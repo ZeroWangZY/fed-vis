@@ -12,6 +12,7 @@ import {
 } from "react-leaflet";
 import { connect } from "react-redux";
 import clsx from "clsx";
+import "./index.less";
 
 const size_param = 500;
 
@@ -153,6 +154,7 @@ export const HeatMap = ({
       createARect(layer._bounds);
     }
   };
+
   const _onDeleted = (e) => {
     let rectIndex = -1;
     for (let i in e.layers._layers) {
@@ -178,9 +180,13 @@ export const HeatMap = ({
       <Map
         center={basicConfig.center}
         zoom={basicConfig.zoom}
-        className={clsx("map-container customer-control", {
-          "drawer-helper": isDrawerOpen,
-        })}
+        className={clsx(
+          "map-container customer-control",
+          "map-container-heatmap",
+          {
+            "drawer-helper": isDrawerOpen,
+          }
+        )}
       >
         <LayersControl position="topleft">
           <LayersControl.BaseLayer name="Base" checked>

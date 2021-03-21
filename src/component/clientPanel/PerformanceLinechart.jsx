@@ -39,7 +39,12 @@ class PerformanceLinechart extends React.Component {
 
     return (
       <svg className="perform">
-        <Linechart width={width} height={height} margin={margin}></Linechart>
+        <Linechart
+          width={width}
+          height={height}
+          margin={margin}
+          data={this.props.data}
+        ></Linechart>
       </svg>
     );
   }

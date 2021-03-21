@@ -7,6 +7,7 @@ import {
   TRIGGER_CHART_POLL,
   SET_CHART_PROGRESS,
 } from "actions/chart";
+import { GENERATE_VISUALIZATION } from "../actions/chart";
 
 // export const chartData = (state = [], action) => {
 //   switch (action.type) {
@@ -22,6 +23,15 @@ export const chartData = (state = [[], []], action) => {
   switch (action.type) {
     case SAVE_CHART_DATA:
       return action.data;
+    default:
+      return state;
+  }
+};
+
+export const currentClient = (state = [], action) => {
+  switch (action.type) {
+    case GENERATE_VISUALIZATION:
+      return action.query.currentClient;
     default:
       return state;
   }

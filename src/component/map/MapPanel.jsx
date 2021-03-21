@@ -9,6 +9,7 @@ import "./map.less";
 // import HeatmapLegend from '../legend/legend';
 // import { rankIcon } from '../icons/RankIcon';
 import * as d3 from "d3";
+import { Switch } from "antd";
 
 function getMinMax(data) {
   let min = Number.MAX_SAFE_INTEGER,
@@ -275,6 +276,10 @@ class MapPanel extends Component {
   //   return `radial-gradient(${color.toString()} 0%, ${endRgb.toString()} 100%)`;
   // }
 
+  onchange(checked) {
+    console.log(`switch to ${checked}`);
+  }
+
   render() {
     let me = this;
     const { isDrawerOpen, odmapData, visualForm } = this.props;
@@ -429,7 +434,7 @@ class MapPanel extends Component {
         <div className="panel-title">
           Server View
           {/* <span>Current space type of outer grid: {currentSpaceTypeOuter}</span> */}
-          <button onClick={this.handleOverlayerType}>H⇋O</button>
+          {/* <button onClick={this.handleOverlayerType}>H⇋O</button>
           <button
             style={{
               right: "85px",
@@ -439,8 +444,15 @@ class MapPanel extends Component {
             onClick={this.handleConvertOD}
           >
             O⇋D
-          </button>
+          </button> */}
           <ChartProgress />
+          <div className="switch-error">
+            <span className="switch-error-label">Show error:</span>
+            <Switch
+              checked={this.props.useError}
+              onChange={this.props.onToggleChartError}
+            />
+          </div>
         </div>
         {currentDisplayType ? $chart : null}
         {/* {!currentDisplayType && <div id='odmap-label'>Current space type of outer grid: {currentSpaceTypeOuter}</div>} */}

@@ -3,12 +3,20 @@ export const SET_BBOX = "SET_BBOX";
 export const CHECK_PROGRESS = "CHECK_PROGRESS";
 export const SET_PRECISION_ROUND = "SET_PRECISION_ROUND";
 export const SAVE_VISUAL_FORM = "SAVE_VISUAL_FORM";
+export const UPDATE_DIMENSION_TAXI = "UPDATE_DIMENSION-TAXI";
 
 export function checkProgress(id, chartType) {
   return {
     type: CHECK_PROGRESS,
     chartType,
     id,
+  };
+}
+
+export function updateDimensionTaxi(datasetType) {
+  return {
+    type: UPDATE_DIMENSION_TAXI,
+    datasetType,
   };
 }
 

@@ -1,9 +1,4 @@
-import {
-  SAVE_VISUAL_FORM,
-  SET_BBOX,
-  SET_PRECISION_ROUND,
-  UPDATE_DIMENSION_TAXI,
-} from "../actions/base";
+import { SAVE_CLIENT_INFO } from "../actions/client";
 
 // export const dataType = (state = 'start', action) => {
 //   switch(action.type) {
@@ -41,34 +36,10 @@ import {
 //   }
 // }
 
-export const visualForm = (state = "heatmap", action) => {
+export const clientInfo = (state = null, action) => {
   switch (action.type) {
-    case SAVE_VISUAL_FORM:
-      return action.visualForm;
-    default:
-      return state;
-  }
-};
-export const bbox = (state = {}, action) => {
-  switch (action.type) {
-    case SET_BBOX:
-      return action.bbox;
-    default:
-      return state;
-  }
-};
-
-export const dimensionTaxi = (state = null, action) => {
-  switch (action.type) {
-    case UPDATE_DIMENSION_TAXI:
-      return {};
-  }
-};
-
-export const precisionRound = (state = 300, action) => {
-  switch (action.type) {
-    case SET_PRECISION_ROUND:
-      return action.precisionRound;
+    case SAVE_CLIENT_INFO:
+      return action.clientInfo;
     default:
       return state;
   }

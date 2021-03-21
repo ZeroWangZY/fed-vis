@@ -5,6 +5,7 @@ import ClientCard from "../clientPanel/ClientCard";
 
 function clientStateToProps(state) {
   return {
+    currentClient: state.currentClient,
     // dataset: state.barchartData,
     // aggregateHour: state.aggregateHour,
     // highlightId: state.highlightId,
@@ -25,7 +26,7 @@ class ClientPanel extends React.PureComponent {
   }
 
   render() {
-    const clientArray = ["1", "2", "3", "4", "5", "6", "7", "8"];
+    const clientArray = this.props.currentClient;
 
     return (
       <div id="client-content">

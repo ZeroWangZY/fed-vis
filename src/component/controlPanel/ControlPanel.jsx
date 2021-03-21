@@ -1,17 +1,13 @@
 import React from "react";
 import "./ControlPanel.less";
-import { Slider } from "antd";
 import { Select, Radio } from "antd";
 import { Divider } from "antd";
 import { Checkbox, Row, Col } from "antd";
-import { DatePicker } from "antd";
 import "antd/lib/switch/style/index.css";
 import "antd/lib/select/style/index.css";
 import VisualForms from "./mod/VisualForms";
-import { dimension_taxi } from "../../util/const";
-import moment from "moment";
+import DimensionAndFilter from "./mod/DimensionAndFilter";
 const { Option } = Select;
-const { RangePicker } = DatePicker;
 const CheckboxGroup = Checkbox.Group;
 
 const precisionRoundMap = {
@@ -62,25 +58,19 @@ export default class ControlPanel extends React.PureComponent {
       // 默认
       dataset: "",
       scheme: "query-based",
-      dataType: "start",
       dataMode: "fitting",
       precision: "high",
       enableError: false,
       checkedError: false,
-      startDate: "2017-05-01",
-      endDate: "2017-10-31",
-      startHour: "00:00",
-      endHour: "23:00",
-      dimensionState: [],
       partition: "coarse",
       currentClient: [],
+      filters: {},
       visualForm: "heatmap",
     };
 
     this.clientOptions = ["3", "4", "5", "6", "7", "8"];
 
     this.generateVisualization = this.generateVisualization.bind(this);
-    this.updateDatatype = this.updateDatatype.bind(this);
     this.updateDatamode = this.updateDatamode.bind(this);
     this.updatePrecision = this.updatePrecision.bind(this);
     this.updateStartDate = this.updateStartDate.bind(this);
@@ -88,36 +78,25 @@ export default class ControlPanel extends React.PureComponent {
     this.updateStartHour = this.updateStartHour.bind(this);
     this.updateEndHour = this.updateEndHour.bind(this);
     this.handleDatasetChange = this.handleDatasetChange.bind(this);
-    this.updateDimensionState = this.updateDimensionState.bind(this);
-    this.updateOrderState = this.updateOrderState.bind(this);
-    this.updataTimeRange = this.updataTimeRange.bind(this);
+    // // this.updateOrderState = this.updateOrderState.bind(this);
     // this.updateScheme = this.updateScheme.bind(this);
   }
   generateVisualization() {
-    // 按api格式拼接日期
-    let startTime =
-      this.state.startDate.replace(/-/g, "/") + "Z" + this.state.startHour;
-    let endTime =
-      this.state.endDate.replace(/-/g, "/") + "Z" + this.state.endHour;
     // load data
     this.props.onGenerate({
-      dataType: this.state.dataType,
-      dataMode: this.state.dataMode,
-      startTime: startTime,
-      endTime: endTime,
+      // filter↓
+      ...this.state.filters,
       visualForm: this.state.visualForm,
-      // TODO: 加上 modelConfig
+      dataMode: this.state.dataMode,
+      partition: this.state.partition,
+      currentClient: this.state.currentClient,
     });
   }
 
   updateVisualForm = (nextVisualForm) => {
     this.setState({ visualForm: nextVisualForm });
   };
-  updateDatatype(e) {
-    this.setState({
-      dataType: e.target.value,
-    });
-  }
+
   updateDatamode(e) {
     this.setState({
       dataMode: e.target.value,
@@ -127,12 +106,14 @@ export default class ControlPanel extends React.PureComponent {
     this.props.onToggleChartError(false);
   }
 
+  updateFilters = (nextFilters) => {
+    this.setState({ filters: nextFilters });
+  };
   updatePrecision(e) {
     this.setState({
       precision: e.target.value,
     });
 
-    // TODO: add api call
     this.props.onChangePrecision(precisionRoundMap[e.target.value]);
   }
 
@@ -171,33 +152,8 @@ export default class ControlPanel extends React.PureComponent {
   };
 
   handleDatasetChange = (value) => {
-    console.log(value);
-    let { dimensionState } = this.state;
-    // console.log(dimensionState);
-
-    switch (value) {
-      case "Urban-Mobility dataset":
-        dimension_taxi.forEach((x, i) => {
-          dimensionState[i] = 0;
-        });
-      // console.log(dimensionState);
-      case "Electronic Health Record Data":
-      // TODO:数据集的维度常量需要先定义并引入
-    }
     this.setState({
       dataset: value,
-      dimensionState: dimensionState,
-    });
-  };
-
-  updateDimensionState = (index) => {
-    let { dimensionState } = this.state;
-    this.setState({
-      dimensionState: [
-        ...dimensionState.slice(0, index),
-        dimensionState[index] === 0 ? 1 : 0,
-        ...dimensionState.slice(index + 1),
-      ],
     });
   };
 
@@ -215,9 +171,9 @@ export default class ControlPanel extends React.PureComponent {
     console.log(e.target.value);
   };
 
-  updateOrderState = (e) => {
-    this.setState({ dataType: e.target.value });
-  };
+  // updateOrderState = (e) => {
+  //   this.setState({ dataType: e.target.value });
+  // };
 
   updatePartition = (e) => {
     this.setState({ partition: e.target.value });
@@ -233,25 +189,6 @@ export default class ControlPanel extends React.PureComponent {
     });
   };
 
-  updataTimeRange(value, dateString) {
-    // console.log("Selected Time: ", value);
-    // console.log(
-    //   "Formatted Selected Time: ",
-    //   dateString[0].split(" "),
-    //   dateString[1]
-    // );
-    this.setState({
-      startDate: dateString[0].split(" ")[0],
-      endDate: dateString[1].split(" ")[0],
-      startHour: dateString[0].split(" ")[1],
-      endHour: dateString[1].split(" ")[1],
-    });
-  }
-
-  onOk(value) {
-    console.log("onOk: ", value);
-  }
-
   render() {
     const { clientOptions } = this;
     const {
@@ -263,7 +200,6 @@ export default class ControlPanel extends React.PureComponent {
 
     const {
       dataset,
-      dimensionState,
       dataType,
       partition,
       precision,
@@ -377,92 +313,9 @@ export default class ControlPanel extends React.PureComponent {
             Query configuration
           </Divider>
 
-          <div className="control-panel__data__item_twoline">
-            <div>Dimension selection:</div>
-            {dataset === "Urban-Mobility dataset"
-              ? dimension_taxi.map((d, i) => (
-                  <span
-                    key={i}
-                    className={
-                      dimensionState[i] === 0
-                        ? "dimensions"
-                        : "dimensions dimensions_checked"
-                    }
-                    onClick={() => {
-                      this.updateDimensionState(i);
-                    }}
-                  >
-                    {d}
-                  </span>
-                ))
-              : null}
-          </div>
+          {/* TODO: 等下再传值，处理 onCHange */}
+          <DimensionAndFilter dataset={dataset} onChange={this.updateFilters} />
 
-          <div className="control-panel__data__item_twoline">
-            <div>Filters:</div>
-            {dimensionState[
-              dimension_taxi.findIndex((item) => item === "time")
-            ] === 1 ? (
-              <div className="control-panel__data__item">
-                <div>time:</div>
-                <RangePicker
-                  showTime={{ format: "HH:mm" }}
-                  format="YYYY-MM-DD HH:mm"
-                  defaultValue={[
-                    moment("2017-05-01 00:00", "YYYY-MM-DD HH:mm"),
-                    moment("2017-10-31 23:00", "YYYY-MM-DD HH:mm"),
-                  ]}
-                  onChange={this.updataTimeRange}
-                  onOk={this.onOk}
-                />
-              </div>
-            ) : null}
-
-            {dimensionState[
-              dimension_taxi.findIndex((item) => item === "latitude")
-            ] === 1 ? (
-              <div className="control-panel__data__item">
-                <div>latitude:</div>
-                <span className="area_range">
-                  {`[` +
-                    (latFrom && parseFloat(latFrom).toFixed(3)) +
-                    `,` +
-                    (latTo && parseFloat(latTo).toFixed(3)) +
-                    `]`}
-                </span>
-                <Slider range defaultValue={[0, 100]} />
-              </div>
-            ) : null}
-
-            {dimensionState[
-              dimension_taxi.findIndex((item) => item === "longitude")
-            ] === 1 ? (
-              <div className="control-panel__data__item">
-                <div>longitude:</div>
-                <span className="area_range">
-                  {`[` +
-                    (lngFrom && parseFloat(lngFrom).toFixed(3)) +
-                    `,` +
-                    (lngTo && parseFloat(lngTo).toFixed(3)) +
-                    `]`}
-                </span>
-                <Slider range defaultValue={[0, 100]} />
-              </div>
-            ) : null}
-
-            {dimensionState[
-              dimension_taxi.findIndex((item) => item === "orderState")
-            ] === 1 ? (
-              <div className="control-panel__data__item">
-                <div>orderState:</div>
-                <Radio.Group value={dataType} onChange={this.updateOrderState}>
-                  {/* TODO：此处的value需要使用state进行控制 */}
-                  <Radio.Button value="start">start</Radio.Button>
-                  <Radio.Button value="end">end</Radio.Button>
-                </Radio.Group>
-              </div>
-            ) : null}
-          </div>
           <div className="control-panel__data__item_twoline">
             <VisualForms
               value={this.state.visualForm}

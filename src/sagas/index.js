@@ -1,5 +1,6 @@
 import { all } from "redux-saga/effects";
 import { watchChartByTimeRange, watchChartByID } from "./chart";
+import { watchClients } from "./client-view";
 import { watchOdmapByTimeRange } from "./odmap";
 import initCalendar from "./calendar";
 import {
@@ -16,6 +17,7 @@ export default function* rootSaga() {
     watchDeleteBarchart(),
     watchAddBarchart(),
     watchCheckProgress(),
+    watchClients(),
     watchChartByID(),
     watchHistogramByID(),
     // watchSelectBarchart()

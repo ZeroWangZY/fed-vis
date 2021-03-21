@@ -31,16 +31,9 @@ class LineChart extends React.Component {
     this.renderByD3();
   };
 
-  mockData = () => {
-    return new Array(10).fill(0).map((_, i) => ({
-      x: i,
-      y: Math.random() * 100,
-    }));
-  };
-
   renderByD3 = () => {
     const { chartSize } = this;
-    const data = this.mockData();
+    const data = this.props.data;
 
     const gChart = d3.select(this.node);
 

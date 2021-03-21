@@ -15,7 +15,6 @@ import Apis from "../api/apis";
 import { get } from "../api/tools";
 
 function* updateChart({ query }) {
-  // TODO: 这里斟酌一下，应该要改
   const precisionRound = yield select((state) => state.precisionRound);
   const params = {
     ...query,

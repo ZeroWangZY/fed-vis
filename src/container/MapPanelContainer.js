@@ -1,5 +1,6 @@
 import { connect } from "react-redux";
 import MapPanel from "components/map/MapPanel";
+import { toggleChartError } from "actions/chart";
 
 const mapStateToProps = (state) => {
   return {
@@ -21,6 +22,9 @@ const mapDispatchToProps = (dispatch) => {
     // onDeleteRect: (index) => {
     //   // dispatch(deleteBarchart(index));
     // },
+    onToggleChartError: (useError) => {
+      dispatch(toggleChartError(useError));
+    },
   };
 };
 

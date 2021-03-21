@@ -5,8 +5,10 @@ import {
   shouldChartPoll,
   chartProgress,
   chartDataId,
+  currentClient,
 } from "./chartData";
 import odmapData from "./odmapData";
+import { clientInfo } from "./client";
 // import { calendarData, calendarProgress } from './calendarData';
 import { bbox, visualForm, precisionRound } from "./base";
 // import { barchartData, highlightId, aggregateHour, shouldHistogramPoll, histogramProgress, histogramDataId, histogramIndex } from './barchartData';
@@ -22,6 +24,8 @@ const rootReducer = combineReducers({
   bbox,
   visualForm,
   precisionRound,
+  clientInfo,
+  currentClient,
   // startTime,
   // endTime,
   // barchartData,
