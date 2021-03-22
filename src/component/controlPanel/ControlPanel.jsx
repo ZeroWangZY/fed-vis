@@ -11,7 +11,7 @@ const { Option } = Select;
 const CheckboxGroup = Checkbox.Group;
 
 const precisionRoundMap = {
-  low: 50,
+  low: 60,
   medium: 150,
   high: 300,
 };
