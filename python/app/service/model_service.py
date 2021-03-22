@@ -7,12 +7,20 @@ from keras.models import Sequential
 from keras.backend.tensorflow_backend import set_session
 from keras.backend.tensorflow_backend import clear_session
 from keras.backend.tensorflow_backend import get_session
-from app.api.data import set_progress
+from app.api.data import set_progress, set_new_data
+from .tools import test_accuracy
+from app.dao.common import size_param, num_client
 
 import tensorflow
 import gc
 import random
 
+MIN_LNG = 110.14
+MAX_LNG = 110.520
+MIN_LAT = 19.902
+MAX_LAT = 20.070
+LNG_SIZE = int((MAX_LNG - MIN_LNG) * size_param) + 1
+LAT_SIZE = int((MAX_LAT - MIN_LAT) * size_param) + 1
 
 def get_model(embedding_size, input_length=1, layers=1, width=64):
     model = Sequential()
@@ -59,7 +67,11 @@ class LossHistory(callbacks.Callback):
     def on_batch_end(self, batch, logs={}):
         self.loss = np.asscalar(logs.get('loss'))
 
-def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800, base_round=0, max_round=100, id='id'):
+def pruner(x):
+    if x < 0:
+        return 0
+    return int(x)
+def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800, base_round=0, max_round=100, id='id', mean=0, std=0,ground_true=None):
     global_weights = model.get_weights()
     for r in range(round):
         print('round ', r)
@@ -71,6 +83,46 @@ def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800, base_round=0, m
             model.fit(x, ys[i], epochs=epoch, batch_size=batch, callbacks=[history])
             losses.append(history.loss)
             weights_set.append(model.get_weights())
+        if (r + base_round + 1) % 15 == 0:
+            _r = r + base_round
+            model.set_weights(global_weights) 
+            res = predict(model, mean, std, x, num_client)
+            res = np.array([pruner(v) for v in res.round().astype(np.int32)
+                    ]).reshape(LNG_SIZE, LAT_SIZE).tolist()
+            normalHeatmap = ground_true.reshape(LNG_SIZE, LAT_SIZE).tolist()
+            errorHeatmap = np.abs(np.array(res) - np.array(normalHeatmap)).tolist()
+            l = [];
+            for i in range(len(ys)):
+                l.append(losses[i])         
+            data = {
+                "round": _r,
+                "server": {
+                    "diagram_data": [res, errorHeatmap],
+                    "re": test_accuracy(res, normalHeatmap),
+                    "loss": l,
+                    "ground_true": ground_true.tolist()
+                }
+            }
+            print(type(res), type(errorHeatmap), type(test_accuracy(res, normalHeatmap)), type(l), type(ground_true))
+            clients = []
+            for i in range(len(ys)):
+                model.set_weights(weights_set[i]) 
+                res = predict(model, mean, std, x, num_client)
+                res = np.array([pruner(v) for v in res.round().astype(np.int32)
+                        ]).reshape(LNG_SIZE, LAT_SIZE).tolist()
+                normalHeatmap = ys[i].reshape(LNG_SIZE, LAT_SIZE).tolist()
+                errorHeatmap = np.abs(np.array(res) - np.array(normalHeatmap)).tolist()
+                clients.append({
+                    "id": str(i),
+                    "diagram_data": [res, errorHeatmap],
+                    "re": test_accuracy(res, normalHeatmap),
+                    "loss": losses[i],
+                    "ground_true": normalHeatmap
+                })
+                print(type(res), type(errorHeatmap), type(test_accuracy(res, normalHeatmap)), type(losses[i]), type(normalHeatmap))
+            data['clients'] = clients
+            set_new_data(id, data)
+            
         set_progress(id, r+base_round, max_round, losses, False)
         print('weights aggregation')
         if len(weights_set) != 0:

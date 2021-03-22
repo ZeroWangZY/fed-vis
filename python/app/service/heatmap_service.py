@@ -85,7 +85,7 @@ def get_heatmap_with_fed_learning(start_time, end_time, type_, id, round=150):
               # optimizer=optimizers.Adam(lr=0.008),
               metrics=['mse'])
     fl_start_time1 = time.time()
-    train_model_fed(model1, x, y, round=half_round, epoch=1, batch=128000, base_round=0, max_round=round, id=id)
+    train_model_fed(model1, x, y, round=half_round, epoch=1, batch=128000, base_round=0, max_round=round, id=id, mean=mean, std=std, ground_true=ground_true)
     fl_end_time1 = time.time()
 
     model2 = get_model(LNG_SIZE * LAT_SIZE, layers=1)
@@ -95,7 +95,7 @@ def get_heatmap_with_fed_learning(start_time, end_time, type_, id, round=150):
               metrics=['mse'])
     model2.set_weights(model1.get_weights())
     fl_start_time2 = time.time()
-    train_model_fed(model2, x, y, round=half_round, epoch=1, batch=128000, base_round=half_round, max_round=round, id=id)
+    train_model_fed(model2, x, y, round=half_round, epoch=1, batch=128000, base_round=half_round, max_round=round, id=id, mean=mean, std=std, ground_true=ground_true)
     fl_end_time2 = time.time()
     print("fl training cost: {} s".format(fl_end_time1 - fl_start_time1 + fl_end_time2 - fl_start_time2))
 

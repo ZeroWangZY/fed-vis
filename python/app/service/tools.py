@@ -17,7 +17,7 @@ def calc_are(p, q):
 def test_accuracy(p, q):
     p = np.array(p).flatten()
     q = np.array(q).flatten()
-    print(p,q)
+    # print(p,q)
     JSD = distance.jensenshannon(p, q, 2.0)
     EMD = wasserstein_distance(p, q)
     ARE = calc_are(p, q)
@@ -25,4 +25,5 @@ def test_accuracy(p, q):
     diff = np.abs(p - q)
     max_sum = q.sum() if q.sum() > p.sum() else p.sum()
 
-    print("accuray: JSD - {}; EMD - {}, ARE - {}, zyARE - {}".format(JSD, EMD, ARE, diff.sum() / max_sum))
+    # print("accuray: JSD - {}; EMD - {}, ARE - {}, zyARE - {}".format(JSD, EMD, ARE, diff.sum() / max_sum))
+    return float(ARE)
