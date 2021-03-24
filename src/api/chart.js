@@ -26,7 +26,7 @@ export const getChart = (params) => {
     config: {
       params: {
         // visualForm↓
-        visualForm,
+        visual_form: visualForm,
         // model config↓
         // filter↓
         lat_from: params.latFrom,
