@@ -4,17 +4,34 @@ from app import app
 from flask import request
 from .response import gen_response, cors
 from app.service.dp import laplace_mech
+import json
+import datetime
+import numpy as np
+from app.dao.common import size_param, num_client
+
+from app.service.tools import test_accuracy
+
+import sys
+
+MIN_LNG = 110.14
+MAX_LNG = 110.520
+MIN_LAT = 19.902
+MAX_LAT = 20.070
+LNG_SIZE = int((MAX_LNG - MIN_LNG) * size_param) + 1
+LAT_SIZE = int((MAX_LAT - MIN_LAT) * size_param) + 1
 
 res_data_map = {}
 progress_info_map = {}
 
 new_data_map = {}
 
+
 def add_res_data(id, data):
     global res_data_map
     global progress_info_map
     set_progress(id, 0, 0, None, True)
     res_data_map[id] = data
+
 
 def set_progress(id, current_round, max_round, losses, done):
     global res_data_map
@@ -47,12 +64,14 @@ def set_progress(id, current_round, max_round, losses, done):
                 "done": done
             }
 
+
 def set_new_data(id, d):
     global new_data_map
     if new_data_map.get(id) == None:
         new_data_map[id] = [d]
     else:
         new_data_map[id].append(d)
+
 
 def gen_id():
     return ''.join(random.sample(string.ascii_letters + string.digits, 8))
@@ -80,7 +99,8 @@ def get_data():
     data = res_data_map[id]
     del res_data_map[id]
     del progress_info_map[id]
-    return gen_response(laplace_mech(data,epsilon=1))
+    return gen_response(laplace_mech(data, epsilon=1))
+
 
 @app.route('/api/new_data')
 @cors
@@ -93,4 +113,43 @@ def get_new_data():
         return gen_response(new_data_map)
     data = new_data_map[id]
     del new_data_map[id]
+    return gen_response(data)
+
+
+@app.route('/api/new_get_data')
+@cors
+def new_get_data():
+    params = request.args
+    visual_form = params.get('visual_form')
+    start_time = params.get('start_time')
+    end_time = params.get('end_time')
+    mode = params.get('mode')
+    data = None
+    if visual_form == 'two_dimension_map' and start_time != None and end_time != None:
+        start_time = datetime.datetime.strptime(start_time, '%Y/%m/%dZ%H:%M')
+        end_time = datetime.datetime.strptime(end_time, '%Y/%m/%dZ%H:%M')
+        if start_time.month == end_time.month:
+            with open(f'heatmap-{end_time.month}.json', 'r') as f:
+                data = json.load(f)
+        else:
+            with open('heatmap300.json', 'r') as f:
+                data = json.load(f)
+        if mode == 'fitting':
+            return data
+        if mode == 'normal':
+            data = data[:1]
+            data[0]['round'] = 0
+            data[0]['server'] = {
+                "diagram_data": [
+                    np.array(data[0]['server']['ground_true']).reshape(
+                        LNG_SIZE, LAT_SIZE).tolist(),
+                    np.zeros((LNG_SIZE, LAT_SIZE)).tolist()
+                ],
+                "re": 0,
+                "loss": []
+            }
+            clients = []
+            for i in range(num_client):
+                data[0]['server']
+
     return gen_response(data)
