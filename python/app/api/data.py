@@ -8,7 +8,7 @@ import json
 import datetime
 import numpy as np
 from app.dao.common import size_param, num_client
-from app.common.data_processing import get_normal_heatmap, get_origin_heatmap
+from app.common.data_processing import get_normal_heatmap, get_origin_heatmap, get_normal_polar, get_origin_polar
 from app.service.tools import test_accuracy
 
 import sys
@@ -140,5 +140,14 @@ def new_get_data():
             return get_normal_heatmap(data)
         else:
             return get_origin_heatmap(data)
+    elif visual_form == 'two_dimension_polar':
+        with open('data/polar-heatmap.json', 'r') as f:
+            data = json.load(f)
+        if mode == 'fitting':
+            return data
+        elif mode == 'normal':
+            return get_normal_polar(data)
+        else:
+            return get_origin_polar(data)
 
     return data

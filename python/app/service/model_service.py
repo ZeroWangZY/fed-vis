@@ -88,8 +88,8 @@ def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800, base_round=0, m
             model.set_weights(global_weights) 
             res = predict(model, mean, std, x, num_client)
             res = np.array([pruner(v) for v in res.round().astype(np.int32)
-                    ]).reshape(LNG_SIZE, LAT_SIZE).tolist()
-            normalHeatmap = ground_true.reshape(LNG_SIZE, LAT_SIZE).tolist()
+                    ]).reshape(7, 24).tolist()
+            normalHeatmap = ground_true.reshape(7, 24).tolist()
             errorHeatmap = np.abs(np.array(res) - np.array(normalHeatmap)).tolist()
             l = [];
             for i in range(len(ys)):
@@ -100,7 +100,7 @@ def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800, base_round=0, m
                     "diagram_data": [res, errorHeatmap],
                     "re": test_accuracy(res, normalHeatmap),
                     "loss": l,
-                    "ground_true": ground_true.tolist()
+                    "ground_true": normalHeatmap
                 }
             }
             print(type(res), type(errorHeatmap), type(test_accuracy(res, normalHeatmap)), type(l), type(ground_true))
@@ -109,8 +109,8 @@ def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800, base_round=0, m
                 model.set_weights(weights_set[i]) 
                 res = predict(model, mean, std, x, num_client)
                 res = np.array([pruner(v) for v in res.round().astype(np.int32)
-                        ]).reshape(LNG_SIZE, LAT_SIZE).tolist()
-                normalHeatmap = ys[i].reshape(LNG_SIZE, LAT_SIZE).tolist()
+                        ]).reshape(7, 24).tolist()
+                normalHeatmap = ys[i].reshape(7, 24).tolist()
                 errorHeatmap = np.abs(np.array(res) - np.array(normalHeatmap)).tolist()
                 clients.append({
                     "id": str(i),
