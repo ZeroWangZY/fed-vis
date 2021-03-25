@@ -8,7 +8,7 @@ import json
 import datetime
 import numpy as np
 from app.dao.common import size_param, num_client
-
+from app.common.data_processing import get_normal_heatmap, get_origin_heatmap
 from app.service.tools import test_accuracy
 
 import sys
@@ -129,27 +129,16 @@ def new_get_data():
         start_time = datetime.datetime.strptime(start_time, '%Y/%m/%dZ%H:%M')
         end_time = datetime.datetime.strptime(end_time, '%Y/%m/%dZ%H:%M')
         if start_time.month == end_time.month:
-            with open(f'heatmap-{end_time.month}.json', 'r') as f:
+            with open(f'data/heatmap-{end_time.month}.json', 'r') as f:
                 data = json.load(f)
         else:
-            with open('heatmap300.json', 'r') as f:
+            with open('data/heatmap-all.json', 'r') as f:
                 data = json.load(f)
         if mode == 'fitting':
             return data
-        if mode == 'normal':
-            data = data[:1]
-            data[0]['round'] = 0
-            data[0]['server'] = {
-                "diagram_data": [
-                    np.array(data[0]['server']['ground_true']).reshape(
-                        LNG_SIZE, LAT_SIZE).tolist(),
-                    np.zeros((LNG_SIZE, LAT_SIZE)).tolist()
-                ],
-                "re": 0,
-                "loss": []
-            }
-            clients = []
-            for i in range(num_client):
-                data[0]['server']
+        elif mode == 'normal':
+            return get_normal_heatmap(data)
+        else:
+            return get_origin_heatmap(data)
 
-    return gen_response(data)
+    return data
