@@ -88,8 +88,8 @@ def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800, base_round=0, m
             model.set_weights(global_weights) 
             res = predict(model, mean, std, x, num_client)
             res = np.array([pruner(v) for v in res.round().astype(np.int32)
-                    ]).reshape(7, 24).tolist()
-            normalHeatmap = ground_true.reshape(7, 24).tolist()
+                    ]).reshape(10, 5, 10, 5).tolist()
+            normalHeatmap = ground_true.reshape(10, 5, 10, 5).tolist()
             errorHeatmap = np.abs(np.array(res) - np.array(normalHeatmap)).tolist()
             l = [];
             for i in range(len(ys)):
@@ -109,8 +109,8 @@ def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800, base_round=0, m
                 model.set_weights(weights_set[i]) 
                 res = predict(model, mean, std, x, num_client)
                 res = np.array([pruner(v) for v in res.round().astype(np.int32)
-                        ]).reshape(7, 24).tolist()
-                normalHeatmap = ys[i].reshape(7, 24).tolist()
+                        ]).reshape(10, 5, 10, 5).tolist()
+                normalHeatmap = ys[i].reshape(10, 5, 10, 5).tolist()
                 errorHeatmap = np.abs(np.array(res) - np.array(normalHeatmap)).tolist()
                 clients.append({
                     "id": str(i),
@@ -137,6 +137,17 @@ def gen_x(size_1, size_2):
         for latitude in range(size_2):
             x = np.append(x, [count])
             count += 1
+    return x[1:]
+
+def gen_x_four_dim(size_1, size_2, size_3, size_4):
+    x = [[0]]
+    count = 0
+    for _a in range(size_1):
+        for _b in range(size_2):
+            for _c in range(size_3):
+                for _d in range(size_4):
+                    x = np.append(x, [count])
+                    count += 1
     return x[1:]
 
 

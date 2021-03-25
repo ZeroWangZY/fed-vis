@@ -8,7 +8,7 @@ import json
 import datetime
 import numpy as np
 from app.dao.common import size_param, num_client
-from app.common.data_processing import get_normal_heatmap, get_origin_heatmap, get_normal_polar, get_origin_polar
+from app.common.data_processing import get_normal_heatmap, get_origin_heatmap, get_normal_polar, get_origin_polar, get_normal_odmap, get_origin_odmap
 from app.service.tools import test_accuracy
 
 import sys
@@ -149,5 +149,14 @@ def new_get_data():
             return get_normal_polar(data)
         else:
             return get_origin_polar(data)
+    elif visual_form == 'four_dimension':
+        with open('data/odmap.json', 'r') as f:
+            data = json.load(f)
+        if mode == 'fitting':
+            return data
+        elif mode == 'normal':
+            return get_normal_odmap(data)
+        else:
+            return get_origin_odmap(data)
 
     return data

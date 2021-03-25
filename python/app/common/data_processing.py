@@ -120,3 +120,56 @@ def get_normal_polar(data):
         clients[i]['diagram_data'][1] = error_data
         clients[i]['re'] = re
     return data
+
+def get_origin_odmap(data):
+    data = data['data'][:1]
+    data[0]['round'] = 0
+    data[0]['server'] = {
+        "diagram_data": [
+            np.array(data[0]['server']['ground_true']).reshape(10, 5, 10, 5).tolist(),
+            np.zeros((10, 5, 10, 5)).tolist()
+        ],
+        "re":
+        0,
+        "loss": []
+    }
+    clients = []
+    for i in range(num_client):
+        clients.append({
+            'id':
+            i,
+            'diagram_data':
+            [data[0]['clients'][i]['ground_true'],
+             np.zeros((10, 5, 10, 5)).tolist()],
+            're':
+            0,
+            'loss':
+            0
+        })
+    data[0]['clients'] = clients
+    return {'data': data}
+
+
+def get_normal_odmap(data):
+    data = get_origin_odmap(data)
+    clients = data['data'][0]['clients']
+    server = data['data'][0]['server']
+
+    origin_data = server['diagram_data'][0]
+    normal_data = laplace_mech(origin_data, epsilon=1)
+    error_data = np.abs(np.array(origin_data) - np.array(normal_data)).tolist()
+    re = test_accuracy(origin_data, normal_data)
+    server['diagram_data'][0] = normal_data
+    server['diagram_data'][1] = error_data
+    server['re'] = re
+
+    for i in range(num_client):
+        origin_data = clients[i]['diagram_data'][0]
+        normal_data = laplace_mech(origin_data, epsilon=1)
+        error_data = np.abs(np.array(origin_data) -
+                            np.array(normal_data)).tolist()
+        re = test_accuracy(origin_data, normal_data)
+        clients[i]['diagram_data'][0] = normal_data
+        clients[i]['diagram_data'][1] = error_data
+        clients[i]['re'] = re
+    return data
