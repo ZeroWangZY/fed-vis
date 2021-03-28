@@ -26,13 +26,24 @@ def get_cancer_treemap():
         data = json.load(f)
         clients_data, all_data, categories_map = data['clients_data'], data[
             'all_data'], data['categories_map']
-        server = get_treemap(all_data,
-                             categories_map,
-                             sex=sex,
-                             race=race,
-                             region=region,
-                             state=state,
-                             need_diff=(mode == 'normal'))
+        server = {
+            'value':
+            get_treemap(all_data,
+                        categories_map,
+                        sex=sex,
+                        race=race,
+                        region=region,
+                        state=state,
+                        need_diff=(mode == 'normal')),
+            'ground_true':
+            get_treemap(all_data,
+                        categories_map,
+                        sex=sex,
+                        race=race,
+                        region=region,
+                        state=state,
+                        need_diff='normal')
+        }
         clients = []
         for d in clients_data:
             clients.append(
@@ -64,6 +75,7 @@ def get_barchart():
                                      sex=sex,
                                      race=race,
                                      need_diff=(mode == 'normal'))
+
         clients = []
         for d in clients_data:
             clients.append(

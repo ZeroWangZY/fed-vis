@@ -80,6 +80,8 @@ def get_cancer_barchart(data,
     for key in region_keys:
         res.append(list(counts[key].values()))
 
+    origin_res = res.copy()
+
     if need_diff:
         new_res = laplace_mech(res, epsilon=1)
         re = test_accuracy(res, new_res)
@@ -89,5 +91,6 @@ def get_cancer_barchart(data,
         're': re,
         'region_keys': region_keys,
         'category_keys': category_keys,
-        'values': res
+        'values': res,
+        'ground_true': origin_res
     }

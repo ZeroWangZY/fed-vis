@@ -71,6 +71,8 @@ def set_new_data(id, d):
         new_data_map[id] = [d]
     else:
         new_data_map[id].append(d)
+    if len(new_data_map[id]) == 20:
+        print(0)
 
 
 def gen_id():
