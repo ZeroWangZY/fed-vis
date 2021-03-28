@@ -14,11 +14,31 @@ import api from "api";
 import Apis from "../api/apis";
 import { get } from "../api/tools";
 
+// function* updateChart({ query }) {
+//   const precisionRound = yield select((state) => state.precisionRound);
+//   const params = {
+//     round: precisionRound,
+//     ...query,
+//   };
+//   const { chartDataId } = yield all({
+//     chartDataId: call(api.getChart, params),
+//   });
+
+//   yield put({ type: SAVE_CHART_DATA_ID, chartDataId });
+//   yield put({ type: TRIGGER_CHART_POLL, shouldPoll: true });
+
+//   // yield put({ type: SHOW_CHART, chartData });
+//   yield put({
+//     type: SAVE_VISUAL_FORM,
+//     visualForm: query.visualForm,
+//   });
+// }
+
 function* updateChart({ query }) {
   const precisionRound = yield select((state) => state.precisionRound);
   const params = {
-    ...query,
     round: precisionRound,
+    ...query,
   };
   const { chartDataId } = yield all({
     chartDataId: call(api.getChart, params),

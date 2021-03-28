@@ -1,17 +1,11 @@
 import React, { useMemo } from "react";
 import { Tag } from "antd";
-import { dimension_taxi } from "util/const";
+import { dimension_cancer } from "util/const";
 
 const { CheckableTag } = Tag;
 
-export default function ({ dataset, value, onChange }) {
-  const dimensionList = useMemo(() => {
-    if (dataset === "Urban-Mobility dataset") {
-      return dimension_taxi;
-    }
-    // TODO: 针对拎一个数据集定制 dimension taxi
-    return null;
-  }, [dataset]);
+export default function ({ value, onChange }) {
+  const dimensionList = dimension_cancer;
 
   const handleChange = (dimension, checked) => {
     onChange({

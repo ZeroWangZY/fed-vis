@@ -27,7 +27,7 @@ export function deleteBarchart(id) {
 }
 
 export function selectBarchart(id) {
-  debugger;
+  // debugger;
   return {
     type: SELECT_BARCHART,
     id,

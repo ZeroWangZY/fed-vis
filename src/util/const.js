@@ -22,3 +22,25 @@ export const dimension_taxi = [
   "longitude",
   "orderState",
 ];
+
+export const dimension_cancer = [
+  "Cancer Site",
+  "Region",
+  "State",
+  "Sex",
+  "Race",
+  "Year",
+];
+
+export const dimension_movie = [
+  "MovieID",
+  "Title",
+  "Genres",
+  "UserID",
+  "Rating",
+  "Timestap",
+  "Gender",
+  "Age",
+  "Occupation",
+  "Zip-code",
+];

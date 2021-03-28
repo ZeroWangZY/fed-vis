@@ -3,7 +3,7 @@ import Dimension from "./Dimension";
 import { connect } from "react-redux";
 import Filters from "./Filters";
 
-export function DimensionAndFilter({ bbox, dataset, onChange }) {
+export function DimensionAndFilterMovie({ bbox, onChange }) {
   const [filters, _setFilters] = useState({});
   const [dimensions, setDimensions] = useState([]);
   useEffect(() => {
@@ -14,7 +14,7 @@ export function DimensionAndFilter({ bbox, dataset, onChange }) {
       endDate: "2017-10-31 23:00",
       ...bbox,
     });
-  }, [dataset]);
+  }, []);
   // bbox 更改后，重置 bbox 的值
   useEffect(() => {
     handleFiltersChange({
@@ -30,13 +30,8 @@ export function DimensionAndFilter({ bbox, dataset, onChange }) {
     <>
       <div className="control-panel__data__item_twoline">
         <div>Dimension selection:</div>
-        {dataset ? (
-          <Dimension
-            dataset={dataset}
-            value={dimensions}
-            onChange={setDimensions}
-          />
-        ) : null}
+
+        <Dimension value={dimensions} onChange={setDimensions} />
       </div>
       <Filters
         dimensions={dimensions}
@@ -52,4 +47,4 @@ const mapStateToProps = (state) => {
     bbox: state.bbox,
   };
 };
-export default connect(mapStateToProps)(DimensionAndFilter);
+export default connect(mapStateToProps)(DimensionAndFilterMovie);

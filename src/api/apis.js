@@ -10,6 +10,10 @@ const Apis = {
   get_data: "api/data",
   // TODO
   get_client_info: "",
+  get_cancer_treemap: "/api/cancer/treemap",
+  get_cancer_barchart: "/api/cancer/barchart",
+  get_movie: "",
+  get_urban: "/api/new_get_data",
 };
 
 export default Apis;

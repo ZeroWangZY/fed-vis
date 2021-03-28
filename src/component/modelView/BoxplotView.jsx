@@ -284,7 +284,7 @@ class BoxplotView extends React.Component {
             />
           ))}
         </svg>
-        <Slider
+        {/* <Slider
           range
           value={[1, 10]}
           max={maxRound}
@@ -293,7 +293,7 @@ class BoxplotView extends React.Component {
           style={{
             margin: "0 30px 0 60px",
           }}
-        />
+        /> */}
       </div>
     );
   }

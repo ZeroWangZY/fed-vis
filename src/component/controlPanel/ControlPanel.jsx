@@ -6,7 +6,10 @@ import { Checkbox, Row, Col } from "antd";
 import "antd/lib/switch/style/index.css";
 import "antd/lib/select/style/index.css";
 import VisualForms from "./mod/VisualForms";
-import DimensionAndFilter from "./mod/DimensionAndFilter";
+import DimensionAndFilterUrban from "./mod/DimensionAndFilterUrban";
+import DimensionAndFilterCancer from "./mod/DimensionAndFilterCancer";
+import DimensionAndFilterMovie from "./mod/DimensionAndFilterMovie";
+import DimensionIcon from "./mod/DimensionIcon";
 const { Option } = Select;
 const CheckboxGroup = Checkbox.Group;
 
@@ -66,6 +69,7 @@ export default class ControlPanel extends React.PureComponent {
       currentClient: [],
       filters: {},
       visualForm: "heatmap",
+      visualFormDimension: "two_dimension_map",
     };
 
     this.clientOptions = ["3", "4", "5", "6", "7", "8"];
@@ -87,14 +91,18 @@ export default class ControlPanel extends React.PureComponent {
       // filter↓
       ...this.state.filters,
       visualForm: this.state.visualForm,
+      visualFormDimension: this.state.visualFormDimension,
       dataMode: this.state.dataMode,
       partition: this.state.partition,
       currentClient: this.state.currentClient,
     });
   }
 
-  updateVisualForm = (nextVisualForm) => {
-    this.setState({ visualForm: nextVisualForm });
+  updateVisualForm = ({ type, dimension }) => {
+    this.setState({
+      visualForm: type,
+      visualFormDimension: dimension,
+    });
   };
 
   updateDatamode(e) {
@@ -233,8 +241,11 @@ export default class ControlPanel extends React.PureComponent {
               <Option value="Urban-Mobility dataset">
                 Urban-Mobility dataset
               </Option>
-              <Option value="Electronic Health Record Data">
-                Electronic Health Record Data
+              <Option value="The United States Cancer Statistics dataset">
+                The United States Cancer Statistics dataset
+              </Option>
+              <Option value="The MovieLens dataset">
+                The MovieLens dataset
               </Option>
             </Select>
           </div>
@@ -279,33 +290,27 @@ export default class ControlPanel extends React.PureComponent {
               <Radio.Button value="decentralized">decentralized</Radio.Button>
             </Radio.Group>
           </div>
-          <div className="control-panel__data__item">
-            <div>Partition granularity:</div>
-            <Radio.Group value={partition} onChange={this.updatePartition}>
-              {/* TODO：此处的value需要使用state进行控制 */}
-              <Radio.Button value="coarse">coarse</Radio.Button>
-              <Radio.Button value="medium">medium</Radio.Button>
-              <Radio.Button value="fine">fine</Radio.Button>
-            </Radio.Group>
-          </div>
 
-          <div className="control-panel__data__item">
-            <div>Expected precision:</div>
-            <Radio.Group value={precision} onChange={this.updatePrecision}>
-              {/* TODO：此处的value需要使用state进行控制 */}
-              <Radio.Button value="low">low</Radio.Button>
-              <Radio.Button value="medium">medium</Radio.Button>
-              <Radio.Button value="high">high</Radio.Button>
-            </Radio.Group>
-          </div>
+          {dataMode === "fitting" ? (
+            <>
+              <div className="control-panel__data__item">
+                <div>Expected precision:</div>
+                <Radio.Group value={precision} onChange={this.updatePrecision}>
+                  <Radio.Button value="low">low</Radio.Button>
+                  <Radio.Button value="medium">medium</Radio.Button>
+                  <Radio.Button value="high">high</Radio.Button>
+                </Radio.Group>
+              </div>
 
-          <div className="control-panel__data__item_twoline">
-            <div>Training parameter:</div>
-            <span className="trainingParam">learning rate: 0.055</span>
-            <span className="trainingParam">batch size: 12800</span>
-            <span className="trainingParam">training round: 50</span>
-            <span className="trainingParam">training epoch: 1</span>
-          </div>
+              <div className="control-panel__data__item_twoline">
+                <div>Training parameter:</div>
+                <span className="trainingParam">learning rate: 0.055</span>
+                <span className="trainingParam">batch size: 12800</span>
+                <span className="trainingParam">training round: 50</span>
+                <span className="trainingParam">training epoch: 1</span>
+              </div>
+            </>
+          ) : null}
 
           <Divider
             style={{ fontSize: "18px", fontWeight: "bold", margin: "10px 0" }}
@@ -314,14 +319,37 @@ export default class ControlPanel extends React.PureComponent {
           </Divider>
 
           {/* TODO: 等下再传值，处理 onCHange */}
-          <DimensionAndFilter dataset={dataset} onChange={this.updateFilters} />
+          {
+            {
+              "Urban-Mobility dataset": (
+                <DimensionAndFilterUrban onChange={this.updateFilters} />
+              ),
+              "The United States Cancer Statistics dataset": (
+                <DimensionAndFilterCancer onChange={this.updateFilters} />
+              ),
+              "The MovieLens dataset": (
+                <DimensionAndFilterMovie onChange={this.updateFilters} />
+              ),
+            }[dataset]
+          }
 
           <div className="control-panel__data__item_twoline">
             <VisualForms
               value={this.state.visualForm}
-              onChange={this.updateVisualForm}
+              onSelect={this.updateVisualForm}
             />
           </div>
+
+          <div className="control-panel__data__item">
+            <div>Partition granularity:</div>
+            <DimensionIcon dimension={this.state.visualFormDimension} />
+            <Radio.Group value={partition} onChange={this.updatePartition}>
+              <Radio.Button value="coarse">coarse</Radio.Button>
+              <Radio.Button value="medium">medium</Radio.Button>
+              <Radio.Button value="fine">fine</Radio.Button>
+            </Radio.Group>
+          </div>
+
           <div className="control-panel__data__item">
             <button className="load-btn" onClick={this.generateVisualization}>
               Generate Visualization
