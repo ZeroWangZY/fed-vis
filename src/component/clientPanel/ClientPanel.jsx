@@ -5,10 +5,12 @@ import ClientCard from "../clientPanel/ClientCard";
 
 function clientStateToProps(state) {
   return {
-    currentClient: state.currentClient,
+    // currentClient: state.currentClient,
     // dataset: state.barchartData,
     // aggregateHour: state.aggregateHour,
     // highlightId: state.highlightId,
+    visualForm: state.visualForm,
+    clientInfo: state.clientInfo,
   };
 }
 
@@ -26,14 +28,15 @@ class ClientPanel extends React.PureComponent {
   }
 
   render() {
-    const clientArray = this.props.currentClient;
+    // const clientArray = this.props.currentClient;
+    const { clientInfo: {clients, round}, visualForm } = this.props;
 
     return (
       <div id="client-content">
         <div className="panel-title">Client view</div>
         <div className="panel-body">
-          {clientArray.map((no) => (
-            <ClientCard key={no} clientNo={no} />
+          {clients.map((client) => (
+            <ClientCard key={client.id} {...client} visualForm={visualForm} currentRound={round} />
           ))}
         </div>
       </div>
