@@ -26,24 +26,21 @@ def get_cancer_treemap():
         data = json.load(f)
         clients_data, all_data, categories_map = data['clients_data'], data[
             'all_data'], data['categories_map']
-        server = {
-            'value':
-            get_treemap(all_data,
-                        categories_map,
-                        sex=sex,
-                        race=race,
-                        region=region,
-                        state=state,
-                        need_diff=(mode == 'normal')),
-            'ground_true':
-            get_treemap(all_data,
-                        categories_map,
-                        sex=sex,
-                        race=race,
-                        region=region,
-                        state=state,
-                        need_diff='normal')
-        }
+        all_data = {}
+        for i in range(8):
+            for k in clients_data[i]:
+                if k in all_data:
+                    all_data[k][6] += clients_data[i][k][6]
+                else:
+                    all_data[k] = clients_data[i][k]
+        server = get_treemap(all_data,
+                             categories_map,
+                             sex=sex,
+                             race=race,
+                             region=region,
+                             state=state,
+                             need_diff=(mode == 'normal'))
+
         clients = []
         for d in clients_data:
             clients.append(
@@ -69,6 +66,13 @@ def get_barchart():
         data = json.load(f)
         clients_data, all_data, categories_map = data['clients_data'], data[
             'all_data'], data['categories_map']
+        all_data = {}
+        for i in range(8):
+            for k in clients_data[i]:
+                if k in all_data:
+                    all_data[k][6] += clients_data[i][k][6]
+                else:
+                    all_data[k] = clients_data[i][k]
         server = get_cancer_barchart(all_data,
                                      category,
                                      categories_map,

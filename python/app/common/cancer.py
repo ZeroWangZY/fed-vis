@@ -5,7 +5,14 @@ import os
 from app.service.dp import laplace_mech
 from app.service.tools import test_accuracy
 
-def get_treemap(data, categories_map, need_diff=False, region=None, state=None, sex=None, race=None):
+
+def get_treemap(data,
+                categories_map,
+                need_diff=False,
+                region=None,
+                state=None,
+                sex=None,
+                race=None):
     keys = list(categories_map.keys())
     counts = {}
     for key in keys:
@@ -27,19 +34,32 @@ def get_treemap(data, categories_map, need_diff=False, region=None, state=None, 
 
     # 差分
     re = 0
+    new_counts = counts.copy()
+    error_counts = counts.copy()
     if need_diff:
         values = list(counts.values())
         new_values = laplace_mech(values, epsilon=1)
+        error_values = np.abs(np.array(values) - np.array(new_values)).tolist()
         re = test_accuracy(values, new_values)
         keys = list(counts.keys())
         for i in range(len(keys)):
-            counts[keys[i]] = new_values[i]
-    
-    tree = {}
+            new_counts[keys[i]] = new_values[i]
+            error_counts[keys[i]] = error_values[i]
+    else:
+        for k in error_counts:
+            error_counts[k] = 0
+
+    value_tree = {}
+    error_tree = {}
+    ground_true_tree = {}
     for key in counts:
-        if categories_map[key] not in tree:
-            tree[categories_map[key]] = {}
-        tree[categories_map[key]][key] = counts[key]
+        if categories_map[key] not in value_tree:
+            value_tree[categories_map[key]] = {}
+            error_tree[categories_map[key]] = {}
+            ground_true_tree[categories_map[key]] = {}
+        value_tree[categories_map[key]][key] = new_counts[key]
+        error_tree[categories_map[key]][key] = error_counts[key]
+        ground_true_tree[categories_map[key]][key] = counts[key]
 
     def build_res(node):
         ret = []
@@ -49,8 +69,24 @@ def get_treemap(data, categories_map, need_diff=False, region=None, state=None, 
             else:
                 ret.append({'name': key, 'children': build_res(node[key])})
         return ret
-    res = {'name': 'root', 'children': build_res(tree), 're': re}
+
+    res = {
+        're':
+        re,
+        'diagram_data': [{
+            'name': 'root',
+            'children': build_res(value_tree)
+        }, {
+            'name': 'root',
+            'children': build_res(error_tree)
+        }],
+        'ground_true': {
+            'name': 'root',
+            'children': build_res(ground_true_tree)
+        }
+    }
     return res
+
 
 def get_cancer_barchart(data,
                         top_cate,
@@ -86,11 +122,11 @@ def get_cancer_barchart(data,
         new_res = laplace_mech(res, epsilon=1)
         re = test_accuracy(res, new_res)
         res = new_res
-
+    error = np.abs(np.array(res) - np.array(origin_res)).tolist()
     return {
         're': re,
         'region_keys': region_keys,
         'category_keys': category_keys,
-        'values': res,
-        'ground_true': origin_res
+        'ground_true': origin_res,
+        'diagram_data': [res, error]
     }
