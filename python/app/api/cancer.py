@@ -4,7 +4,6 @@ import _thread
 from flask import request
 
 from app import app
-from app.service.heatmap_service import get_default_heatmap, get_heatmap, get_heatmap_with_fed_learning
 
 from .response import gen_response, cors
 from .data import gen_id, add_res_data
