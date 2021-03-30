@@ -42,13 +42,15 @@ def get_cancer_treemap():
 
         clients = []
         for d in clients_data:
-            clients.append(
-                get_treemap(d,
+            c_d = get_treemap(d,
                             categories_map,
                             sex=sex,
                             race=race,
                             region=region,
-                            state=state))
+                            state=state)
+            c_d['id'] = str(len(clients))
+            c_d['loss'] = 0
+            clients.append(c_d)
     return gen_response({'server': server, 'clients': clients})
 
 
@@ -81,12 +83,15 @@ def get_barchart():
 
         clients = []
         for d in clients_data:
-            clients.append(
-                get_cancer_barchart(
+            c_d = get_cancer_barchart(
                     d,
                     category,
                     categories_map,
                     sex=sex,
                     race=race,
-                ))
+                )
+            c_d['id'] = str(len(clients))
+            c_d['loss'] = 0
+            clients.append(
+                )
     return gen_response({'server': server, 'clients': clients})
