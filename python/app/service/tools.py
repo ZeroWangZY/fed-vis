@@ -15,6 +15,8 @@ def calc_are(p, q):
 
 
 def test_accuracy(p, q):
+    if len(p) == 0 or len(q) == 0:
+        return 0
     p = np.array(p).flatten()
     q = np.array(q).flatten()
     # print(p,q)
@@ -25,5 +27,5 @@ def test_accuracy(p, q):
     diff = np.abs(p - q)
     max_sum = q.sum() if q.sum() > p.sum() else p.sum()
 
-    # print("accuray: JSD - {}; EMD - {}, ARE - {}, zyARE - {}".format(JSD, EMD, ARE, diff.sum() / max_sum))
+    print("accuray: JSD - {}; EMD - {}, ARE - {}, zyARE - {}".format(JSD, EMD, ARE, diff.sum() / max_sum))
     return float(ARE)

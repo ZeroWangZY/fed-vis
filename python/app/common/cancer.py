@@ -109,6 +109,7 @@ def get_cancer_barchart(data,
             if race != None and race != row[4]:
                 continue
             counts[row[1]][row[0]] += row[6]
+            
     region_keys = list(counts.keys())
     category_keys = list(counts['West'].keys())
     re = 0
