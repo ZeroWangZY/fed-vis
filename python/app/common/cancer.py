@@ -65,6 +65,8 @@ def get_treemap(data,
         ret = []
         for key in node:
             if type(node[key]) == int:
+                if node[key] == 0:
+                    continue
                 ret.append({'name': key, 'value': node[key]})
             else:
                 ret.append({'name': key, 'children': build_res(node[key])})
