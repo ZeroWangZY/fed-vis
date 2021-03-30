@@ -92,6 +92,5 @@ def get_barchart():
                 )
             c_d['id'] = str(len(clients))
             c_d['loss'] = 0
-            clients.append(
-                )
+            clients.append(c_d)
     return gen_response({'server': server, 'clients': clients})

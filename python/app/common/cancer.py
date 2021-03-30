@@ -126,10 +126,25 @@ def get_cancer_barchart(data,
         re = test_accuracy(res, new_res)
         res = new_res
     error = np.abs(np.array(res) - np.array(origin_res)).tolist()
+
+    def format_res(data):
+        ret = []
+        for i in range(len(region_keys)):
+            ele = {
+                'categories': region_keys[i],
+                'values': []
+            }
+            for j in range(len(category_keys)):
+                ele['values'].append({
+                    'value': data[i][j],
+                    'key': category_keys[j]
+                })
+            ret.append(ele)
+        return ret
     return {
         're': re,
-        'region_keys': region_keys,
-        'category_keys': category_keys,
-        'ground_true': origin_res,
-        'diagram_data': [res, error]
+        # 'region_keys': region_keys,
+        # 'category_keys': category_keys,
+        'ground_true': format_res(origin_res),
+        'diagram_data': [format_res(res), format_res(error)]
     }
