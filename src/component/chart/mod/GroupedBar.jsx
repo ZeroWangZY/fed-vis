@@ -235,7 +235,7 @@ class GroupedBar extends React.Component {
               right: 0,
               width: 250,
               height: 300,
-              fontSize: 12
+              fontSize: 12,
             }}
           >
             {this.props.chartNerror[0][0]["values"].map((v, i) => (

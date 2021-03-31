@@ -7,7 +7,12 @@ import "./index.less";
 class Treemap extends React.Component {
   constructor(props) {
     super(props);
-
+    this.state = {
+      showTooltip: false,
+      x: 0,
+      y: 0,
+      tooltipText: "",
+    };
     this.colorMap = d3.scaleOrdinal(d3.schemeCategory10);
 
     // this.colorMap = d3.scaleOrdinal(["#173f5f", "#20639b",
@@ -54,7 +59,7 @@ class Treemap extends React.Component {
     const { chartSize, svgStyles, groupStyles } = this;
 
     // const data = this.props.data.data || this.mockData();
-    const data = this.props.dataset;
+    const [data, error] = this.props.dataset;
     let cnt = 0;
     function count(root) {
       if (root.children && root.children.length) {
@@ -65,6 +70,13 @@ class Treemap extends React.Component {
     }
     count(data);
 
+    for (const i in data.children) {
+      for (const j in data.children[i].children) {
+        data.children[i].children[j].error =
+          error.children[i].children[j].value;
+      }
+    }
+
     const treemap = d3.treemap().size(chartSize)(
       d3
         .hierarchy(data)
@@ -72,26 +84,61 @@ class Treemap extends React.Component {
         .sort((a, b) => b.value - a.value)
     );
 
-    console.log(`treemap num: ${cnt}`, treemap.leaves());
     return (
       <svg
         key={this.props.panelID}
         className="treemap_container"
         style={svgStyles}
+        onMouseMove={
+          this.props.position === "server" &&
+          ((e) => {
+            this.setState({
+              showTooltip: true,
+              x: e.nativeEvent.offsetX,
+              y: e.nativeEvent.offsetY,
+            });
+          })
+        }
+        onMouseOut={() => this.setState({ showTooltip: false })}
       >
+        {this.state.showTooltip && (
+          <text x={this.state.x} y={this.state.y}>
+            {this.state.tooltipText}
+          </text>
+        )}
         <g style={groupStyles}>
           {treemap.leaves().map((node, i) => {
+            const w = node.x1 - node.x0;
+            const h = node.y1 - node.y0;
             return (
-              <g key={i} transform={`translate(${node.x0}, ${node.y0})`}>
+              <g
+                onMouseEnter={
+                  this.props.position === "server" &&
+                  ((e) => {
+                    this.setState({
+                      tooltipText: node.data.name,
+                    });
+                  })
+                }
+                key={i}
+                transform={`translate(${node.x0}, ${node.y0})`}
+              >
                 <rect
-                  width={node.x1 - node.x0}
-                  height={node.y1 - node.y0}
+                  width={w}
+                  height={h}
+                  stroke="#fff"
+                  stroke-width="0.5"
                   fill={this.genColor(node)}
                   fillOpacity={0.6}
                 />
-                <text className="treemap__label" x={2} y={2}>
-                  {node.data.name}
-                </text>
+                {w > 8 &&
+                  h > 8 &&
+                  this.props.useError &&
+                  this.props.position === "server" && (
+                    <text className="treemap-error" x={2} y={2}>
+                      {node.data.error}
+                    </text>
+                  )}
               </g>
             );
           })}
