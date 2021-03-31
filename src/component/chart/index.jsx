@@ -57,7 +57,7 @@ export default ({ visualForm, chartNerror, useError, position, panelID }) => {
       return <PolarHeatmap useError={useError} chartNerror={chartNerror} svgRange={position === "client"?SVG_RANGE_FOR_CLIENT:SVG_RANGE_FOR_SERVER}/>
     // TODO： 加上其他图的渲染
     case "odmap":
-      return <ODMap odmapData={chartData}/>
+      return <ODMap useError={useError} odmapData={chartNerror[0]} errorData={chartNerror[1]}/>
     case "treemap":
       return <Treemap useError={useError} dataset={chartNerror} position={position} svgRange={position === "client"?SVG_RANGE_FOR_CLIENT:SVG_RANGE_FOR_SERVER} panelID={panelID}/>
     case "groupedBar":

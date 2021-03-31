@@ -15,8 +15,8 @@ const LAT_START = 19.902;
 const LAT_END = 20.07;
 const LNG_START = 110.14;
 const LNG_END = 110.52;
-const OD_ROW_SIZE = 20;
-const OD_COL_SIZE = 20;
+const OD_ROW_SIZE = 5;
+const OD_COL_SIZE = 10;
 
 function getMinMax (data) {
   let min = 999, max = 0;
@@ -41,7 +41,7 @@ const computeColor = (num) => {
 
 //当前odmap只提供图表的呈现，没有交互响应，比如odmap的点击和o d切换
 export const ODMap=({
-  odmapData,
+  useError, odmapData, errorData
 })=>{
   console.log("🚀 ~ file: ODMap.jsx ~ line 25 ~ odmapData", odmapData)
   // 数据经纬度范围
@@ -68,7 +68,7 @@ export const ODMap=({
       .scaleLinear()
       .domain([min, max / 8])
       .range([0, 1]);
-    let usedOdmapData = odmapData;
+    let usedOdmapData = useError ? errorData : odmapData;
       // currentSpaceTypeOuter === "O" ? odmapData : odmapDataForDesSpace;
     $odmap = usedOdmapData.map((column, column_index) => {
       return column.map((outerRect, outerRectId) => {
@@ -173,6 +173,7 @@ export const ODMap=({
     });
   }
   const legend = [...colorClass];
+  console.log(legend)
   const legendHeight = 60;
   const legendUnitHeight = legendHeight / legend.length;
   // return ($odmap);
@@ -219,7 +220,7 @@ export const ODMap=({
                 ))
             : null}
           {odmapData.length
-            ? [max, min].map((d, i) => (
+            ? [max, 0].map((d, i) => (
                 <text
                   key={d}
                   x={35 + 21 / 2}
@@ -227,7 +228,7 @@ export const ODMap=({
                   textAnchor="middle"
                   dominantBaseline={i > 0 ? "hanging" : "baseline"}
                 >
-                  {d}
+                  {parseInt(d)}
                 </text>
               ))
             : null}
