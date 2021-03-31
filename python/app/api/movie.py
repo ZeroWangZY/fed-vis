@@ -16,7 +16,8 @@ from app.common.cancer import get_treemap, get_cancer_barchart
 def get_movie_scatterplot():
     params = request.args
     mode = params.get('mode')
-    name = params.getlist('name')
+    name = params.getlist('name[]')
+    round = params.get('round')
     
     path = f'data/movie-{mode}-data.json'
     with open(path, 'r') as f:
@@ -38,5 +39,7 @@ def get_movie_scatterplot():
                 client_d['values'] = list(filter(pruner, client_d['values']))
                 if 'error' in client_d:
                     client_d['error'] = list(filter(pruner, client_d['error']))
+        if round != None:
+            data = list(filter(lambda x:x['round'] < int(round), data))
         return {'data': data}
     return None

@@ -126,6 +126,7 @@ def new_get_data():
     start_time = params.get('start_time')
     end_time = params.get('end_time')
     mode = params.get('mode')
+    round = params.get('round')
     data = None
     if visual_form == 'two_dimension_map' and start_time != None and end_time != None:
         start_time = datetime.datetime.strptime(start_time, '%Y/%m/%dZ%H:%M')
@@ -137,6 +138,8 @@ def new_get_data():
             with open('data/heatmap-all.json', 'r') as f:
                 data = json.load(f)
         if mode == 'fitting':
+            if round != None:
+                data['data'] = list(filter(lambda x:x['round'] < int(round), data['data']))
             return data
         elif mode == 'normal':
             return get_normal_heatmap(data)
@@ -146,6 +149,8 @@ def new_get_data():
         with open('data/polar-heatmap.json', 'r') as f:
             data = json.load(f)
         if mode == 'fitting':
+            if round != None:
+                data['data'] = list(filter(lambda x:x['round'] < int(round), data['data']))
             return data
         elif mode == 'normal':
             return get_normal_polar(data)
@@ -155,6 +160,8 @@ def new_get_data():
         with open('data/odmap.json', 'r') as f:
             data = json.load(f)
         if mode == 'fitting':
+            if round != None:
+                data['data'] = list(filter(lambda x:x['round'] < int(round), data['data']))
             return data
         elif mode == 'normal':
             return get_normal_odmap(data)
