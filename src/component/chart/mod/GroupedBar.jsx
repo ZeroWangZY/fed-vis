@@ -161,9 +161,9 @@ class GroupedBar extends React.Component {
       .data((d) => d.values)
       .join("rect")
       .attr("x", (d) => xScale_subKey(d.key))
-      .attr("y", (d) => yScale(d.value))
+      .attr("y", (d) => yScale(d.value) + innerPadding)
       .attr("width", xScale_subKey.bandwidth())
-      .attr("height", (d) => chartHeight - yScale(d.value))
+      .attr("height", (d) => chartHeight - yScale(d.value) - innerPadding)
       .attr("fill", (d) => color(d.key))
       .on("mouseover", function (d) {
         const { offsetX, offsetY } = d3.event;
