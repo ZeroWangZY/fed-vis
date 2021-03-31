@@ -61,7 +61,7 @@ export default ({ visualForm, chartNerror, useError, position, panelID }) => {
     case "treemap":
       return <Treemap dataset={chartData} svgRange={position === "client"?SVG_RANGE_FOR_CLIENT:SVG_RANGE_FOR_SERVER} panelID={panelID}/>
     case "groupedBar":
-      return <GroupedBar useError={useError} chartNerror={chartNerror}  svgRange={position === "client"?SVG_RANGE_FOR_CLIENT:SVG_RANGE_FOR_SERVER}/>
+      return <GroupedBar useError={useError} chartNerror={chartNerror} position={position} svgRange={position === "client"?SVG_RANGE_FOR_CLIENT:SVG_RANGE_FOR_SERVER}/>
     case "scatterplot":
       return <Scatterplot useError={useError} chartNerror={chartNerror} svgRange={position === "client"?SVG_RANGE_FOR_CLIENT:SVG_RANGE_FOR_SERVER}/>
     default:

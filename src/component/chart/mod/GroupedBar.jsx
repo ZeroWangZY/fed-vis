@@ -3,6 +3,20 @@ import * as d3 from "d3";
 import "./index.less";
 
 class GroupedBar extends React.Component {
+  color = d3
+    .scaleOrdinal()
+    .range([
+      "#FF6B3B",
+      "#626681",
+      "#FFC100",
+      "#9FB40F",
+      "#76523B",
+      "#DAD5B5",
+      "#0E8E89",
+      "#E19348",
+      "#F383A2",
+      "#247FEA",
+    ]);
   constructor(props) {
     super(props);
     // const dataset = this.props.dataset;
@@ -120,9 +134,6 @@ class GroupedBar extends React.Component {
     const { chartHeight, chartWidth } = this;
     const keyList = dataset.map((d) => d.categories);
 
-    const color = d3
-      .scaleOrdinal()
-      .range(["#ca0020", "#f4a582", "#d5d5d5", "#92c5de", "#0571b0"]);
     const gChart = d3.select(this.node);
     gChart.selectAll("*").remove();
 
@@ -164,7 +175,7 @@ class GroupedBar extends React.Component {
       .attr("y", (d) => yScale(d.value) + innerPadding)
       .attr("width", xScale_subKey.bandwidth())
       .attr("height", (d) => chartHeight - yScale(d.value) - innerPadding)
-      .attr("fill", (d) => color(d.key))
+      .attr("fill", (d) => this.color(d.key))
       .on("mouseover", function (d) {
         const { offsetX, offsetY } = d3.event;
         const { key, value } = d;
@@ -201,7 +212,10 @@ class GroupedBar extends React.Component {
     const { key, value } = this.state;
     return (
       <div>
-        <svg className={"groupedBar_container"} style={svgStyles}>
+        <svg
+          className={"groupedBar_container"}
+          style={{ ...svgStyles, position: "relative" }}
+        >
           <rect
             width="100%"
             height="100%"
@@ -211,6 +225,34 @@ class GroupedBar extends React.Component {
           ></rect>
           <g ref={(node) => (this.node = node)}></g>
         </svg>
+
+        {this.props.position === "server" && (
+          <svg
+            id={"grouped_ba_legend"}
+            style={{
+              position: "absolute",
+              top: 50,
+              right: 0,
+              width: 250,
+              height: 300,
+              fontSize: 12
+            }}
+          >
+            {this.props.chartNerror[0][0]["values"].map((v, i) => (
+              <g>
+                <rect
+                  width={15}
+                  height={15}
+                  fill={this.color(v.key)}
+                  y={i * 20 + 5}
+                ></rect>
+                <text x={25} y={i * 20 + 18}>
+                  {v.key}
+                </text>
+              </g>
+            ))}
+          </svg>
+        )}
 
         <div className="my-tooltip" ref={(node) => (this.tooltip = node)}>
           <p>key: {key}</p>
