@@ -8,6 +8,8 @@ from app.service.dp import laplace_mech
 res_data_map = {}
 progress_info_map = {}
 
+new_data_map = {}
+
 def add_res_data(id, data):
     global res_data_map
     global progress_info_map
@@ -45,6 +47,13 @@ def set_progress(id, current_round, max_round, losses, done):
                 "done": done
             }
 
+def set_new_data(id, d):
+    global new_data_map
+    if new_data_map.get(id) == None:
+        new_data_map[id] = [d]
+    else:
+        new_data_map[id].append(d)
+
 def gen_id():
     return ''.join(random.sample(string.ascii_letters + string.digits, 8))
 
@@ -72,3 +81,16 @@ def get_data():
     del res_data_map[id]
     del progress_info_map[id]
     return gen_response(laplace_mech(data,epsilon=1))
+
+@app.route('/api/new_data')
+@cors
+def get_new_data():
+    global new_data_map
+    # global progress_info_map
+    params = request.args
+    id = params.get('id')
+    if id == None:
+        return gen_response(new_data_map)
+    data = new_data_map[id]
+    del new_data_map[id]
+    return gen_response(data)
