@@ -80,7 +80,12 @@ def get_barchart():
                                      sex=sex,
                                      race=race,
                                      need_diff=(mode == 'normal'))
-
+        for cate in server['diagram_data'][0]:
+            for d in cate['values']:
+                if d['value'] == 16:
+                    d['value'] = 2
+                if d['value'] == 17:
+                    d['value'] = 3
         clients = []
         for d in clients_data:
             c_d = get_cancer_barchart(
