@@ -307,8 +307,8 @@ export default class ControlPanel extends React.PureComponent {
                 <div>Training parameter:</div>
                 <span className="trainingParam">learning rate: 0.055</span>
                 <span className="trainingParam">batch size: 12800</span>
-                <span className="trainingParam">training round: 50</span>
-                <span className="trainingParam">training epoch: 1</span>
+                <span className="trainingParam">round: 300</span>
+                <span className="trainingParam">epoch: 1</span>
               </div>
             </>
           ) : null}

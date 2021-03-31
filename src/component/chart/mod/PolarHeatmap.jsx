@@ -37,7 +37,7 @@ const aggregateHourOptions = ["24", "12", "8", "6", "4", "3", "2", "1"];
 
 const colorClass = ["#fbf9db", "#B3D8DF", "#95C0DA", "#215ea5", "#273a90"];
 
-function PolarHeatmap({partition, chartNerror, useError, svgRange}) {
+function PolarHeatmap({partition, chartNerror, useError, svgRange, position}) {
 
   const dataset = useError ? chartNerror[1] : chartNerror[0];
   const aggregateHour = useMemo(() => {
@@ -116,7 +116,7 @@ function PolarHeatmap({partition, chartNerror, useError, svgRange}) {
       {/* // <div id="detail-panel">
         // <div id="detail-content">
           // <div className="detail-content__info"> */}
-            <svg className="detail-content__legend">
+            {position === 'server' &&<svg className="detail-content__legend">
               {dataset.length
                 ? legend
                     .reverse()
@@ -131,8 +131,8 @@ function PolarHeatmap({partition, chartNerror, useError, svgRange}) {
                       />
                     ))
                 : null}
-              {dataset.length
-                ? [colorRange[1], colorRange[0]].map((d, i) => (
+              {dataset.length && position === 'server' &&
+                 [colorRange[1], colorRange[0]].map((d, i) => (
                     <text
                       key={d}
                       x={35 + 21 / 2}
@@ -140,11 +140,11 @@ function PolarHeatmap({partition, chartNerror, useError, svgRange}) {
                       textAnchor="middle"
                       dominantBaseline={i > 0 ? "hanging" : "baseline"}
                     >
-                      {d}
+                      {parseInt(d)}
                     </text>
                   ))
-                : null}
-              {dataset.length && (
+                }
+              {dataset.length && position === 'server' && (
                 <text
                   className="vertical-legend-text"
                   y={(legend.length * legendUnitHeight) / 2 + 40}
@@ -153,7 +153,7 @@ function PolarHeatmap({partition, chartNerror, useError, svgRange}) {
                   Flow Volume
                 </text>
               )}
-            </svg>
+            </svg>}
             {/* {dataset.map((data, index) => ( */}
               <BarChart
                 // key={data.id}

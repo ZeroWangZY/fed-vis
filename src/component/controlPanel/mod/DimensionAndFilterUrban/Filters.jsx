@@ -60,6 +60,7 @@ export default function Filters({ dimensions, value, onChange }) {
           {/* TODO */}
           <Slider
             range
+            style={{width:200}}
             step={0.001}
             min={LAT_FROM}
             max={LAT_TO}
@@ -84,6 +85,7 @@ export default function Filters({ dimensions, value, onChange }) {
           {/* TODO */}
           <Slider
             range
+            style={{width:200}}
             step={0.001}
             min={LNG_FROM}
             max={LNG_TO}

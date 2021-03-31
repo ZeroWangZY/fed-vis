@@ -29,11 +29,11 @@ class Scatterplot extends React.Component {
 
     const xScale = d3.scaleLinear()
                     .domain([0,xMax])
-                    .range([innerPadding, this.chartWidth]);
+                    .range([innerPadding, this.chartWidth - innerPadding]);
     
     const yScale = d3.scaleLinear()
                     .domain([0,yMax])
-                    .range([this.chartHeight, innerPadding]);
+                    .range([this.chartHeight - innerPadding, innerPadding]);
     this.state = {
         name: '',
         rate: '',
@@ -47,18 +47,18 @@ class Scatterplot extends React.Component {
   componentWillReceiveProps(nextProps) {
     if(nextProps.chartNerror !== this.props.chartNerror) {
       const {useError, chartNerror} = this.props;
-    const dataset = useError?chartNerror[1]:chartNerror[0];
+      const dataset = useError?chartNerror[1]:chartNerror[0];
       const xMax = d3.max(dataset,d=>d.rate);
       const yMax = d3.max(dataset,d=>d.count);
       const {innerPadding} = this.props.svgRange;
   
       const xScale = d3.scaleLinear()
                       .domain([0,xMax])
-                      .range([innerPadding, this.chartWidth]);
+                      .range([innerPadding, this.chartWidth - innerPadding]);
       
       const yScale = d3.scaleLinear()
                       .domain([0,yMax])
-                      .range([this.chartHeight, innerPadding]);
+                      .range([this.chartHeight - innerPadding, innerPadding]);
       this.setState({xScale, yScale})
     }
   }
@@ -90,10 +90,19 @@ class Scatterplot extends React.Component {
     // const yScale = d3.scaleLinear()
     //                 .domain([0,yMax])
     //                 .range([chartHeight, innerPadding]);
-    const {xScale, yScale} = this.state;
+    const xMax = d3.max(dataset,d=>d.rate);
+    const yMax = d3.max(dataset,d=>d.count);
+  
+    const xScale = d3.scaleLinear()
+                      .domain([0,xMax])
+                      .range([innerPadding, this.chartWidth - innerPadding]);
+      
+    const yScale = d3.scaleLinear()
+                      .domain([0,yMax])
+                      .range([this.chartHeight - innerPadding, innerPadding]);
 // debugger
     const xAxis = (g) => {
-      g.attr("transform", `translate(0, ${chartHeight})`).call(
+      g.attr("transform", `translate(0, ${chartHeight - innerPadding})`).call(
         d3.axisBottom(xScale).tickSize(0)
         // .ticks(keyList.length)
       );
@@ -119,11 +128,11 @@ class Scatterplot extends React.Component {
     gChart.selectAll('circle')
     .data(dataset)
     .enter().append("circle")
-    .attr("r", 5)
+    .attr("r", this.props.position === 'server' ? 5 : 2)
             .attr("cx", d => xScale(d.rate))
             .attr("cy", d => yScale(d.count))
             .attr('name',d => d.name)
-            .attr("fill", "#333333")
+            .attr("fill", "rgb(23, 63, 95)")
     .on("mouseout", function(){
       console.log('mouseout')
     })
@@ -172,7 +181,7 @@ class Scatterplot extends React.Component {
             <g style={groupStyles} ref={(node) => (this.node = node)}></g>
    
           <text
-          className="axis-text" transform={`translate(${innerPadding*2}, ${innerPadding*2})`}
+          className="axis-text" transform={`translate(${innerPadding*2 + 4}, ${innerPadding*2})`}
           >Count</text>
         <text
           className="axis-text" transform={`translate(${(innerPadding*2+chartWidth)/2}, ${innerPadding*2+chartHeight})`}
@@ -212,9 +221,9 @@ class Scatterplot extends React.Component {
 
           <line
             x1={0.5}
-            x2={chartWidth}
-            y1={chartHeight}
-            y2={chartHeight}
+            x2={chartWidth-innerPadding}
+            y1={chartHeight-innerPadding}
+            y2={chartHeight-innerPadding}
             markerEnd="url(#arrow)"
           ></line>
         </g>

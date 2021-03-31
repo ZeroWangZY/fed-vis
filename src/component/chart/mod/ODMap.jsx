@@ -41,7 +41,7 @@ const computeColor = (num) => {
 
 //当前odmap只提供图表的呈现，没有交互响应，比如odmap的点击和o d切换
 export const ODMap=({
-  useError, odmapData, errorData
+  useError, odmapData, errorData, position
 })=>{
   console.log("🚀 ~ file: ODMap.jsx ~ line 25 ~ odmapData", odmapData)
   // 数据经纬度范围
@@ -180,7 +180,7 @@ export const ODMap=({
   return (
     <Map
       center={basicConfig.center}
-      zoom={basicConfig.zoom}
+      zoom={11}
       className={"map-container customer-control"}
     >
     <LayersControl position="topleft">
@@ -205,8 +205,8 @@ export const ODMap=({
           />
         )} */}
         <svg className="detail-content__legend heatmap-legend">
-          {odmapData.length
-            ? legend
+          {odmapData.length && position === 'server' &&
+            legend
                 .reverse()
                 .map((d, i) => (
                   <rect
@@ -218,9 +218,9 @@ export const ODMap=({
                     y={i * legendUnitHeight + 58}
                   />
                 ))
-            : null}
-          {odmapData.length
-            ? [max, 0].map((d, i) => (
+            }
+          {odmapData.length && position === 'server' &&
+             [max, 0].map((d, i) => (
                 <text
                   key={d}
                   x={35 + 21 / 2}
@@ -231,8 +231,8 @@ export const ODMap=({
                   {parseInt(d)}
                 </text>
               ))
-            : null}
-          {odmapData.length && (
+            }
+          {odmapData.length && position === 'server' && (
             <text
               className="vertical-legend-text"
               y={(legend.length * legendUnitHeight) / 2 + 40}

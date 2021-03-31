@@ -23,6 +23,7 @@ export const HeatMap = ({
   lngRange,
   useError,
   onSelect,
+  position
 }) => {
   let maxCnt = null;//实际最大值
   let maxHeat = null;//分位数
@@ -112,7 +113,7 @@ export const HeatMap = ({
     legendText = [
       {
         stop: 1,
-        val: maxCnt,
+        val: parseInt(maxCnt),
       },
       ...legendText.slice(1, legendText.length - 1),
       {
@@ -212,7 +213,7 @@ export const HeatMap = ({
                 intensityExtractor={(d) => d[2] * (useError ? 1 : 1)}
                 //   intensityExtractor={(d) => parseFloat(d[2])}
               />
-              {maxCnt ? (
+              {maxCnt && position === 'server' && (
                 <div className="heatmap-legend">
                   <div
                     className="heatmap-legend__info"
@@ -234,7 +235,7 @@ export const HeatMap = ({
                     ))}
                   </svg>
                 </div>
-              ) : null}
+              )}
               {/* {isShowTooltipLine && (
                 <Polyline
                   color={"#D7191C"}
