@@ -53,9 +53,9 @@ function PerformanceServer(props) {
 
 const yScale_re = d3
   .scaleLinear()
-  .domain(d3.extent(reList, (d) => d.y))
+  .domain(reList.length === 1 ? [0, reList[0].y*3/2] : (d3.extent(reList, (d) => d.y)))
   .range([chartHeight, 0])
-  .nice();
+  // .nice();
 
 
   const yScale_loss = d3
@@ -83,6 +83,8 @@ const yScale_re = d3
       .attr("stroke-linejoin", "round")
       .attr("stroke-linecap", "round")
       .attr("d", line);
+
+      console.log(reList);
 
   return (
     <div>

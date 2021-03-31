@@ -118,6 +118,7 @@ class Scatterplot extends React.Component {
     .attr("r", 5)
             .attr("cx", d => xScale(d.rate))
             .attr("cy", d => yScale(d.count))
+            .attr('name',d => d.name)
             .attr("fill", "#333333")
     .on("mouseout", function(){
       console.log('mouseout')

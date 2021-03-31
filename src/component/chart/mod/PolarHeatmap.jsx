@@ -42,9 +42,9 @@ function PolarHeatmap({partition, chartNerror, useError, svgRange}) {
   const dataset = useError ? chartNerror[1] : chartNerror[0];
   const aggregateHour = useMemo(() => {
     return {
-      coarse: 12,
-      medium: 8,
-      fine: 4,
+      coarse: 6,
+      medium: 4,
+      fine: 2,
     }[partition]
   }, [partition]);
 

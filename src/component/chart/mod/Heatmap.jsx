@@ -24,8 +24,8 @@ export const HeatMap = ({
   useError,
   onSelect,
 }) => {
-  let maxCnt = null;
-  let maxHeat = null;
+  let maxCnt = null;//实际最大值
+  let maxHeat = null;//分位数
   // const maxValue = Math.log(chartData.max + 1);
   console.log("max:", chartData.max);
   console.log(chartData);
@@ -247,7 +247,7 @@ export const HeatMap = ({
               )} */}
             </FeatureGroup>
           </LayersControl.Overlay>
-          {/* <LayersControl.Overlay name="Brush" checked>
+          <LayersControl.Overlay name="Brush" checked>
             <FeatureGroup>
               <EditControl
                 position="topleft"
@@ -289,7 +289,7 @@ export const HeatMap = ({
                 // }}
               />
             </FeatureGroup>
-          </LayersControl.Overlay> */}
+          </LayersControl.Overlay>
         </LayersControl>
       </Map>
     </>

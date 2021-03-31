@@ -46,7 +46,7 @@ class LineChart extends React.Component {
 
     const yScale = d3
       .scaleLinear()
-      .domain(d3.extent(data, (d) => d.y))
+      .domain(data.length === 1 ? [0, data[0].y*3/2] : (d3.extent(data, (d) => d.y)))
       .range([chartSize[1], 0]).nice();
 
     const line = d3

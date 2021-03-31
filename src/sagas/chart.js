@@ -84,37 +84,37 @@ function* updateChart({ query }) {
      maxRound = roundList.slice(-1)[0].round;
   }
   // 下面是循环，后面再打开
-  // const chan = yield call(countdown, -1, roundList.length)
-  // // 循环展示所有数据
-  // try {    
-  //   while (true) {
-  //     let index = yield take(chan);
-  //     const { server, clients, round } = roundList[index];
-  //   yield put({ type: SAVE_CHART_DATA, data: {...server, maxRound, round} });
-  //   yield put({
-  //     type: SAVE_CLIENT_INFO,
-  //     clientInfo: {clients, round},
-  //   });
-  //     console.log(`countdown: ${index}`)
-  //   }
-  // } finally {
-  //   if (yield cancelled()) {
-  //     chan.close();
-  //     console.log('countdown cancelled')
-  //   }    
-  //   yield put({ type: CHART_REQUEST_END });
-  // }
-  // 上面是循环
-      let index = 0;
+  const chan = yield call(countdown, -1, roundList.length)
+  // 循环展示所有数据
+  try {    
+    while (true) {
+      let index = yield take(chan);
       const { server, clients, round } = roundList[index];
-      // debugger
     yield put({ type: SAVE_CHART_DATA, data: {...server, maxRound, round} });
     yield put({
       type: SAVE_CLIENT_INFO,
       clientInfo: {clients, round},
     });
- 
+      console.log(`countdown: ${index}`)
+    }
+  } finally {
+    if (yield cancelled()) {
+      chan.close();
+      console.log('countdown cancelled')
+    }    
     yield put({ type: CHART_REQUEST_END });
+  }
+  // 上面是循环
+    //   let index = 0;
+    //   const { server, clients, round } = roundList[index];
+    //   // debugger
+    // yield put({ type: SAVE_CHART_DATA, data: {...server, maxRound, round} });
+    // yield put({
+    //   type: SAVE_CLIENT_INFO,
+    //   clientInfo: {clients, round},
+    // });
+ 
+    // yield put({ type: CHART_REQUEST_END });
     // 上面一整块是测试代码
 }
 
