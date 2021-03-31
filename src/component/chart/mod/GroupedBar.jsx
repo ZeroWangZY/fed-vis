@@ -119,7 +119,11 @@ class GroupedBar extends React.Component {
     this.renderByD3();
   };
 
-  componentDidUpdate = () => {
+  componentDidUpdate = (prevProps) => {
+    const {props} = this
+    if(prevProps.useError === props.useError && prevProps.svgRange === props.svgRange && prevProps.chartNerror === props.chartNerror){
+      return 
+    }
     this.renderByD3();
   };
 
@@ -174,13 +178,12 @@ class GroupedBar extends React.Component {
       .attr("x", (d) => xScale_subKey(d.key))
       .attr("y", (d) => yScale(d.value) + innerPadding)
       .attr("width", xScale_subKey.bandwidth())
-      .attr("height", (d) => chartHeight - yScale(d.value) - innerPadding)
+      .attr("height", (d) => chartHeight - yScale(d.value) - innerPadding < 0 ? 0 : chartHeight - yScale(d.value) - innerPadding)
       .attr("fill", (d) => this.color(d.key))
-      .on("mouseover", function (d) {
+      .on("mousemove", function (d) {
         const { offsetX, offsetY } = d3.event;
         const { key, value } = d;
         // tooltip
-
         that.setState(
           {
             key,
@@ -195,7 +198,6 @@ class GroupedBar extends React.Component {
         );
       })
       .on("mouseout", function () {
-        console.log("mouse out");
         tooltip.transition().style("display", "none");
       });
 
@@ -221,7 +223,6 @@ class GroupedBar extends React.Component {
             height="100%"
             fill="#fff"
             fillOpacity="0"
-            onMouseOut={this.handleMouseout}
           ></rect>
           <g ref={(node) => (this.node = node)}></g>
         </svg>

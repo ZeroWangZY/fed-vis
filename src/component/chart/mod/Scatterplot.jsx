@@ -66,7 +66,11 @@ class Scatterplot extends React.Component {
     this.renderByD3();
   };
 
-  componentDidUpdate = () => {
+  componentDidUpdate = (prevProps) => {
+    const {props} = this
+    if(prevProps.useError === props.useError && prevProps.svgRange === props.svgRange && prevProps.chartNerror === props.chartNerror){
+      return 
+    }
     this.renderByD3();
   };
 
@@ -122,11 +126,9 @@ class Scatterplot extends React.Component {
             .attr("fill", "#333333")
     .on("mouseout", function(){
       console.log('mouseout')
-      tooltip.transition()
-        .style('display', 'none')
     })
     .on("mouseover", function(d) {
-      
+      console.log('mouseover')
       const {offsetX, offsetY} = d3.event;
       const {name, count, rate} = d;
       // tooltip
