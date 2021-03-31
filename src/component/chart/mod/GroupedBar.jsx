@@ -66,7 +66,7 @@ class GroupedBar extends React.Component {
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, yMax])
+      .domain([0, yMax < 1 ? 1 : yMax])
       .range([chartHeight - innerPadding, 0]);
 
     this.state = {
@@ -110,7 +110,7 @@ class GroupedBar extends React.Component {
 
       const yScale = d3
         .scaleLinear()
-        .domain([0, yMax])
+        .domain([0, yMax < 1 ? 1 : yMax])
         .range([chartHeight - innerPadding, 0]);
       this.setState({ xScale_key, xScale_subKey, yScale });
     }
