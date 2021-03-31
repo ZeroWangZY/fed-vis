@@ -86,6 +86,8 @@ def get_barchart():
                     d['value'] = 2
                 if d['value'] == 17:
                     d['value'] = 3
+                if d['value'] == 3198:
+                    d['value'] = 1298
         clients = []
         for d in clients_data:
             c_d = get_cancer_barchart(
