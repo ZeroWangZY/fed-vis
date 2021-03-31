@@ -84,7 +84,8 @@
     "start": "node scripts/start.js",
     "server": "serve python/two-dim/data",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "lint:fix": "eslint ./src --ext .js,.jsx --fix --quiet"
   },
   "eslintConfig": {
     "extends": "react-app"

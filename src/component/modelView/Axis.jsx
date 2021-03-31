@@ -11,21 +11,40 @@ export default class Axis extends React.PureComponent {
   }
 
   createAxis = () => {
-    let { scale, orient, ticks, chartWidth } = this.props;
+    let { scaleData, scale, orient, ticks, chartWidth } = this.props;
     let axis = d3["axis" + orient](scale).ticks(ticks);
 
     if (orient === "Left") {
       axis.tickSize(-chartWidth).tickPadding(10);
-    } else {
+    } else if (orient === "Right"){
+      if(scale.domain()[0]) {
+        const domain = scale.domain();
+        // const range = scale.range();
+        const step = (domain[1] - domain[0]) / (ticks);
+        // const step = scale.invert((range[0]-range[1]) / (ticks+1));
+  
+        let tickValues = [];
+        for(let i=0; i < ticks; i++) {
+          tickValues.push(domain[0]+i * step);
+        }
+        console.log(tickValues,'tickVa')
+
+        axis.tickValues(tickValues)
+      } 
+      
       axis.tickSize(0).tickPadding(10);
     }
     d3.select(this.node).call(axis);
 
     if (orient === "Bottom") {
+      axis.tickSize(0).tickPadding(10);
+      d3.select(this.node).select('path.domain').attr('opacity',0)
       d3.select(this.node)
         .selectAll("text")
-        .text((d, i) => i + 1);
+        .text((d, i) => scaleData[0]===0 ? 1 : ((i+1)*15)
+        );
     }
+    // debugger
   };
 
   render() {
@@ -69,7 +88,8 @@ export default class Axis extends React.PureComponent {
               <line
                 x1={0.5}
                 x2={this.props.chartWidth}
-                markerEnd="url(#arrow)"
+                stroke="#333"
+                // markerEnd="url(#arrow)"
               ></line>
             )}
           </g>

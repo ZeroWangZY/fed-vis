@@ -6,6 +6,7 @@ import Apis from "../../api/apis";
 
 import "./index.less";
 
+
 class Treemap extends React.Component {
   constructor(props) {
     super(props);

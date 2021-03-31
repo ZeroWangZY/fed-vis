@@ -9,8 +9,8 @@ class PerformanceLinechart extends React.Component {
     super(props);
     this.state = {
       margin: {
-        left: 20,
-        right: 5,
+        left: 25,
+        right: 15,
         top: 20,
         bottom: 0,
       },
@@ -36,7 +36,7 @@ class PerformanceLinechart extends React.Component {
       yTicks,
       xTick,
     } = this.state;
-
+    console.log("🚀 ~ file: PerformanceLinechart.jsx ~ line 47 ~ PerformanceLinechart ~ render ~ this.props.data", this.props.data)
     return (
       <svg className="perform">
         <Linechart
@@ -44,6 +44,7 @@ class PerformanceLinechart extends React.Component {
           height={height}
           margin={margin}
           data={this.props.data}
+          type={type}
         ></Linechart>
       </svg>
     );

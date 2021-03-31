@@ -10,7 +10,6 @@ import { connect } from "react-redux";
 
 function ClientCard(props) {
   const { id, diagram_data, visualForm, loss, re, currentRound } = props;
-  console.log("🚀 ~ file: clientCard.jsx ~ line 13 ~ ClientCard ~ diagram_data", diagram_data)
   const [lossList, setLossList] = useState([]);
   const [reList, setReList] = useState([]);
   useEffect(() => {
@@ -32,12 +31,12 @@ function ClientCard(props) {
         <div className="card-head">{"Client" + id}</div>
         <div className="card-body">
           <div className="client-result">
-            <Chart visualForm={visualForm} chartNerror={diagram_data} useError={false} position={"client"}/>
+            <Chart visualForm={visualForm} chartNerror={diagram_data} useError={false} position={"client"} panelID={"Client" + id}/>
           </div>
           <div className="client-performance">
             {/* 两个折线图 */}
-            <PerformanceLinechart type={"perform-loss"} data={lossList} />
-            <PerformanceLinechart type={"perform-error"} data={reList} />
+            <PerformanceLinechart type={"loss"} data={lossList} />
+            <PerformanceLinechart type={"error"} data={reList} />
           </div>
         </div>
       </div>

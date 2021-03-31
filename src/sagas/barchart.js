@@ -9,7 +9,7 @@ import {
   TRIGGER_HISTOGRAM_POLL,
   GET_HISTOGRAM_BY_ID,
 } from "actions/barchart";
-import { SET_BBOX } from "actions/base";
+// import { SET_BBOX } from "actions/base";
 import Apis from "../api/apis";
 import { get } from "../api/tools";
 

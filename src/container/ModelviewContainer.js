@@ -1,9 +1,11 @@
 import { connect } from "react-redux";
-import ClientPanel from "components/clientPanel/ClientPanel";
+import ModelView from "components/ModelView";
 
 const mapStateToProps = (state) => {
   return {
     // to add
+    re: state.chartData.re,
+    losses: state.chartData.losses,
   };
 };
 
@@ -11,9 +13,9 @@ const mapDispatchToProps = (dispatch) => {
   return {};
 };
 
-const ClientPanelContainer = connect(
+const ModelViewContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(ClientPanel);
+)(ModelView);
 
-export default ClientPanelContainer;
+export default ModelViewContainer;

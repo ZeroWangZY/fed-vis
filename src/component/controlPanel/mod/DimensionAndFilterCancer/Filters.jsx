@@ -7,21 +7,14 @@ const allCancerSite = [
   "Oral Cavity and Pharynx",
   "Digestive System",
   "Respiratory System",
-  "Bones and Joints",
-  "Soft Tissue including Heart",
   "Skin excluding Basal and Squamous",
   "Male and Female Breast",
   "Female Genital System",
   "Male Genital System",
   "Urinary System",
-  "Eye and Orbit",
-  "Brain and Other Nervous System",
   "Endocrine System",
   "Lymphomas",
-  "Myeloma",
   "Leukemias",
-  "Mesothelioma",
-  "Miscellaneous",
 ];
 const allYear = [
   "2009",
@@ -54,7 +47,7 @@ export default function Filters({ dimensions, value, onChange }) {
         <div className="control-panel__data__item">
           <div>Cance Site:</div>
           <Select
-            defaultValue="Select a cancer site"
+            defaultValue="All cancer site"
             style={{
               width: "360px",
               paddingLeft: "10px",

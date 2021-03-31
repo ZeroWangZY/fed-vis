@@ -21,7 +21,7 @@ class BoxplotView extends React.Component {
       height: 200,
       width: 750,
       boxplotNum: 10, // 视野里的个数
-      sliderWindowNum: 10,
+      // sliderWindowNum: 10,
       windowRange: [-1, -1], //当前滑动窗口的range
       dataForBoxplot: [],
       xTick: [],
@@ -90,7 +90,7 @@ class BoxplotView extends React.Component {
       margin,
       dataForBoxplot,
       boxplotNum,
-      sliderWindowNum,
+      // sliderWindowNum,
       curIter,
       windowRange,
       yMax,
@@ -98,44 +98,44 @@ class BoxplotView extends React.Component {
 
     let newDataForBoxplot = dataForBoxplot; //JSON.parse(JSON.stringify(dataForBoxplot)); 不用深拷贝 不然会判断数组不一样重新render
 
-    let interval = Math.floor(sliderWindowNum / boxplotNum);
-    let startPos = dataForBoxplot.length * interval;
-    // console.log(startPos)
-    let newWindowRange = [1, 1];
-    if (maxRound !== 1) {
-      let pos = Math.floor(curIter / sliderWindowNum) * sliderWindowNum;
-      if (pos >= maxRound) {
-        newWindowRange = [maxRound - sliderWindowNum + 1, maxRound];
-      } else {
-        newWindowRange = [
-          pos + 1,
-          pos + sliderWindowNum > maxRound ? maxRound : pos + sliderWindowNum,
-        ];
-      }
-    }
+    // let interval = Math.floor(sliderWindowNum / boxplotNum);
+    // let startPos = dataForBoxplot.length * interval;
+    // // console.log(startPos)
+    // let newWindowRange = [1, 1];
+    // if (maxRound !== 1) {
+    //   let pos = Math.floor(curIter / sliderWindowNum) * sliderWindowNum;
+    //   if (pos >= maxRound) {
+    //     newWindowRange = [maxRound - sliderWindowNum + 1, maxRound];
+    //   } else {
+    //     newWindowRange = [
+    //       pos + 1,
+    //       pos + sliderWindowNum > maxRound ? maxRound : pos + sliderWindowNum,
+    //     ];
+    //   }
+    // }
 
     // console.log(newWindowRange)
-    if (
-      newWindowRange[0] === windowRange[0] &&
-      newWindowRange[1] === windowRange[1]
-    ) {
-      // console.log("in range")
-      let curIterCount = losses[0].length;
-      // console.log(curIterCount)
-      for (let i = 1; i <= boxplotNum; i++) {
-        // const index = (finalNum === i) ? maxRound : interval*i;
-        const index = startPos + interval * i;
-        // console.log(index)
-        if (index > curIterCount) continue;
-        let dataSingleIter = losses.map((d) => d[index - 1]);
-        newDataForBoxplot.push(dataSingleIter);
-      }
+    // if (
+    //   newWindowRange[0] === windowRange[0] &&
+    //   newWindowRange[1] === windowRange[1]
+    // ) {
+    //   // console.log("in range")
+    //   let curIterCount = losses[0].length;
+    //   // console.log(curIterCount)
+    //   for (let i = 1; i <= boxplotNum; i++) {
+    //     // const index = (finalNum === i) ? maxRound : interval*i;
+    //     const index = startPos + interval * i;
+    //     // console.log(index)
+    //     if (index > curIterCount) continue;
+    //     let dataSingleIter = losses.map((d) => d[index - 1]);
+    //     newDataForBoxplot.push(dataSingleIter);
+    //   }
 
-      this.setState({
-        curIter: curIterCount,
-        dataForBoxplot: newDataForBoxplot,
-      });
-    } else {
+    //   this.setState({
+    //     curIter: curIterCount,
+    //     dataForBoxplot: newDataForBoxplot,
+    //   });
+    // } else {
       // console.log("update range")
 
       const chartHeight = height - margin.top - margin.bottom;
@@ -146,23 +146,23 @@ class BoxplotView extends React.Component {
 
       let xTick = [];
 
-      let finalNum =
-        Math.ceil((maxRound - interval * boxplotNum) / interval) + boxplotNum;
+      // let finalNum =
+      //   Math.ceil((maxRound - interval * boxplotNum) / interval) + boxplotNum;
 
       let curIterCount = losses[0].length;
 
-      xTick.push(newWindowRange[0] + interval - 1);
+      // xTick.push(newWindowRange[0] + interval - 1);
       for (let i = 2; i <= boxplotNum; i++) {
-        const tick = newWindowRange[0] + interval - 1 + interval * (i - 1);
-        xTick.push(parseInt(tick));
+        // const tick = newWindowRange[0] + interval - 1 + interval * (i - 1);
+        // xTick.push(parseInt(tick));
       }
 
       for (let i = 1; i <= boxplotNum; i++) {
-        const index = startPos + interval * i;
+        // const index = startPos + interval * i;
 
-        if (index > curIterCount) continue;
-        let dataSingleIter = losses.map((d) => d[index - 1]);
-        newDataForBoxplot.push(dataSingleIter);
+        // if (index > curIterCount) continue;
+        // let dataSingleIter = losses.map((d) => d[index - 1]);
+        // newDataForBoxplot.push(dataSingleIter);
       }
 
       let lossStart = losses.map((d) => d[0]);
@@ -178,10 +178,10 @@ class BoxplotView extends React.Component {
         curIter: curIterCount,
         dataForBoxplot: dataForBoxplot,
         xTick: xTick,
-        windowRange: newWindowRange,
+        // windowRange: newWindowRange,
         yMax: newYMax,
       });
-    }
+    // }
   };
 
   render() {
@@ -195,7 +195,7 @@ class BoxplotView extends React.Component {
       yTicks,
       xTick,
       windowRange,
-      sliderWindowNum,
+      // sliderWindowNum,
       boxplotNum,
     } = this.state;
     const chartHeight = height - margin.top - margin.bottom;
@@ -203,7 +203,7 @@ class BoxplotView extends React.Component {
 
     const { maxRound } = this.props;
 
-    let interval = Math.floor(sliderWindowNum / boxplotNum);
+    // let interval = Math.floor(sliderWindowNum / boxplotNum);
 
     let initialGridsY = [];
     for (let i = 0; i < yTicks; i++) {
@@ -215,7 +215,7 @@ class BoxplotView extends React.Component {
     };
     marks[maxRound] = maxRound;
 
-    let startPos = Math.floor((windowRange[0] - 1) / interval);
+    // let startPos = Math.floor((windowRange[0] - 1) / interval);
     // let data = dataForBoxplot.slice(startPos, startPos + boxplotNum);
     let data = dataForBoxplot.slice(0, 10);
     // console.log(windowRange, dataForBoxplot, data, xTick)

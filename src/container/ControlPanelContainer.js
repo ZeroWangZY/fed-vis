@@ -7,6 +7,7 @@ const mapStateToProps = (state) => {
   return {
     // chartData: state.chartData
     bbox: state.bbox,
+    chartDataLoading: state.chartDataLoading,
   };
 };
 

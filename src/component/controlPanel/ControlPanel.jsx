@@ -1,10 +1,10 @@
 import React from "react";
 import "./ControlPanel.less";
-import { Select, Radio } from "antd";
+import { Select, Radio, Button } from "antd";
 import { Divider } from "antd";
 import { Checkbox, Row, Col } from "antd";
 import "antd/lib/switch/style/index.css";
-import "antd/lib/select/style/index.css";
+// import "../chart/mod/node_modules/antd/lib/select/style/index.css";
 import VisualForms from "./mod/VisualForms";
 import DimensionAndFilterUrban from "./mod/DimensionAndFilterUrban";
 import DimensionAndFilterCancer from "./mod/DimensionAndFilterCancer";
@@ -88,6 +88,7 @@ export default class ControlPanel extends React.PureComponent {
   generateVisualization() {
     // load data
     this.props.onGenerate({
+      dataset: this.state.dataset,
       // filter↓
       ...this.state.filters,
       visualForm: this.state.visualForm,
@@ -351,9 +352,14 @@ export default class ControlPanel extends React.PureComponent {
           </div>
 
           <div className="control-panel__data__item">
-            <button className="load-btn" onClick={this.generateVisualization}>
+            <Button
+              className="load-btn"
+              onClick={this.generateVisualization}
+              disabled={!this.state.dataset}
+              loading={this.props.chartDataLoading}
+            >
               Generate Visualization
-            </button>
+            </Button>
           </div>
         </div>
       </div>

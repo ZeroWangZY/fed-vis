@@ -4,7 +4,9 @@ import { toggleChartError } from "actions/chart";
 
 const mapStateToProps = (state) => {
   return {
-    chartNerror: state.chartData,
+    chartNerror: state.chartData.diagram_data,
+    maxRound: state.chartData.maxRound,
+    currentRound: state.chartData.round,
     odmapData: state.odmapData,
     // deleteRect: state.deleteRectId,
     useError: state.useError,

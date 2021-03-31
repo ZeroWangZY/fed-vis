@@ -3,19 +3,19 @@ import * as d3 from "d3";
 import d3Tip from "d3-tip";
 import "./BarChart.less";
 
-function customXAxis(xAxis) {
-  return (g) => {
-    g.call(xAxis);
-    g.selectAll(".tick text").attr("dy", 10);
-  };
-}
+// function customXAxis(xAxis) {
+//   return (g) => {
+//     g.call(xAxis);
+//     g.selectAll(".tick text").attr("dy", 10);
+//   };
+// }
 
-function customYAxis(yAxis) {
-  return (g) => {
-    g.call(yAxis);
-    g.selectAll(".tick text").attr("x", -10);
-  };
-}
+// function customYAxis(yAxis) {
+//   return (g) => {
+//     g.call(yAxis);
+//     g.selectAll(".tick text").attr("x", -10);
+//   };
+// }
 
 function calcTextAnchor(d) {
   const epsilon = (Math.PI * 2) / 48;
@@ -43,26 +43,22 @@ function calcDominantBaseline(d) {
     return "middle";
   }
 }
-// TODO:改为外部传入，client和server的绘制画布大小不同
-const svgWidth = 320;
-const svgHeight = 230;
 
 export default class BarChart extends Component {
   constructor(props) {
     super(props);
-
-    this.svgWidth = svgWidth;
-    this.svgHeight = svgHeight;
+    this.svgWidth = this.props.width;
+    this.svgHeight = this.props.height;
     this.padding = {
-      top: 45,
-      left: 50,
+      top: 0,
+      left: 0,
     };
     this.iconSize = 10;
 
     this.renderByD3 = this.renderByD3.bind(this);
-    this.handleDeleteSvg = this.handleDeleteSvg.bind(this);
-    this.handleSelectSvg = this.handleSelectSvg.bind(this);
-    this.groupDataByAggregateHour = this.groupDataByAggregateHour.bind(this);
+    // this.handleDeleteSvg = this.handleDeleteSvg.bind(this);
+    // this.handleSelectSvg = this.handleSelectSvg.bind(this);
+    // this.groupDataByAggregateHour = this.groupDataByAggregateHour.bind(this);
     this.getHourRange = this.getHourRange.bind(this);
   }
 
@@ -87,11 +83,12 @@ export default class BarChart extends Component {
     const width = svgWidth - 2 * padding.left;
     const height = svgHeight - 2 * padding.top;
 
-    const donutWidth = Math.min(width, height) / 7 / 1.5;
+    // const donutWidth = Math.min(width, height) / 7 / 1.5;
+    const donutWidth = Math.min(width, height) / 14;
 
     // 注意这两句的先后顺序
-    const colorRange = groupDataByAggregateHour(data, dataKeys, aggregateHour);
-    const formattedData = this.formattedData;
+    // const colorRange = groupDataByAggregateHour(data, dataKeys, aggregateHour);
+    // const formattedData = this.formattedData;
 
     const gChart = d3.select(this.node).select(".barchart__group");
     // 先清空一遍svg下的所有元素
@@ -117,7 +114,8 @@ export default class BarChart extends Component {
       });
 
     gChart.call(tip);
-
+    const {colorRange, formattedData} = this.props;
+    console.log("🚀 ~ file: Barchart.jsx ~ line 118 ~ BarChart ~ renderByD3 ~ colorRange", colorRange)
     const colorScale = d3.scaleQuantize().domain(colorRange).range(colorClass);
 
     const pie = d3
@@ -188,40 +186,40 @@ export default class BarChart extends Component {
     }
   }
 
-  groupDataByAggregateHour(data, dataKeys, aggregateHour) {
-    let formattedData = [];
-    let numSegment = 24 / aggregateHour;
+  // groupDataByAggregateHour(data, dataKeys, aggregateHour) {
+  //   let formattedData = [];
+  //   let numSegment = 24 / aggregateHour;
 
-    const sumReducer = (accumulator, currentValue) =>
-      accumulator + currentValue;
-    let max = 0;
-    let min = Number.POSITIVE_INFINITY;
-    for (let i = 0, len = dataKeys.length; i < len; i += 1) {
-      let dataEle = [];
-      const dataByDay = data[i];
-      for (let j = 0; j < numSegment; j += 1) {
-        let val = dataByDay
-          .slice(j * aggregateHour, (j + 1) * aggregateHour)
-          .reduce(sumReducer);
-        max = Math.max(val, max);
-        min = Math.min(val, min);
-        dataEle.push({
-          count: val,
-          ratio: numSegment,
-          hour: j * aggregateHour,
-          date: dataKeys[i],
-        });
-      }
-      // dataEle["type"] = dataKeys[i];
-      // dataEle["total"] = data[i].reduce(sumReducer);
+  //   const sumReducer = (accumulator, currentValue) =>
+  //     accumulator + currentValue;
+  //   let max = 0;
+  //   let min = Number.POSITIVE_INFINITY;
+  //   for (let i = 0, len = dataKeys.length; i < len; i += 1) {
+  //     let dataEle = [];
+  //     const dataByDay = data[i];
+  //     for (let j = 0; j < numSegment; j += 1) {
+  //       let val = dataByDay
+  //         .slice(j * aggregateHour, (j + 1) * aggregateHour)
+  //         .reduce(sumReducer);
+  //       max = Math.max(val, max);
+  //       min = Math.min(val, min);
+  //       dataEle.push({
+  //         count: val,
+  //         ratio: numSegment,
+  //         hour: j * aggregateHour,
+  //         date: dataKeys[i],
+  //       });
+  //     }
+  //     // dataEle["type"] = dataKeys[i];
+  //     // dataEle["total"] = data[i].reduce(sumReducer);
 
-      formattedData.push(dataEle);
-    }
-    // debugger;
-    this.formattedData = formattedData;
+  //     formattedData.push(dataEle);
+  //   }
+  //   // debugger;
+  //   this.formattedData = formattedData;
 
-    return [min, max];
-  }
+  //   return [min, max];
+  // }
 
   getHourRange(index) {
     const { aggregateHour } = this.props;
@@ -235,25 +233,28 @@ export default class BarChart extends Component {
       svgHeight,
       iconSize,
       padding,
-      handleDeleteSvg,
-      handleSelectSvg,
+      // handleDeleteSvg,
+      // handleSelectSvg,
     } = this;
+
+    console.log("svgWidth", svgWidth, svgHeight);
 
     return (
       <svg
         className={`barchart`}
+        style={{marginTop: this.props.marginTop}}
         ref={(node) => {
           this.node = node;
         }}
         width={svgWidth}
         height={svgHeight}
-        onClick={handleSelectSvg}
+        // onClick={handleSelectSvg}
       >
         <g
           className="barchart__group"
           transform={`translate(${padding.left}, ${padding.top})`}
         />
-        <image
+        {/* <image
           className="barchart__deletebtn"
           x={svgWidth - iconSize - 10}
           y={10}
@@ -261,7 +262,7 @@ export default class BarChart extends Component {
           height={iconSize}
           xlinkHref={require("../../assets/img/delete-btn.svg")}
           onClick={handleDeleteSvg}
-        />
+        /> */}
       </svg>
     );
   }

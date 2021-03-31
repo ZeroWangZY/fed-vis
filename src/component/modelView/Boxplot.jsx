@@ -8,7 +8,7 @@ export default class Boxplot extends React.PureComponent {
     this.state = {
       quantileData: [], // 中位数、上下四分位
       whiskerData: [], // q1 - iqr;q3 + iqr
-      boxplotWidth: 0,
+      boxplotWidth: 10,
     };
   }
 
@@ -40,13 +40,14 @@ export default class Boxplot extends React.PureComponent {
     this.setState({
       quantileData: [q1, q2, q3],
       whiskerData: [dataSort[whiskerIndices[0]], dataSort[whiskerIndices[1]]],
-      boxplotWidth: parseFloat(bandWidth) * 0.2,
+      // boxplotWidth: parseFloat(bandWidth) * 0.2,
     });
   };
 
   render() {
     const { index, trans, xscale, yscale } = this.props;
     const { quantileData, whiskerData, boxplotWidth } = this.state;
+
     return (
       // <Motion style={{opacity: spring(1)}} defaultStyle={{opacity: 0}}>
       //   {interpolatedStyle => (

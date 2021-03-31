@@ -6,6 +6,9 @@ import {
   TOGGLE_CHART_ERROR,
   TRIGGER_CHART_POLL,
   SET_CHART_PROGRESS,
+  CHART_REQUESTING,
+  CHART_REQUEST_END,
+  RESET_CHART_DATA,
 } from "actions/chart";
 import { GENERATE_VISUALIZATION } from "../actions/chart";
 
@@ -19,10 +22,23 @@ import { GENERATE_VISUALIZATION } from "../actions/chart";
 //   }
 // };
 
-export const chartData = (state = [[], []], action) => {
+export const chartData = (state = {diagram_data: null}, action) => {
   switch (action.type) {
     case SAVE_CHART_DATA:
       return action.data;
+      case RESET_CHART_DATA:
+      return {diagram_data: null};
+    default:
+      return state;
+  }
+};
+
+export const chartDataLoading = (state = false, action) => {
+  switch (action.type) {
+    case CHART_REQUESTING:
+      return true;
+    case CHART_REQUEST_END:
+      return false;
     default:
       return state;
   }
@@ -36,6 +52,15 @@ export const currentClient = (state = [], action) => {
       return state;
   }
 };
+
+export const query = (state = {}, action) => {
+  switch (action.type) {
+    case GENERATE_VISUALIZATION:
+      return action.query;
+    default:
+      return state;
+  }
+}
 
 export const chartDataId = (state = "", action) => {
   switch (action.type) {

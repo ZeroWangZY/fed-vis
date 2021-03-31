@@ -1,8 +1,8 @@
 import { all } from "redux-saga/effects";
-import { watchChartByTimeRange, watchChartByID } from "./chart";
-import { watchClients } from "./client-view";
-import { watchOdmapByTimeRange } from "./odmap";
-import initCalendar from "./calendar";
+import { watchChartByTimeRange } from "./chart";
+// import { watchClients } from "./client-view";
+// import { watchOdmapByTimeRange } from "./odmap";
+// import initCalendar from "./calendar";
 import {
   watchDeleteBarchart,
   watchAddBarchart,
@@ -11,14 +11,14 @@ import {
 import { watchCheckProgress } from "./base";
 export default function* rootSaga() {
   yield all([
-    initCalendar(),
+    // initCalendar(),
     watchChartByTimeRange(),
-    watchOdmapByTimeRange(),
+    // watchOdmapByTimeRange(),
     watchDeleteBarchart(),
     watchAddBarchart(),
     watchCheckProgress(),
-    watchClients(),
-    watchChartByID(),
+    // watchClients(),
+    // watchChartByID(),
     watchHistogramByID(),
     // watchSelectBarchart()
   ]);

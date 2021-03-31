@@ -5,6 +5,7 @@ import { Divider } from "antd";
 import "./ModelView.less";
 import WaterProgress from "./WaterProgress";
 import BoxplotView from "./BoxplotView";
+import PerformanceServer from "./PerformanceServer";
 import LiquidGaugeLegend from "./LiquidGaugeLegend";
 
 const clientInfo = [
@@ -77,35 +78,36 @@ class ModelView extends React.PureComponent {
   // }
 
   render() {
-    const { progressInfo } = this.props;
-    const {
-      current_round: currentRound = 0,
-      max_round: maxRound = 1,
-      losses = [],
-    } = progressInfo;
-    const percent = (currentRound / maxRound) * 100;
-    let max = 0;
-    let waterLevels = [];
-    if (losses !== null && losses !== undefined) {
-      for (const loss of losses) {
-        if (loss[0] > max) {
-          max = loss[0];
-        }
-        if (loss.length > 10) {
-          waterLevels.push(loss[9]);
-        } else {
-          waterLevels.push(loss[loss.length - 1]);
-        }
-      }
-    }
-    let ls = Array.from(waterLevels);
-    if (max === 0) {
-      waterLevels = [1, 1, 1, 1, 1, 1, 1, 1];
-    } else {
-      for (const i in waterLevels) {
-        waterLevels[i] = waterLevels[i] / max;
-      }
-    }
+    const {re, losses, currentRound} = this.props;
+    // const { progressInfo } = this.props;
+    // const {
+    //   current_round: currentRound = 0,
+    //   max_round: maxRound = 1,
+    //   losses = [],
+    // } = progressInfo;
+    // const percent = (currentRound / maxRound) * 100;
+    // let max = 0;
+    // let waterLevels = [];
+    // if (losses !== null && losses !== undefined) {
+    //   for (const loss of losses) {
+    //     if (loss[0] > max) {
+    //       max = loss[0];
+    //     }
+    //     if (loss.length > 10) {
+    //       waterLevels.push(loss[9]);
+    //     } else {
+    //       waterLevels.push(loss[loss.length - 1]);
+    //     }
+    //   }
+    // }
+    // let ls = Array.from(waterLevels);
+    // if (max === 0) {
+    //   waterLevels = [1, 1, 1, 1, 1, 1, 1, 1];
+    // } else {
+    //   for (const i in waterLevels) {
+    //     waterLevels[i] = waterLevels[i] / max;
+    //   }
+    // }
     return (
       <div id="model-view">
         {/* <div className="panel-title">Server performance</div> */}
@@ -214,7 +216,8 @@ class ModelView extends React.PureComponent {
             {/* <div className="third-panel-title" style={{ marginTop: 5 }}>
               Global Loss
             </div> */}
-            <BoxplotView losses={losses} maxRound={maxRound} />
+            {/* <BoxplotView losses={losses} maxRound={maxRound} /> */}
+            <PerformanceServer losses={losses} re={re} currentRound={currentRound} />
           </div>
         </div>
       </div>
@@ -224,10 +227,14 @@ class ModelView extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    shouldPoll: state.shouldChartPoll,
-    id: state.chartDataId.id,
-    // 具体进度信息
-    progressInfo: state.chartProgress,
+    // shouldPoll: state.shouldChartPoll,
+    // id: state.chartDataId.id,
+    // // 具体进度信息
+    // progressInfo: state.chartProgress,
+    re: state.chartData.re,
+    losses: state.chartData.loss,
+    currentRound: state.chartData.round,
+    // allData: state.chartData,
   };
 };
 

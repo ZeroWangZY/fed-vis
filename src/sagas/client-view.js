@@ -32,9 +32,9 @@ function* updateClients({ query }) {
   });
 }
 
-export function* watchClients() {
-  yield takeLatest(GENERATE_VISUALIZATION, updateClients);
-}
+// export function* watchClients() {
+//   yield takeLatest(GENERATE_VISUALIZATION, updateClients);
+// }
 
 // export function* watchChartByID() {
 //   yield takeLatest(GET_CHART_BY_ID, getChartData);

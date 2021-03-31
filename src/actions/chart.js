@@ -4,10 +4,12 @@ export const SHOW_CHART = "SHOW_CHART";
 export const TOGGLE_CHART_ERROR = "TOGGLE_CHART_ERROR";
 export const SAVE_CHART_DATA = "SAVE_CHART_DATA";
 export const SAVE_CHART_DATA_ID = "SAVE_CHART_DATA_ID";
+export const CHART_REQUESTING = "CHART_REQUESTING";
+export const CHART_REQUEST_END = "CHART_REQUEST_END";
 export const TRIGGER_CHART_POLL = "TRIGGER_CHART_POLL";
 export const GET_CHART_BY_ID = "GET_CHART_BY_ID";
 export const SET_CHART_PROGRESS = "SET_CHART_PROGRESS";
-
+export const RESET_CHART_DATA = "RESET_CHART_DATA";
 export function generateVisualization(query) {
   return {
     type: GENERATE_VISUALIZATION,

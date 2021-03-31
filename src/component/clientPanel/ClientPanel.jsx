@@ -4,6 +4,7 @@ import "./clientPanel.less";
 import ClientCard from "../clientPanel/ClientCard";
 
 function clientStateToProps(state) {
+  console.log("🚀 ~ file: clientPanel.jsx ~ line 16 ~ clientStateToProps ~ state", state)
   return {
     // currentClient: state.currentClient,
     // dataset: state.barchartData,
@@ -11,7 +12,7 @@ function clientStateToProps(state) {
     // highlightId: state.highlightId,
     visualForm: state.visualForm,
     clientInfo: state.clientInfo,
-  };
+  }; 
 }
 
 function clientDispatchToProps(dispatch) {

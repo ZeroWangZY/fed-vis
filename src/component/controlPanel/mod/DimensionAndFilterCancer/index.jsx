@@ -9,19 +9,13 @@ export function DimensionAndFilterCancer({ bbox, onChange }) {
   useEffect(() => {
     setDimensions({});
     handleFiltersChange({
-      dataType: "start",
-      startDate: "2017-05-01 00:00",
-      endDate: "2017-10-31 23:00",
-      ...bbox,
+      // cancerSite, region, sex, race, year
+      cancerSite: "All cancer site",
+      region: "Northeast",
+      sex:"Female",
     });
   }, []);
-  // bbox 更改后，重置 bbox 的值
-  useEffect(() => {
-    handleFiltersChange({
-      ...filters,
-      ...bbox,
-    });
-  }, [bbox]);
+  
   const handleFiltersChange = (nextFilters) => {
     _setFilters(nextFilters);
     onChange(nextFilters);

@@ -17,7 +17,7 @@ import "./index.less";
 const size_param = 500;
 
 export const HeatMap = ({
-  isDrawerOpen,
+  // isDrawerOpen,
   chartData,
   latRange,
   lngRange,
@@ -182,10 +182,10 @@ export const HeatMap = ({
         zoom={basicConfig.zoom}
         className={clsx(
           "map-container customer-control",
-          "map-container-heatmap",
-          {
-            "drawer-helper": isDrawerOpen,
-          }
+          "map-container-heatmap"
+          // {
+          //   "drawer-helper": isDrawerOpen,
+          // }
         )}
       >
         <LayersControl position="topleft">
@@ -247,7 +247,7 @@ export const HeatMap = ({
               )} */}
             </FeatureGroup>
           </LayersControl.Overlay>
-          <LayersControl.Overlay name="Brush" checked>
+          {/* <LayersControl.Overlay name="Brush" checked>
             <FeatureGroup>
               <EditControl
                 position="topleft"
@@ -288,9 +288,8 @@ export const HeatMap = ({
                 // });
                 // }}
               />
-              {/* <EditControl name="line"/> */}
             </FeatureGroup>
-          </LayersControl.Overlay>
+          </LayersControl.Overlay> */}
         </LayersControl>
       </Map>
     </>

@@ -1,4 +1,4 @@
-import { SAVE_CLIENT_INFO } from "../actions/client";
+import { SAVE_CLIENT_INFO, RESET_CLIENT_INFO } from "../actions/client";
 
 // export const dataType = (state = 'start', action) => {
 //   switch(action.type) {
@@ -36,10 +36,12 @@ import { SAVE_CLIENT_INFO } from "../actions/client";
 //   }
 // }
 
-export const clientInfo = (state = null, action) => {
+export const clientInfo = (state = {clients: []}, action) => {
   switch (action.type) {
     case SAVE_CLIENT_INFO:
       return action.clientInfo;
+    case RESET_CLIENT_INFO: 
+      return {clients: []};
     default:
       return state;
   }

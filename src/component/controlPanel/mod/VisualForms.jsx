@@ -109,7 +109,6 @@ function FormBtn({ type, title, component, dimension, onClick, active }) {
 export default class VisualForms extends Component {
   render() {
     const { onSelect, value } = this.props;
-    console.log(formsList, value);
     return (
       <>
         <div>Visual forms:</div>

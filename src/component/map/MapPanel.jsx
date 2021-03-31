@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { FeatureGroup, Circle, Rectangle } from "react-leaflet";
-import Heatmap from "./mod/Heatmap";
 // import HeatmapLayer from '../heatmap/heatmap';
 
 import ChartProgress from "../progress-circle/chart-progress";
@@ -10,6 +9,7 @@ import "./map.less";
 // import { rankIcon } from '../icons/RankIcon';
 import * as d3 from "d3";
 import { Switch } from "antd";
+import Chart from "components/chart";
 
 function getMinMax(data) {
   let min = Number.MAX_SAFE_INTEGER,
@@ -64,7 +64,7 @@ class MapPanel extends Component {
     this.handleConvertOD = this.handleConvertOD.bind(this); // o和d的切换
     this.handleODmapClick = this.handleODmapClick.bind(this);
     this.handleLinklineClick = this.handleLinklineClick.bind(this); // 点击删除链接线
-    this.genChartData = this.genChartData.bind(this);
+    // this.genChartData = this.genChartData.bind(this);
     // this.genColor = this.genColor.bind(this);
   }
 
@@ -251,18 +251,19 @@ class MapPanel extends Component {
     });
   }
 
-  genChartData() {
-    const { chartNerror, useError } = this.props;
-    const chartData = useError ? chartNerror[1] : chartNerror[0];
-    const chartNonError = chartNerror[0];
-    let [min, max] = getMinMax(chartData);
-    return {
-      chartData: chartData,
-      min,
-      max,
-      chartNonError,
-    }; // 找到heatdata的最大值和最小值 为了在地图上做颜色映射
-  }
+  // genChartData() {
+  //   const { chartNerror, useError } = this.props;
+  //   if(!chartNerror) return null;
+  //   const chartData = useError ? chartNerror[1] : chartNerror[0];
+  //   const chartNonError = chartNerror[0];
+  //   let [min, max] = getMinMax(chartData);
+  //   return {
+  //     chartData: chartData,
+  //     min,
+  //     max,
+  //     chartNonError,
+  //   }; // 找到heatdata的最大值和最小值 为了在地图上做颜色映射
+  // }
 
   //没有调用
   // genColor(colorScale, opacityScale, val) {
@@ -282,8 +283,8 @@ class MapPanel extends Component {
 
   render() {
     let me = this;
-    const { isDrawerOpen, odmapData, visualForm } = this.props;
-    const chartData = this.genChartData();
+    const { maxRound, currentRound, odmapData, visualForm, chartNerror, useError } = this.props;
+    // const chartData = this.genChartData();
     const {
       latRange,
       lngRange,
@@ -294,140 +295,124 @@ class MapPanel extends Component {
       currentSpaceTypeOuter,
       odmapDataForDesSpace,
     } = this.state;
-
-    let $chart = null;
-
-    // heatmap
-    if (chartData.chartData.length !== 0) {
-      const chartProps = {
-        chartData,
-        latRange,
-        lngRange,
-        isDrawerOpen,
-        useError: this.props.useError,
-      };
-      switch (visualForm) {
-        case "heatmap":
-          $chart = <Heatmap {...chartProps} />;
-          break;
-        // TODO： 加上其他图的渲染
-        default:
-          throw new Error(`暂不支持 visualForm: ${visualForm} 的渲染`);
-      }
+    let $chart;
+    
+    if(chartNerror) {
+      console.log("🚀 ~ file: MapPanel.jsx ~ line 301 ~ render ~ chartNerror", chartNerror)
+      $chart = <Chart visualForm={visualForm} chartNerror={chartNerror} useError={useError} position={"server"} panelID={"server"}/>;
     }
-    console.log("visualForm", visualForm);
 
-    // odmap
-    let $odmap = null;
-    if (Array.isArray(odmapData.data) && odmapData.data.length !== 0) {
-      let colorLinear = d3
-        .scaleLinear()
-        .domain([odmapData.min, odmapData.max / 8])
-        .range([0, 1]);
-      let usedOdmapData =
-        currentSpaceTypeOuter === "O" ? odmapData.data : odmapDataForDesSpace;
-      $odmap = usedOdmapData.map((column, column_index) => {
-        return column.map((outerRect, outerRectId) => {
-          // 默认是5*10
-          let outerRectBounds = [
-            [
-              latRange[0] + odmapOuterrectSize[0] * outerRectId,
-              lngRange[0] + odmapOuterrectSize[1] * column_index,
-            ],
-            [
-              latRange[0] + odmapOuterrectSize[0] * (outerRectId + 1),
-              lngRange[0] + odmapOuterrectSize[1] * (column_index + 1),
-            ],
-          ];
-          let innerRects = outerRect.map((innerColumn, innerColumnId) => {
-            return innerColumn.map((innerRect, innerRectId) => {
-              let innerRectBounds = [
-                [
-                  outerRectBounds[0][0] + odmapInnerrectSize[0] * innerRectId,
-                  outerRectBounds[0][1] + odmapInnerrectSize[1] * innerColumnId,
-                ],
-                [
-                  outerRectBounds[0][0] +
-                    odmapInnerrectSize[0] * (innerRectId + 1),
-                  outerRectBounds[0][1] +
-                    odmapInnerrectSize[1] * (innerColumnId + 1),
-                ],
-              ];
-              if (innerRect - 0 <= 0.1) {
-                return null;
-              } else {
-                let highlightFlag = false;
-                // 需要高亮
-                if (
-                  userrectIndexBounds.length !== 0 &&
-                  innerColumnId <= userrectIndexBounds[1][0] &&
-                  innerColumnId >= userrectIndexBounds[0][0] &&
-                  innerRectId <= userrectIndexBounds[1][1] &&
-                  innerRectId >= userrectIndexBounds[0][1]
-                ) {
-                  highlightFlag = true;
-                }
-                return (
-                  <FeatureGroup
-                    key={
-                      "odmap-innerrcolumn" + innerColumnId + "-" + innerRectId
-                    }
-                  >
-                    <Rectangle
-                      bounds={innerRectBounds}
-                      fillColor={me.computeColor(colorLinear(innerRect))}
-                      color={"#333"}
-                      weight={highlightFlag ? 1 : 0}
-                      fillOpacity={0.9}
-                      key={
-                        "odmap-innerrect" + innerColumnId + "-" + innerRectId
-                      }
-                      className={
-                        "odmaprect-" +
-                        column_index +
-                        "-" +
-                        outerRectId +
-                        "-" +
-                        innerColumnId +
-                        "-" +
-                        innerRectId
-                      }
-                      id={
-                        "odmaprect-" +
-                        column_index +
-                        "-" +
-                        outerRectId +
-                        "-" +
-                        innerColumnId +
-                        "-" +
-                        innerRectId
-                      }
-                      onclick={me.handleODmapClick}
-                    />
-                  </FeatureGroup>
-                );
-              }
-            });
-          });
+    // // odmap
+    // let $odmap = null;
+    // if (Array.isArray(odmapData.data) && odmapData.data.length !== 0) {
+    //   let colorLinear = d3
+    //     .scaleLinear()
+    //     .domain([odmapData.min, odmapData.max / 8])
+    //     .range([0, 1]);
+    //   let usedOdmapData =
+    //     currentSpaceTypeOuter === "O" ? odmapData.data : odmapDataForDesSpace;
+    //   $odmap = usedOdmapData.map((column, column_index) => {
+    //     return column.map((outerRect, outerRectId) => {
+    //       // 默认是5*10
+    //       let outerRectBounds = [
+    //         [
+    //           latRange[0] + odmapOuterrectSize[0] * outerRectId,
+    //           lngRange[0] + odmapOuterrectSize[1] * column_index,
+    //         ],
+    //         [
+    //           latRange[0] + odmapOuterrectSize[0] * (outerRectId + 1),
+    //           lngRange[0] + odmapOuterrectSize[1] * (column_index + 1),
+    //         ],
+    //       ];
+    //       let innerRects = outerRect.map((innerColumn, innerColumnId) => {
+    //         return innerColumn.map((innerRect, innerRectId) => {
+    //           let innerRectBounds = [
+    //             [
+    //               outerRectBounds[0][0] + odmapInnerrectSize[0] * innerRectId,
+    //               outerRectBounds[0][1] + odmapInnerrectSize[1] * innerColumnId,
+    //             ],
+    //             [
+    //               outerRectBounds[0][0] +
+    //                 odmapInnerrectSize[0] * (innerRectId + 1),
+    //               outerRectBounds[0][1] +
+    //                 odmapInnerrectSize[1] * (innerColumnId + 1),
+    //             ],
+    //           ];
+    //           if (innerRect - 0 <= 0.1) {
+    //             return null;
+    //           } else {
+    //             let highlightFlag = false;
+    //             // 需要高亮
+    //             if (
+    //               userrectIndexBounds.length !== 0 &&
+    //               innerColumnId <= userrectIndexBounds[1][0] &&
+    //               innerColumnId >= userrectIndexBounds[0][0] &&
+    //               innerRectId <= userrectIndexBounds[1][1] &&
+    //               innerRectId >= userrectIndexBounds[0][1]
+    //             ) {
+    //               highlightFlag = true;
+    //             }
+    //             return (
+    //               <FeatureGroup
+    //                 key={
+    //                   "odmap-innerrcolumn" + innerColumnId + "-" + innerRectId
+    //                 }
+    //               >
+    //                 <Rectangle
+    //                   bounds={innerRectBounds}
+    //                   fillColor={me.computeColor(colorLinear(innerRect))}
+    //                   color={"#333"}
+    //                   weight={highlightFlag ? 1 : 0}
+    //                   fillOpacity={0.9}
+    //                   key={
+    //                     "odmap-innerrect" + innerColumnId + "-" + innerRectId
+    //                   }
+    //                   className={
+    //                     "odmaprect-" +
+    //                     column_index +
+    //                     "-" +
+    //                     outerRectId +
+    //                     "-" +
+    //                     innerColumnId +
+    //                     "-" +
+    //                     innerRectId
+    //                   }
+    //                   id={
+    //                     "odmaprect-" +
+    //                     column_index +
+    //                     "-" +
+    //                     outerRectId +
+    //                     "-" +
+    //                     innerColumnId +
+    //                     "-" +
+    //                     innerRectId
+    //                   }
+    //                   onclick={me.handleODmapClick}
+    //                 />
+    //               </FeatureGroup>
+    //             );
+    //           }
+    //         });
+    //       });
 
-          return (
-            <FeatureGroup
-              key={"odmap-outercolumn" + column_index + "-" + outerRectId}
-            >
-              <Rectangle
-                bounds={outerRectBounds}
-                color={"#333"}
-                weight={1}
-                // fillOpacity={0.5}
-                fill={false}
-                key={"odmap-outerrect" + column_index + "-" + outerRectId}
-              />
-              {innerRects}
-            </FeatureGroup>
-          );
-        });
-      });
-    }
+    //       return (
+    //         <FeatureGroup
+    //           key={"odmap-outercolumn" + column_index + "-" + outerRectId}
+    //         >
+    //           <Rectangle
+    //             bounds={outerRectBounds}
+    //             color={"#333"}
+    //             weight={1}
+    //             // fillOpacity={0.5}
+    //             fill={false}
+    //             key={"odmap-outerrect" + column_index + "-" + outerRectId}
+    //           />
+    //           {innerRects}
+    //         </FeatureGroup>
+    //       );
+    //     });
+    //   });
+    // }
 
     return (
       <div id="map-content">
@@ -445,7 +430,11 @@ class MapPanel extends Component {
           >
             O⇋D
           </button> */}
-          <ChartProgress />
+         
+         {chartNerror ? (
+           <span>Round: {currentRound + 1} / {maxRound + 1}</span>
+         ) : null}
+          {/* <ChartProgress /> */}
           <div className="switch-error">
             <span className="switch-error-label">Show error:</span>
             <Switch

@@ -6,6 +6,8 @@ import {
   chartProgress,
   chartDataId,
   currentClient,
+  query,
+  chartDataLoading,
 } from "./chartData";
 import odmapData from "./odmapData";
 import { clientInfo } from "./client";
@@ -16,9 +18,11 @@ import { bbox, visualForm, precisionRound } from "./base";
 const rootReducer = combineReducers({
   chartData,
   useError,
+  query,
   // calendarData,
   // calendarProgress,
   odmapData,
+  chartDataLoading,
   // dataType,
   // dataMode,
   bbox,

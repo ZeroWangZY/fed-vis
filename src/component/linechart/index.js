@@ -6,7 +6,7 @@ import "./index.less";
 class LineChart extends React.Component {
   constructor(props) {
     super(props);
-    const { width, height, margin } = this.props;
+    const { width, height, margin, type } = this.props;
 
     this.chartSize = [
       width - margin.left - margin.right,
@@ -47,7 +47,7 @@ class LineChart extends React.Component {
     const yScale = d3
       .scaleLinear()
       .domain(d3.extent(data, (d) => d.y))
-      .range([chartSize[1], 0]);
+      .range([chartSize[1], 0]).nice();
 
     const line = d3
       .line()
@@ -58,12 +58,19 @@ class LineChart extends React.Component {
     const xAxis = (g) => {
       g.attr("transform", `translate(0, ${chartSize[1]})`).call(
         d3.axisBottom(xScale).tickSize(0)
-        // .ticks(5)
+        .ticks(5)
       );
     };
 
     const yAxis = (g) => {
-      g.call(d3.axisLeft(yScale).ticks(4).tickSize(0));
+      g.call(d3.axisLeft(yScale).ticks(3).tickSize(0).tickFormat(d => {
+        if(d < 1) {
+          return d3.format(".2f")(d)
+        } else {
+          // return d / 1000 +'k'
+          return d3.format(".2s")(d)
+        }
+      }));
     };
 
     gChart.append("g").call(xAxis);
@@ -87,6 +94,13 @@ class LineChart extends React.Component {
     return (
       <svg className="linechart" style={svgStyles}>
         <g style={groupStyles} ref={(node) => (this.node = node)}></g>
+        <text
+          className="axis-text" transform={`translate(${this.props.margin.left+5}, ${this.props.margin.top})`}
+          >{this.props.type}</text>
+        <text
+          className="axis-text" transform={`translate(${this.props.margin.left+chartSize[0]}, ${this.props.margin.top+chartSize[1]+10})`}
+          >round</text>
+        
 
         <defs>
           <marker
