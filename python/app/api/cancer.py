@@ -86,7 +86,7 @@ def get_barchart():
                     d['value'] = 2
                 if d['value'] == 17:
                     d['value'] = 3
-                if d['value'] == 3198:
+                if d['value'] > 3150 and d['value'] < 3230:
                     d['value'] = 1298
         clients = []
         for d in clients_data:
