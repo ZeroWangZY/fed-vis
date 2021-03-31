@@ -172,7 +172,7 @@ export const ODMap=({
       });
     });
   }
-  const legend = [...colorClass];
+  const legend = ['rgb(255, 255, 255)', 'rgb(236, 213, 214)' , 'rgb(240, 113, 114)', 'rgb(255, 0, 0)'];
   console.log(legend)
   const legendHeight = 60;
   const legendUnitHeight = legendHeight / legend.length;
