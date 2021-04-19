@@ -9,7 +9,6 @@ def noisyCount(sensitivety, epsilon):
         n_value = -beta * np.log(1. - u2)
     else:
         n_value = beta * np.log(u2)
-    print(n_value)
     return n_value
 
 

@@ -88,8 +88,8 @@ def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800, base_round=0, m
             model.set_weights(global_weights) 
             res = predict(model, mean, std, x, num_client)
             res = np.array([pruner(v) for v in res.round().astype(np.int32)
-                    ]).reshape(LNG_SIZE, LAT_SIZE).tolist()
-            normalHeatmap = ground_true.reshape(LNG_SIZE, LAT_SIZE).tolist()
+                    ]).reshape(10, 5, 10, 5).tolist()
+            normalHeatmap = ground_true.reshape(10, 5, 10, 5).tolist()
             errorHeatmap = np.abs(np.array(res) - np.array(normalHeatmap)).tolist()
             l = [];
             for i in range(len(ys)):
@@ -100,7 +100,7 @@ def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800, base_round=0, m
                     "diagram_data": [res, errorHeatmap],
                     "re": test_accuracy(res, normalHeatmap),
                     "loss": l,
-                    "ground_true": ground_true.tolist()
+                    "ground_true": normalHeatmap
                 }
             }
             print(type(res), type(errorHeatmap), type(test_accuracy(res, normalHeatmap)), type(l), type(ground_true))
@@ -109,8 +109,8 @@ def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800, base_round=0, m
                 model.set_weights(weights_set[i]) 
                 res = predict(model, mean, std, x, num_client)
                 res = np.array([pruner(v) for v in res.round().astype(np.int32)
-                        ]).reshape(LNG_SIZE, LAT_SIZE).tolist()
-                normalHeatmap = ys[i].reshape(LNG_SIZE, LAT_SIZE).tolist()
+                        ]).reshape(10, 5, 10, 5).tolist()
+                normalHeatmap = ys[i].reshape(10, 5, 10, 5).tolist()
                 errorHeatmap = np.abs(np.array(res) - np.array(normalHeatmap)).tolist()
                 clients.append({
                     "id": str(i),
@@ -129,6 +129,57 @@ def train_model_fed(model, x, ys, epoch=1, round=1, batch=12800, base_round=0, m
             global_weights = update_weights(weights_set)
 
 
+def train_model_fed_movie(model, X, xs, ys, epoch=1, round=1, batch=12800, base_round=0, max_round=100, ground_true=None):
+    global_weights = model.get_weights()
+    id = "asd"
+    for r in range(round):
+        print('round ', r)
+        weights_set = []
+        losses = []
+        for i in range(len(ys)):
+            model.set_weights(global_weights)   
+            history = LossHistory()
+            model.fit(xs[i], ys[i], epochs=epoch, batch_size=batch, callbacks=[history])
+            losses.append(history.loss)
+            weights_set.append(model.get_weights())
+        if (r + base_round + 1) % 15 == 0:
+            _r = r + base_round
+            model.set_weights(global_weights) 
+            res = model.predict(X).flatten().tolist()
+            normal = ground_true
+            error = np.abs(np.array(res) - np.array(normal)).tolist()
+            l = [];
+            for i in range(len(ys)):
+                l.append(losses[i])         
+            data = {
+                "round": _r,
+                "server": {
+                    "diagram_data": [res, error],
+                    "re": test_accuracy(res, normal),
+                    "loss": l,
+                    "ground_true": normal
+                }
+            }
+            clients = []
+            for i in range(len(ys)):
+                model.set_weights(weights_set[i]) 
+                res = model.predict(xs[i]).flatten().tolist()
+                normal = ys[i]
+                error = np.abs(np.array(res) - np.array(normal)).tolist()
+                clients.append({
+                    "id": str(i),
+                    "diagram_data": [res, error],
+                    "re": test_accuracy(res, normal),
+                    "loss": losses[i],
+                    "ground_true": normal
+                })
+            data['clients'] = clients
+            set_new_data(id, data)
+            
+        print('weights aggregation')
+        if len(weights_set) != 0:
+            global_weights = update_weights(weights_set)
+
 
 def gen_x(size_1, size_2):
     x = [[0]]
@@ -137,6 +188,17 @@ def gen_x(size_1, size_2):
         for latitude in range(size_2):
             x = np.append(x, [count])
             count += 1
+    return x[1:]
+
+def gen_x_four_dim(size_1, size_2, size_3, size_4):
+    x = [[0]]
+    count = 0
+    for _a in range(size_1):
+        for _b in range(size_2):
+            for _c in range(size_3):
+                for _d in range(size_4):
+                    x = np.append(x, [count])
+                    count += 1
     return x[1:]
 
 
