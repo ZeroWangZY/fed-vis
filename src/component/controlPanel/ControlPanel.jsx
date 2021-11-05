@@ -173,7 +173,7 @@ export default class ControlPanel extends React.PureComponent {
     });
   };
 
-  handleClientChange = () => {};
+  handleClientChange = () => { };
 
   updateScheme = (e) => {
     // this.setState(e.target.value);
@@ -285,9 +285,9 @@ export default class ControlPanel extends React.PureComponent {
             <div>Representation mode:</div>
             <Radio.Group value={dataMode} onChange={this.updateDatamode}>
               {/* TODO：此处的value需要使用state进行控制 */}
-              <Radio.Button value="normal">query-based</Radio.Button>
+              Federated: <Radio.Button value="normal">query-based</Radio.Button>
               <Radio.Button value="fitting">prediction-based</Radio.Button>
-              <Radio.Button value="centralized">centralized</Radio.Button>
+              <br />Traditional: <Radio.Button value="centralized">centralized</Radio.Button>
               <Radio.Button value="decentralized">decentralized</Radio.Button>
             </Radio.Group>
           </div>
